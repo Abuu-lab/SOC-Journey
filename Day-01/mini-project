@@ -1,0 +1,55 @@
+MY COMPUTER SECURITY BASELINE
+
+1. Hardware
+CPU:AMD Ryzen 7 8845HS 
+RAM: 16GB
+Storage: 477GB
+GPU: Radeon 780M Graphics
+
+2. Operating System
+OS: Microsoft Windows 11 Pro
+Version: 10.0.28000 N/A Build 28000
+Architecture: x64 - based PC
+
+3. Current User
+Username: Buya
+
+4. Running Processes
+ Name: steam.exe
+   PID: 4324
+   Status: Running
+   CPU: 00
+   Memory : 18.436K
+
+2. Name: Cloudflare WARP.exe
+   PID: 11852
+   Status: Running
+   CPU: 00
+   Memory: 4968K 
+
+3. Name: firefox.exe
+   PID: 6804
+   Status:  Running
+   CPU: 00
+   Memory: 348.884K
+
+4. Name: Spotify.exe
+   PID: 8120
+   Status: Running
+   CPU: 01
+   Memory: 191.840K 
+
+5. Observations
+
+Apa yang saya pelajari:
+- Membuka program atau aplikasi yang masih running
+- melihat PID nomor proses disetiap aplikasi yg running
+- melihat cpu usage
+- melihat memory usage
+- melihat informasi PC atau laptop yg lebih komplit melalui CMD menggunakan command systeminfo
+bisa melihat OS name, OS version, manufaktur, architecture
+
+Hal yang belum saya pahami:
+- belum mengerti cara membedakan apakah cpu dengan usage tinggi terkena malware atau tidak
+- belum bisa membedakan apakah memory dengan usage tinggi terkena malware atau tidak
+- belum mengerti apa itu parent proses
