@@ -1,0 +1,43 @@
+1. taskmgr
+Membuka Task Manager dari CMD:
+
+taskmgr
+Dipakai untuk melihat:
+
+CPU
+Memory
+Disk
+Processes
+PID
+CPU usage
+Memory usage
+
+2. resmon
+
+Ini bukan CMD command murni untuk mengambil data langsung, tetapi Windows command untuk membuka Resource Monitor.
+resmon
+
+Kemudian:
+Network → TCP Connections
+
+Di sini kamu bisa melihat hubungan antara:
+Process ↔ PID ↔ Network Connection
+
+3. netstat -ano
+
+netstat -ano
+-a → menampilkan connections/listening ports
+-n → menampilkan address/port dalam bentuk angka
+-o → menampilkan PID
+
+Contoh:
+Proto  Local Address       Foreign Address     State         PID
+TCP    192.168.1.10:50544  142.250.x.x:443     ESTABLISHED   4216
+
+Kemudian PID tersebut bisa dicocokkan dengan:
+tasklist
+
+Misalnya:
+PID 4216 → unknown.exe
+
+Nah, ini mulai menjadi correlation.
