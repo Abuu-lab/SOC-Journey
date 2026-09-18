@@ -1,0 +1,60 @@
+Command yang Dipelajari
+
+### 1. Menampilkan Process + PID + PPID
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId
+```
+
+Keterangan:
+
+```text
+Name              = nama process
+ProcessId         = PID process tersebut
+ParentProcessId   = PPID / PID parent process
+```
+
+---
+
+### 2. Menampilkan Process + Executable Path
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath
+```
+
+Tambahan:
+
+```text
+ExecutablePath = lokasi file executable
+```
+
+---
+
+### 3. Menampilkan Process + Command Line
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, CommandLine
+```
+
+Tambahan:
+
+```text
+CommandLine = bagaimana process tersebut dijalankan + arguments/parameters
+```
+
+---
+
+### 4. Investigasi Process tertentu
+
+Contoh untuk Spotify:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "Name = 'Spotify.exe'" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Ini berguna untuk **filter satu process** sehingga output tidak terlalu banyak.
+
