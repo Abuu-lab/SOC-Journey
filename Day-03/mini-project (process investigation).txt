@@ -1,0 +1,102 @@
+Process Investigation
+
+## Process 1
+Name            : Spotify.exe
+ProcessId       : 9472
+ParentProcessId : 19740
+ExecutablePath  : C:\Users\Buya\AppData\Roaming\Spotify\Spotify.exe
+CommandLine     : "C:\Users\Buya\AppData\Roaming\Spotify\Spotify.exe" --type=utility
+                  --utility-sub-type=media.mojom.CdmServiceBroker --lang=en-US --service-sandbox-type=cdm
+                  --video-capture-use-gpu-memory-buffer --no-pre-read-main-dll
+                  --user-data-dir="C:\Users\Buya\AppData\Local\Spotify" --log-severity=disable
+                  --user-agent-product="Chrome/146.0.7680.179 Spotify/1.3.0.277"
+                  --metrics-shmem-handle=7312,i,7574247829178312417,11017353352888449004,524288
+                  --field-trial-handle=2564,i,9697757951994868595,17242469109847768957,262144 --disable-features=AutofillActorMod
+                  e,BackForwardCache,FullscreenBubbleShowOrigin,GlicActorUi,HardwareMediaKeyHandling,LensOverlay,PartitionAllocDa
+                  nglingPtr,PartitionAllocUnretainedDanglingPtr,StorageNotificationService --variations-seed-version
+                  --pseudonymization-salt-handle=2560,i,11956326233228186941,9705302225072860105,4
+                  --trace-process-track-uuid=3190708992871164437 --enable-logging=handle --log-file=7552
+                  --mojo-platform-channel-handle=8348 /prefetch:14
+
+## Process 2
+Name            : Discord.exe
+ProcessId       : 16464
+ParentProcessId : 15004
+ExecutablePath  : C:\Users\Buya\AppData\Local\Discord\app-1.0.9257\Discord.exe
+CommandLine     : "C:\Users\Buya\AppData\Local\Discord\app-1.0.9257\Discord.exe" --type=utility
+                  --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none
+                  --user-data-dir="C:\Users\Buya\AppData\Roaming\discord" --standard-schemes=disclip
+                  --secure-schemes=disclip,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=disclip,sentry-ipc
+                  --fetch-schemes=disclip,sentry-ipc --streaming-schemes=disclip
+                  --field-trial-handle=1852,i,13112856409038008341,10999823638448049431,262144
+                  --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports --disable-features=AllowAggressiveThrottlingW
+                  ithWebSocket,DropInputEventsWhilePaintHolding,HardwareMediaKeyHandling,IntensiveWakeUpThrottling,LocalNetworkAc
+                  cessChecks,MediaSessionService,NetworkServiceSandbox,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSit
+                  eInstanceGetProcessCreation,UseEcoQoSForBackgroundProcess,WinRetrieveSuggestionsOnlyOnDemand
+                  --variations-seed-version --pseudonymization-salt-handle=1856,i,12559488081512397146,713315348952602427,4
+                  --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2056 /prefetch:11
+
+Name            : Discord.exe
+ProcessId       : 20204
+ParentProcessId : 15004
+ExecutablePath  : C:\Users\Buya\AppData\Local\Discord\app-1.0.9257\Discord.exe
+CommandLine     : "C:\Users\Buya\AppData\Local\Discord\app-1.0.9257\Discord.exe" --type=renderer
+                  --user-data-dir="C:\Users\Buya\AppData\Roaming\discord" --standard-schemes=disclip
+                  --secure-schemes=disclip,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=disclip,sentry-ipc
+                  --fetch-schemes=disclip,sentry-ipc --streaming-schemes=disclip
+                  --app-user-model-id=com.squirrel.Discord.Discord
+                  --app-path="C:\Users\Buya\AppData\Local\Discord\app-1.0.9257\resources\app.asar" --no-sandbox --no-zygote
+                  --enable-blink-features=EnumerateDevices,AudioOutputDevices --autoplay-policy=no-user-gesture-required
+                  --disable-background-timer-throttling --enable-h264-mf --enable-h264-mf-zero-copy
+                  --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1.5 --num-raster-threads=4
+                  --enable-main-frame-before-activation --renderer-client-id=6 --time-ticks-at-unix-epoch=-1789482264973760
+                  --launch-time-ticks=144144040876 --field-trial-handle=1852,i,13112856409038008341,10999823638448049431,262144
+                  --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports --disable-features=AllowAggressiveThrottlingW
+                  ithWebSocket,DropInputEventsWhilePaintHolding,HardwareMediaKeyHandling,IntensiveWakeUpThrottling,LocalNetworkAc
+                  cessChecks,MediaSessionService,NetworkServiceSandbox,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSit
+                  eInstanceGetProcessCreation,UseEcoQoSForBackgroundProcess,WinRetrieveSuggestionsOnlyOnDemand
+                  --variations-seed-version --pseudonymization-salt-handle=1856,i,12559488081512397146,713315348952602427,4
+                  --trace-process-track-uuid=3190708991934122588 --mojo-platform-channel-handle=4232
+                  --enable-node-leakage-in-renderers /prefetch:1
+
+Name            : Discord.exe
+ProcessId       : 484
+ParentProcessId : 15004
+ExecutablePath  : C:\Users\Buya\AppData\Local\Discord\app-1.0.9257\Discord.exe
+CommandLine     : "C:\Users\Buya\AppData\Local\Discord\app-1.0.9257\Discord.exe" --type=utility
+                  --utility-sub-type=audio.mojom.AudioService --lang=en-US --service-sandbox-type=audio
+                  --video-capture-use-gpu-memory-buffer --user-data-dir="C:\Users\Buya\AppData\Roaming\discord"
+                  --standard-schemes=disclip --secure-schemes=disclip,sentry-ipc --bypasscsp-schemes=sentry-ipc
+                  --cors-schemes=disclip,sentry-ipc --fetch-schemes=disclip,sentry-ipc --streaming-schemes=disclip
+                  --field-trial-handle=1852,i,13112856409038008341,10999823638448049431,262144
+                  --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports --disable-features=AllowAggressiveThrottlingW
+                  ithWebSocket,DropInputEventsWhilePaintHolding,HardwareMediaKeyHandling,IntensiveWakeUpThrottling,LocalNetworkAc
+                  cessChecks,MediaSessionService,NetworkServiceSandbox,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSit
+                  eInstanceGetProcessCreation,UseEcoQoSForBackgroundProcess,WinRetrieveSuggestionsOnlyOnDemand
+                  --variations-seed-version --pseudonymization-salt-handle=1856,i,12559488081512397146,713315348952602427,4
+                  --trace-process-track-uuid=3190708992871164437 --mojo-platform-channel-handle=4636 /prefetch:12
+
+## Process 3
+Name            : Cloudflare WARP.exe
+ProcessId       : 17864
+ParentProcessId : 9568
+ExecutablePath  : C:\Program Files\Cloudflare\Cloudflare WARP\Cloudflare WARP.exe
+CommandLine     : "C:\Program Files\Cloudflare\Cloudflare WARP\Cloudflare WARP.exe"
+
+## Observation
+
+Apa yang saya temukan?
+Saya menemukan hamper keseluruhan info, dari pid hingga parent, lalu saya bisa melihat executablepath dan commandline semua menjadi terfilter dan lebih mudah membacanya , karena kita mencari hanya di 1 tujuan
+
+Apakah process tersebut mempunyai parent process?
+ya 3 process tersebut mempunyai parent process
+
+Apakah executable path terlihat masuk akal?
+ya saya lihat jalur atau tempat aplikasi berada dalam folder yg masuk akal
+
+Apakah command line terlihat normal?
+saya belum begitu paham cara membaca commandline
+
+Apa yang masih belum saya ketahui?
+sepertinya hanya commandline, ini menurut pribadiku. karena kan aku belum punya pandangan, mungkin ada yg belum kuketahui tapi km mengetahuinya. jadi aku belum bisa menyebutkan karena emg benar2 belum tahu
+
