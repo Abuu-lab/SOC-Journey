@@ -1,0 +1,103 @@
+HANDS-ON
+Task 1 — Find 3 processes
+
+Buka beberapa application:
+
+Firefox
+Spotify
+Discord
+
+Kemudian jalankan:
+
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId
+
+Cari tiga process tersebut.
+
+Catat:
+
+Process: Discord.exe
+PID: 15004
+PPID: 17936
+
+Process: Spotify.exe
+PID: 19740
+PPID: 9568
+
+Process: firefox.exe
+PID: 10284
+PPID: 11068
+
+
+Task 2 — Find the Executable Path
+
+Sekarang gunakan:
+
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath
+
+Cari:
+
+firefox.exe
+spotify.exe
+discord.exe
+
+Catat:
+
+Process: firefox.exe
+PID: 10284
+Executable Path: C:\Program Files\Mozilla Firefox\firefox.exe
+
+Process: spotify.exe
+PID: 19740
+Executable Path: C:\Users\Buya\AppData\Roaming\Spotify\Spotify.exe
+
+Process: discord.exe
+PID: 15004
+Executable Path: C:\Users\Buya\AppData\Local\Discord\app-1.0.9257\Disco...
+
+Jangan kaget kalau beberapa process tidak menampilkan path. Windows dapat membatasi informasi tertentu untuk process tertentu.
+
+
+Task 3 — Find Command Line
+
+Sekarang:
+
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, CommandLine
+
+Cari salah satu application milikmu.
+
+Catat:
+
+Process: Cloudflare WARP.exe
+PID: 17864
+Command Line: "C:\Program Files\Cloudflare\Cloudflare WARP\Cloudflare WARP.exe"
+
+Process: OneDrive.exe
+PID: 13384
+Command Line : "C:\Program Files\Microsoft OneDrive\OneDrive.exe" /background
+
+Perhatikan bahwa command line bisa sangat panjang.
+
+Itu normal.
+
+
+Task 4 — Investigation satu process
+
+Sekarang pilih SATU process, misalnya:
+
+Spotify.exe
+
+Cari seluruh informasi:
+
+Get-CimInstance Win32_Process -Filter "Name = 'Spotify.exe'" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+
+Hasilnya akan memberikan:
+
+Name: firefox.exe
+ProcessId: 6872
+ParentProcessId: 10284
+ExecutablePath: C:\Program Files\Mozilla Firefox\firefox.exe
+CommandLine: "C:\Program Files\Mozilla Firefox\firefox.exe" -contentproc -isForBrowser -prefsHandle 23700:52635 -prefMapHandle 15656:306489 -jsInitHandle 13188:162620 -parentBuildID 20260909172920 -ipcHandle 17396 -initialChannelId {84cfb72a-57cd-4ec4-888b-6e2ba3268351} -parentPid 10284 -crashHelperPid 0 -crashHelper 22556 -crashReporter "\\.\pipe\gecko-crash-server-pipe.10284" -win32kLockedDown -appDir "C:\Program Files\Mozilla Firefox\browser" - 86 tab
