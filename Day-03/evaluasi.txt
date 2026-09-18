@@ -1,0 +1,663 @@
+EVALUATION
+
+**Status: DEVELOPING → hampir READY, tetapi perlu correction drill.**
+
+Bagian bagusnya: kamu benar-benar menjalankan command dan mendapatkan data nyata dari Windows. Bahkan kamu menemukan sesuatu yang penting:
+
+```text
+Discord.exe
+PID 15004
+    ├── Discord.exe PID 16464
+    ├── Discord.exe PID 20204
+    └── Discord.exe PID 484
+```
+
+Ini bukti nyata bahwa **satu application dapat mempunyai beberapa process**. Itu observasi yang bagus.
+
+---
+
+# 1. HANDS-ON — ✅ PASS
+
+Task 1 sampai Task 4 berhasil.
+
+Kamu berhasil mendapatkan:
+
+```text
+Name
+PID
+PPID
+ExecutablePath
+CommandLine
+```
+
+Dan ini jauh lebih penting daripada sekadar menghafal command.
+
+Kamu juga menggunakan `-Filter`:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "Name = 'Spotify.exe'" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Itu sudah mulai menunjukkan kemampuan **mempersempit investigation ke process tertentu**.
+
+---
+
+# 2. Observasimu tentang Discord — bagus
+
+Kamu menemukan:
+
+```text
+Discord.exe PID 15004
+    ↓
+Discord.exe PID 16464
+Discord.exe PID 20204
+Discord.exe PID 484
+```
+
+Ini sangat bagus untuk memahami:
+
+> **Application ≠ satu process saja.**
+
+Discord memang dapat menggunakan beberapa process dengan fungsi berbeda, misalnya:
+
+```text
+--type=renderer
+--type=utility
+--utility-sub-type=network...
+--utility-sub-type=audio...
+```
+
+Jadi command line yang berbeda dapat memberikan **context mengenai role/function process tersebut**.
+
+Ini mulai mendekati cara analyst membaca telemetry.
+
+---
+
+# 3. MINOR CORRECTION — Executable Path ✅
+
+Kamu menulis:
+
+> jalur atau tempat aplikasi berada dalam folder yang masuk akal
+
+Benar.
+
+Tetapi jangan ubah menjadi:
+
+> Path masuk akal = file aman.
+
+Karena:
+
+```text
+C:\Program Files\...
+```
+
+bisa meningkatkan confidence bahwa file berada di lokasi yang expected, tetapi **belum membuktikan file legitimate**.
+
+Begitu juga:
+
+```text
+C:\Temp\...
+```
+
+tidak otomatis malware.
+
+Ini penting untuk Challenge kamu.
+
+---
+
+# 4. KOREKSI BESAR #1 — PPID
+
+Kamu beberapa kali menulis:
+
+> “PPID adalah parent proses, PID adalah child proses”
+
+Ini **salah konsep**.
+
+### PID
+
+**PID = ID milik process itu sendiri.**
+
+### PPID
+
+**PPID = PID milik parent process.**
+
+Contoh:
+
+```text
+firefox.exe
+PID: 5500
+
+    ↓ creates/starts
+
+unknown.exe
+PID: 4216
+PPID: 5500
+```
+
+Perhatikan:
+
+```text
+unknown.exe
+PID 4216
+PPID 5500
+```
+
+Artinya:
+
+> `unknown.exe` sendiri memiliki PID **4216**.
+
+Sedangkan:
+
+> Parent-nya memiliki PID **5500**.
+
+Kemudian kita cari PID 5500:
+
+```text
+PID 5500 = firefox.exe
+```
+
+Jadi:
+
+```text
+Parent:
+firefox.exe
+PID 5500
+
+       ↓
+
+Child:
+unknown.exe
+PID 4216
+PPID 5500
+```
+
+### Ingat kalimat ini:
+
+> **PID = “Saya siapa?”**
+
+> **PPID = “Siapa parent saya?”**
+
+Bukan:
+
+> PID = child
+> PPID = parent.
+
+---
+
+# 5. KOREKSI BESAR #2 — Parent dan Child tidak harus punya Executable Path yang sama
+
+Kamu menjawab:
+
+> “biasanya Parentproses dan childproses executablepathnya hampir sama”
+
+Tidak.
+
+Itu **tidak menjadi aturan**.
+
+Contoh:
+
+```text
+firefox.exe
+    ↓
+unknown.exe
+```
+
+Bisa saja:
+
+```text
+Parent Path:
+C:\Program Files\Mozilla Firefox\firefox.exe
+
+Child Path:
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+```
+
+Justru **path yang berbeda sangat mungkin** karena parent dan child memang dua executable yang berbeda.
+
+Contoh normal lain:
+
+```text
+explorer.exe
+    ↓
+notepad.exe
+```
+
+Path-nya jelas berbeda.
+
+Yang perlu kita tanyakan adalah:
+
+> **Apakah relationship tersebut masuk akal?**
+
+Bukan:
+
+> “Apakah path mereka hampir sama?”
+
+---
+
+# 6. KOREKSI BESAR #3 — Command Line
+
+Kamu menulis:
+
+> “membantu investigasi apa saja instruksi didalam aplikasi tersebut.”
+
+Ini kurang tepat.
+
+**Command Line tidak menunjukkan seluruh instruksi internal application.**
+
+Command line menunjukkan **bagaimana executable tersebut dipanggil/dijalankan, termasuk arguments/parameters**.
+
+Contoh milikmu:
+
+```text
+firefox.exe
+-contentproc
+-isForBrowser
+-parentPid 10284
+-crashHelperPid 0
+...
+```
+
+Kita dapat belajar:
+
+```text
+process ini adalah content process
+parent PID-nya 10284
+mempunyai parameter tertentu
+```
+
+Bukan berarti kita membaca:
+
+> “Firefox sedang menjalankan instruksi A, B, C di dalam kode program.”
+
+Untuk melihat aktivitas internal yang lebih dalam, nanti kita menggunakan evidence lain:
+
+* Event Logs
+* Sysmon
+* Network telemetry
+* File activity
+* EDR telemetry
+* memory analysis
+* dan sebagainya.
+
+---
+
+# 7. CHALLENGE — Di sinilah kamu perlu diperbaiki
+
+Kasus:
+
+```text
+unknown.exe
+PID 4216
+CPU 92%
+Memory 180 MB
+
+PPID 5500
+Executable:
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+
+CommandLine:
+unknown.exe -update
+
+PID 5500:
+firefox.exe
+```
+
+Kamu mengatakan:
+
+> “70% itu malicious.”
+
+Nah, **ini yang tidak boleh kita lakukan** dalam investigation.
+
+Bukan karena kecurigaanmu tidak masuk akal.
+
+Kecurigaan awalnya **masuk akal**.
+
+Yang bermasalah adalah memberikan angka:
+
+> **70% malicious**
+
+padahal kita belum mempunyai evidence yang cukup untuk menghitung probabilitas tersebut.
+
+Gunakan:
+
+> **Suspicious / warrants further investigation**
+
+daripada:
+
+> **70% malicious**
+
+---
+
+# 8. Apakah `Temp` mencurigakan?
+
+**Bisa menjadi clue, tetapi tidak otomatis malicious.**
+
+Kamu menyebut Temp sebagai:
+
+> “folder sampah”
+
+Untuk troubleshooting sehari-hari, analogi itu lumayan.
+
+Tetapi dari perspektif SOC, jangan berpikir:
+
+```text
+Temp = malware
+```
+
+Karena legitimate software juga dapat menggunakan temporary directories untuk:
+
+* installer
+* updater
+* temporary extraction
+* cache
+* runtime files
+* update mechanism
+
+Jadi:
+
+```text
+Temp
++
+unknown.exe
+```
+
+adalah:
+
+**interesting / suspicious indicator**
+
+bukan:
+
+**proof of malware.**
+
+---
+
+# 9. Bagian paling penting dari Challenge kamu
+
+Kamu berkata:
+
+> “kalau PPID-nya Firefox berarti harusnya PID-nya Firefox juga”
+
+Nah, justru di sini kamu perlu memperbaiki mental model.
+
+Yang benar:
+
+```text
+Firefox
+PID 5500
+    │
+    └── unknown.exe
+        PID 4216
+        PPID 5500
+```
+
+Tidak ada masalah dengan:
+
+```text
+Parent = Firefox
+Child = unknown.exe
+```
+
+Itu memang arti dari parent-child relationship.
+
+Yang perlu diselidiki adalah:
+
+> **Mengapa Firefox membuat unknown.exe?**
+
+Itulah pertanyaan SOC.
+
+---
+
+# 10. Evidence berikutnya yang kamu pilih — ✅
+
+Kamu menyebut:
+
+* Network traffic
+* Command Line
+* keaslian/license/signature
+
+Bagus.
+
+Untuk kasus ini, saya ingin kamu mulai mengenal urutan investigation:
+
+```text
+1. Process
+2. Parent Process
+3. Executable Path
+4. Command Line
+5. User
+6. Network Connection
+7. File Signature
+8. Hash
+9. File creation/modification
+10. Event Logs
+```
+
+Tidak semuanya harus dipakai setiap kali.
+
+Kita memilih evidence berdasarkan kasus.
+
+---
+
+# 11. Tentang “license / keaslian”
+
+Yang kamu cari sebenarnya kemungkinan adalah:
+
+### Digital Signature
+
+Misalnya file memiliki signature dari publisher tertentu.
+
+Ini berbeda dengan:
+
+### Hash
+
+Hash menjawab:
+
+> “Fingerprint file ini apa?”
+
+Digital Signature lebih dekat dengan:
+
+> “Apakah file memiliki tanda tangan digital dari publisher yang dapat diverifikasi?”
+
+Nanti kita pelajari keduanya.
+
+Jadi tebakanmu sudah mengarah ke konsep yang benar, hanya **nama metode** yang belum kamu tahu.
+
+---
+
+# 12. Self-Test kamu
+
+### 1. Application vs Process — ✅
+
+Sudah cukup benar.
+
+Koreksi kecil:
+
+> Process bukan “informasi/data program yang berjalan”.
+
+Lebih tepat:
+
+> **Process adalah instance dari program yang sedang dieksekusi oleh operating system.**
+
+---
+
+### 2. PID — ✅
+
+Pemahaman dasarnya benar.
+
+---
+
+### 3. PID menentukan malicious? — ✅
+
+Benar.
+
+---
+
+### 4. Executable — ✅
+
+Benar.
+
+---
+
+### 5. Executable Path — ✅
+
+Benar.
+
+---
+
+### 6. Parent Process — ⚠️
+
+Kamu menulis:
+
+> “proses utama”
+
+Jangan gunakan definisi itu.
+
+Parent Process bukan harus:
+
+> “main process”.
+
+Lebih tepat:
+
+> **Process yang menjadi parent bagi process lain dalam process relationship/tree.**
+
+Contoh:
+
+```text
+explorer.exe
+   ↓
+notepad.exe
+```
+
+`explorer.exe` adalah parent dari `notepad.exe`.
+
+---
+
+### 7. PID vs PPID — ❌
+
+Ini yang paling perlu diperbaiki.
+
+Ingat:
+
+```text
+PID  = ID process ini
+PPID = ID parent process
+```
+
+---
+
+### 8. Command Line — ⚠️
+
+Konsep bahwa command line memberi tambahan information **benar**.
+
+Tetapi jangan menganggapnya sebagai daftar seluruh aktivitas internal application.
+
+---
+
+### 9. PID 5500 — ✅/⚠️
+
+Kamu ingin mencari executable path dan command line parent.
+
+Bagus.
+
+Tambahkan:
+
+> **Kita harus mencari process dengan PID 5500 dan melihat siapa sebenarnya parent tersebut.**
+
+---
+
+### 10. Firefox → unknown.exe — ✅/⚠️
+
+Kamu sudah memahami:
+
+> “patut dicurigai, tapi tetap harus check.”
+
+Bagus.
+
+Hanya jangan langsung memberikan angka probabilitas.
+
+---
+
+# 13. Jadi, apakah Day 3 lulus?
+
+Saya beri:
+
+# **DAY 3 — DEVELOPING ⚠️**
+
+Bukan karena hands-on kamu gagal.
+
+Justru **hands-on kamu berhasil**.
+
+Yang menahan kamu dari PASS penuh adalah:
+
+```text
+❌ PID vs PPID masih tertukar
+❌ Parent Process dianggap “main process”
+❌ Mengira child/parent executable path biasanya sama
+⚠️ Command Line masih dianggap sebagai isi instruksi internal
+⚠️ Masih memberi probabilitas "70% malicious" tanpa basis probabilitas
+```
+
+Ini konsep fundamental. Lebih baik kita rapikan sekarang daripada kesalahan ini terbawa sampai Wazuh/SIEM.
+
+---
+
+# CORRECTION DRILL — Sebelum Day 4
+
+Jawab **5 pertanyaan ini saja**, tidak perlu menjalankan lab lagi:
+
+### 1.
+
+```text
+firefox.exe
+PID 5500
+
+   ↓
+
+unknown.exe
+PID 4216
+PPID 5500
+```
+
+Siapa PID **4216**?
+
+### 2.
+
+Siapa PID **5500**?
+
+### 3.
+
+Apa arti:
+
+```text
+PPID 5500
+```
+
+pada `unknown.exe`?
+
+### 4.
+
+Apakah ini normal secara konsep?
+
+```text
+C:\Program Files\Mozilla Firefox\firefox.exe
+        ↓
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+```
+
+Kenapa?
+
+### 5.
+
+Kalau menemukan:
+
+```text
+unknown.exe
+CPU 92%
+Temp folder
+Parent = firefox.exe
+```
+
+tulis **5 evidence berikutnya** yang ingin kamu cari **tanpa memberikan kesimpulan malicious/benign terlebih dahulu**.
+
+Setelah 5 ini benar, **Day 3 saya nyatakan PASS**, dan baru kita lanjut ke Day 4.
