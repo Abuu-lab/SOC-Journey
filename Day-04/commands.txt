@@ -1,0 +1,100 @@
+Commands
+
+### PowerShell
+
+**1. Mencari executable**
+
+```powershell
+Get-Command notepad.exe
+```
+
+Fungsi: mencari informasi/Path command atau executable yang dikenal PowerShell.
+
+---
+
+**2. Process + PID + PPID + Path + Command Line**
+
+```powershell
+Get-CimInstance Win32_Process -Filter "Name = 'notepad.exe'" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+> Ini sebenarnya command yang juga memakai konsep Day 3, tetapi digunakan lagi pada awal **File Investigation** untuk menemukan file/process yang akan diperiksa. 
+
+---
+
+**3. Mengambil File Metadata**
+
+```powershell
+Get-Item "C:\Windows\System32\notepad.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime, Attributes
+```
+
+Fungsi: melihat **Name, Size, Creation Time, Last Write Time, Last Access Time, Attributes**. 
+
+---
+
+**4. Memeriksa Digital Signature**
+
+```powershell
+Get-AuthenticodeSignature "C:\Windows\System32\notepad.exe"
+```
+
+Fokus Day 4:
+
+```text
+Status
+SignerCertificate
+```
+
+Pada latihanmu, `Status = Valid`. 
+
+---
+
+**5. Mengambil SHA-256 Hash**
+
+```powershell
+Get-FileHash "C:\Windows\System32\notepad.exe" -Algorithm SHA256
+```
+
+Fungsi: menghasilkan **SHA-256 hash** dari file. 
+
+---
+
+### CMD
+
+**6. Mengambil SHA-256 dengan `certutil`**
+
+```cmd
+certutil -hashfile C:\Windows\System32\notepad.exe SHA256
+```
+
+Fungsi: menghasilkan SHA-256 menggunakan **CMD** untuk kemudian dibandingkan dengan hasil PowerShell. 
+
+---
+
+## `commands.txt` Day 4
+
+```text
+# Find executable
+Get-Command notepad.exe
+
+# Process investigation
+Get-CimInstance Win32_Process -Filter "Name = 'notepad.exe'" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+
+# File metadata
+Get-Item "C:\Windows\System32\notepad.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime, Attributes
+
+# Digital Signature
+Get-AuthenticodeSignature "C:\Windows\System32\notepad.exe"
+
+# SHA-256 - PowerShell
+Get-FileHash "C:\Windows\System32\notepad.exe" -Algorithm SHA256
+
+# SHA-256 - CMD
+certutil -hashfile C:\Windows\System32\notepad.exe SHA256
+```
+
+Itu saja yang perlu kamu masukkan sebagai **command Day 4**.
