@@ -1,0 +1,457 @@
+EVALUATION
+
+**Status: DEVELOPING ⚠️**
+
+Hands-on kamu **PASS**, tetapi pemahaman konsep masih perlu beberapa koreksi sebelum saya nyatakan Day 4 PASS penuh.
+
+---
+
+# 1. Hands-On ✅ PASS
+
+Kamu berhasil mendapatkan:
+
+```text
+Metadata
+Digital Signature
+SHA-256
+CMD hash
+PowerShell hash
+```
+
+Dan kamu menemukan bahwa hasil PowerShell dan CMD sama kecuali kapitalisasi huruf. Itu **benar**. Hash hexadecimal yang sama dapat ditulis uppercase atau lowercase tanpa mengubah nilainya. 
+
+Ini latihan yang bagus karena kamu sekarang sudah mengalami sendiri:
+
+```text
+PowerShell
+    ↓
+SHA-256
+    ↓
+CMD
+    ↓
+SHA-256
+    ↓
+same result
+```
+
+---
+
+# 2. Metadata — ✅
+
+Pemahamanmu sudah cukup benar.
+
+Kamu memahami bahwa metadata bisa memberikan informasi seperti:
+
+* creation time
+* last write time
+* last access time
+* attributes
+
+Data nyata yang kamu dapat juga menunjukkan itu. 
+
+---
+
+# 3. Digital Signature — ⚠️ KOREKSI PENTING
+
+Kamu mengatakan:
+
+> “seperti pengakuan digital, bersertifikat atau tidaknya sebuah aplikasi resmi atau tidaknya dan berbayar.”
+
+Bagian **“berbayar”** dan **“resmi/tidak resmi”** harus kita hilangkan.
+
+Digital Signature **bukan tanda bahwa aplikasi itu berbayar**.
+
+Lebih tepat:
+
+> **Digital Signature membantu memverifikasi identitas signer/publisher dan integritas file yang ditandatangani.**
+
+Jadi misalnya:
+
+```text
+Signer: Microsoft Corporation
+Status: Valid
+```
+
+kita memperoleh informasi bahwa signature tersebut dapat diverifikasi dan berkaitan dengan certificate signer tersebut.
+
+Tetapi:
+
+```text
+Valid Signature
+≠
+100% Safe
+```
+
+Dan:
+
+```text
+Unsigned
+≠
+Malware
+```
+
+Kamu sudah benar pada dua konsep terakhir itu. 
+
+### Satu lagi:
+
+Pada hasilmu:
+
+```text
+SignerCertificate:
+DC91E564...
+```
+
+itu **bukan nama publisher**. Itu merupakan informasi/identifier certificate yang ditampilkan oleh PowerShell dalam output tersebut. Jadi ketika kamu mengatakan:
+
+> “gak ada tulisan siapa publishernya”
+
+✅ benar berdasarkan output yang kamu dapat.
+
+Kita belum belajar cara mengambil nama signer dari certificate tersebut.
+
+---
+
+# 4. Hash — ⚠️ konsepnya sudah dekat
+
+Kamu mengatakan:
+
+> “kode hash unik”
+
+Lebih tepat:
+
+> **Hash adalah nilai yang dihasilkan dari isi file melalui hash function.**
+
+Analogi:
+
+```text
+File
+ ↓
+SHA-256
+ ↓
+Fingerprint-like value
+```
+
+Jadi SHA-256:
+
+```text
+87CA8213820A...
+```
+
+adalah **hash dari file tertentu pada kondisi tertentu**. 
+
+Kamu benar bahwa:
+
+> file dengan isi identik → hash yang sama.
+
+Dan perubahan pada data biasanya menghasilkan hash yang berbeda.
+
+---
+
+# 5. Koreksi paling penting: Identifier vs Context ❌
+
+Pada Challenge kamu menulis:
+
+> identifier itu metadata dan digital signature
+> context itu SHA256
+
+Ini **terbalik**.
+
+Yang lebih tepat:
+
+### Identifier
+
+```text
+SHA-256
+PID
+filename
+```
+
+Mereka membantu **mengidentifikasi sesuatu**.
+
+Contohnya:
+
+```text
+SHA-256 = 7B3F...A912
+```
+
+adalah identifier/fingerprint untuk file tersebut.
+
+### Evidence / Context
+
+```text
+Creation Time
+Last Write Time
+Digital Signature
+Executable Path
+Command Line
+Parent Process
+Network Connection
+```
+
+Informasi tersebut membantu kita **memahami dan menilai context**.
+
+Jadi:
+
+```text
+SHA-256
+→ Identifier
+
+Digital Signature
+→ Evidence / Context
+
+Creation Time
+→ Evidence / Context
+```
+
+---
+
+# 6. Challenge nomor 1 — ⚠️
+
+Kamu menulis:
+
+> “aplikasi tersebut tidak resmi”
+
+Dari data:
+
+```text
+Digital Signature: NotSigned
+```
+
+kita **belum boleh mengatakan “tidak resmi.”**
+
+Yang bisa kita katakan:
+
+> **File tersebut tidak memiliki signature yang dapat diverifikasi oleh pemeriksaan Authenticode yang dilakukan.**
+
+Kemudian:
+
+> **This is an observation, not a malware verdict.**
+
+Kamu sebenarnya sudah memahami ini di nomor 4 dan 5. Jadi masalahnya terutama pada penggunaan istilah.
+
+---
+
+# 7. Challenge nomor 6 — ❌ belum terjawab
+
+Kamu menulis:
+
+> “belum ada bayangan”
+
+Nah, ini bagian yang perlu kita latihan.
+
+Dari kasus:
+
+```text
+unknown.exe
+CPU 92%
+Temp
+Parent = firefox.exe
+NotSigned
+SHA-256 = 7B3F...A912
+```
+
+Evidence berikutnya yang logis misalnya:
+
+```text
+1. Network Connection
+2. Parent Process / Process Tree lebih lanjut
+3. Command Line lebih lengkap
+4. File origin / Zone information
+5. Event Logs
+6. Threat Intelligence lookup berdasarkan SHA-256
+```
+
+Tidak harus semuanya.
+
+Yang penting sekarang kamu mulai bisa mengatakan:
+
+> “Evidence yang saya punya belum cukup, jadi saya perlu mencari evidence tambahan.”
+
+Itu inti investigation.
+
+---
+
+# 8. Hash sebagai IOC — ⚠️
+
+Kamu mengatakan:
+
+> “indicator pendeteksi yang cepat hanya dengan menggunakan hash, kita bisa mencari malware dengan nilai hash yang sama lalu mengeksekusinya.”
+
+Bagian **“mencari malware dengan nilai hash yang sama”** arahnya benar.
+
+Tetapi jangan mengatakan:
+
+> “lalu mengeksekusinya.”
+
+Dalam SOC, kita umumnya menggunakan hash untuk:
+
+```text
+File
+ ↓
+SHA-256
+ ↓
+IOC
+ ↓
+Search / Match
+ ↓
+Threat Intelligence / endpoint telemetry
+```
+
+Misalnya mencari apakah hash tersebut pernah terlihat pada endpoint lain atau dikenal sebagai malicious hash.
+
+**Kita tidak perlu menjalankan file tersebut untuk melakukan hash matching.**
+
+Dan benar bahwa attacker dapat mengubah file sehingga hash-nya berubah, tetapi itu berarti **hash matching bergantung pada file yang sama secara cryptographic identity**, bukan berarti hash “gampang dikelabui” secara universal.
+
+---
+
+# 9. Q10 — sebenarnya ini jawaban penting
+
+Kamu belum tahu kenapa kita membandingkan:
+
+```powershell
+Get-FileHash ...
+```
+
+dengan:
+
+```cmd
+certutil -hashfile ...
+```
+
+Jawabannya sederhana:
+
+> **Untuk memastikan kita memahami bahwa dua tools/interface berbeda dapat menghasilkan identifier cryptographic yang sama untuk file dan algoritma yang sama.**
+
+Misalnya:
+
+```text
+PowerShell:
+87CA8213820A...
+
+CMD:
+87CA8213820A...
+```
+
+Maka kita tahu:
+
+```text
+Same file
++
+Same algorithm
+=
+Same SHA-256
+```
+
+Ini juga melatih kamu supaya tidak bergantung pada satu tool saja.
+
+---
+
+# 10. Ada satu hal bagus dari jawabanmu
+
+Saya suka bagian ini:
+
+> “mungkin evidence lain dan cara membaca commandline”
+
+Itu menunjukkan kamu mulai memahami bahwa investigation **belum selesai setelah menemukan hash**.
+
+Urutannya mulai menjadi:
+
+```text
+Process
+ ↓
+Executable
+ ↓
+Metadata
+ ↓
+Signature
+ ↓
+Hash
+ ↓
+???
+ ↓
+Further investigation
+```
+
+Bagus.
+
+---
+
+# 11. Penilaian Day 4
+
+| Materi                         | Status |
+| ------------------------------ | ------ |
+| File path                      | ✅      |
+| File metadata                  | ✅      |
+| Digital Signature command      | ✅      |
+| SHA-256 command                | ✅      |
+| CMD `certutil`                 | ✅      |
+| Hash concept                   | ⚠️     |
+| Digital Signature concept      | ⚠️     |
+| Identifier vs evidence/context | ❌      |
+| Challenge investigation        | ⚠️     |
+| Evidence-based mindset         | ✅      |
+
+## Kesimpulan
+
+**Hands-on: PASS ✅**
+
+**Theory: DEVELOPING ⚠️**
+
+Jadi saya **belum memberikan Day 4 PASS penuh**.
+
+Bukan karena kamu belum bisa command. Justru command-mu sudah berjalan dengan baik. Yang perlu diperbaiki adalah **cara membaca hasilnya**.
+
+---
+
+# CORRECTION DRILL DAY 4
+
+Jawab 5 pertanyaan ini saja:
+
+**1.** Apa perbedaan:
+
+```text
+SHA-256
+vs
+Digital Signature
+```
+
+**2.** Mana yang merupakan **identifier**, mana yang merupakan **context/evidence**?
+
+```text
+SHA-256
+Creation Time
+Digital Signature
+PID
+```
+
+**3.** Apakah:
+
+```text
+Digital Signature = Valid
+```
+
+berarti file pasti aman? Jelaskan.
+
+**4.** Apakah:
+
+```text
+Digital Signature = NotSigned
+```
+
+berarti file pasti malware? Jelaskan.
+
+**5.** Kasus:
+
+```text
+unknown.exe
+CPU 92%
+Temp
+Parent = Firefox
+NotSigned
+SHA-256 = 7B3F...A912
+```
+
+Sebutkan **5 evidence berikutnya** yang ingin kamu cari.
+
+Tidak perlu command dulu. Saya ingin memastikan **cara berpikirmu** benar sebelum kita lanjut.
