@@ -1,0 +1,883 @@
+# DAY 4 — FILE INVESTIGATION: PATH, METADATA, DIGITAL SIGNATURE & HASH
+
+## Objective
+
+Hari ini kamu akan belajar bagaimana seorang analyst memeriksa **file executable** setelah menemukan sebuah process.
+
+Di Day 3 kamu sudah bisa menemukan:
+
+```text
+Process
+↓
+PID
+↓
+PPID
+↓
+Executable Path
+↓
+Command Line
+```
+
+Sekarang kita lanjut:
+
+```text
+Executable Path
+↓
+File
+↓
+Metadata
+↓
+Digital Signature
+↓
+Hash
+```
+
+Setelah Day 4, kamu harus mulai bisa menjawab:
+
+> “File ini berada di mana?”
+
+> “Kapan file ini dibuat atau diubah?”
+
+> “Siapa publisher yang menandatangani file ini?”
+
+> “Apa SHA-256 file ini?”
+
+> “Apakah hash dapat digunakan untuk mengidentifikasi file yang sama?”
+
+---
+
+# 1. THEORY
+
+## A. File Investigation
+
+Bayangkan Day 3 kamu menemukan:
+
+```text
+unknown.exe
+PID: 4216
+```
+
+dan executable path:
+
+```text
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+```
+
+Sekarang kita tidak berhenti pada path.
+
+Kita bisa mengambil file tersebut dan melakukan **file investigation**.
+
+Pertanyaan kita:
+
+```text
+Where is the file?
+Who created/modified it?
+When?
+Is it digitally signed?
+What is its hash?
+```
+
+---
+
+# 2. File Metadata
+
+**Metadata** adalah informasi mengenai file.
+
+Contohnya:
+
+```text
+File name
+File size
+Creation time
+Last write time
+Last access time
+File attributes
+```
+
+Contoh:
+
+```text
+unknown.exe
+Size: 2.4 MB
+Created: 2026-09-18 10:23
+Modified: 2026-09-18 10:24
+```
+
+Metadata **tidak membuktikan file malicious**.
+
+Tetapi metadata dapat memberikan context.
+
+Misalnya:
+
+```text
+Process mulai: 10:25
+File dibuat:   10:23
+```
+
+Ini menarik karena file baru dibuat sedikit sebelum process dijalankan.
+
+Tetapi sekali lagi:
+
+> **Interesting ≠ malicious**
+
+---
+
+# 3. Digital Signature
+
+Sekarang kita masuk ke **Digital Signature**.
+
+Digital signature digunakan untuk membantu memverifikasi identitas publisher dan integritas file yang ditandatangani.
+
+Contoh concept:
+
+```text
+Microsoft Corporation
+    ↓
+Digital Signature
+    ↓
+notepad.exe
+```
+
+Kalau signature valid, itu memberi kita **additional trust/context**.
+
+Namun:
+
+> **Signed ≠ automatically safe.**
+
+Dan:
+
+> **Unsigned ≠ automatically malware.**
+
+Jadi signature adalah **evidence**, bukan verdict.
+
+---
+
+# 4. Hash
+
+Sekarang salah satu konsep penting dalam cybersecurity:
+
+## Hash
+
+Hash adalah hasil dari fungsi cryptographic hash yang menghasilkan nilai fixed-length berdasarkan isi file.
+
+Contoh:
+
+```text
+File A
+   ↓
+SHA-256
+   ↓
+3F2A8B...
+```
+
+Kalau isi file berubah, hash biasanya berubah.
+
+Contoh:
+
+```text
+unknown.exe
+SHA-256:
+AABBCCDDEEFF...
+```
+
+Hash dapat digunakan sebagai **file identifier / IOC**.
+
+Misalnya analyst menerima alert:
+
+```text
+SHA-256:
+ABC123...
+```
+
+Kemudian menemukan file dengan hash yang sama di endpoint lain.
+
+Itu membantu menghubungkan file yang sama.
+
+---
+
+# 5. Mengapa Hash berguna dalam SOC?
+
+Misalnya ada dua file:
+
+```text
+C:\Temp\a.exe
+C:\Download\b.exe
+```
+
+Nama berbeda.
+
+Tetapi ternyata:
+
+```text
+SHA-256
+A.exe = ABC123...
+B.exe = ABC123...
+```
+
+Maka isi keduanya identik secara hash.
+
+Jadi hash dapat membantu analyst ketika:
+
+* filename berubah
+* lokasi berubah
+* file ditemukan di banyak endpoint
+* melakukan IOC matching
+* melakukan threat intelligence lookup
+
+Tetapi jangan berpikir:
+
+> “Hash terlihat aneh.”
+
+Hash sendiri bukan sesuatu yang "aneh" atau "bagus".
+
+Hash adalah **identifier**.
+
+---
+
+# 6. HASH vs DIGITAL SIGNATURE
+
+Ini harus kamu bedakan.
+
+|                          | Hash                              | Digital Signature                            |
+| ------------------------ | --------------------------------- | -------------------------------------------- |
+| Tujuan utama             | Identifikasi berdasarkan isi file | Verifikasi publisher/integritas tanda tangan |
+| Contoh                   | SHA-256                           | Microsoft Corporation                        |
+| Bergantung pada isi file | Ya                                | Ya                                           |
+| Menunjukkan publisher    | Tidak                             | Ya                                           |
+| Bisa membantu IOC        | Ya                                | Bisa membantu context                        |
+
+Simplenya:
+
+> **Hash = fingerprint file**
+
+> **Digital Signature = siapa yang menandatangani + apakah signature dapat diverifikasi**
+
+---
+
+# 7. HANDS-ON
+
+⚠️ Gunakan **file legitimate milik Windows atau aplikasi yang memang terpasang di komputer kamu**.
+
+Jangan mengambil `unknown.exe`, malware sample, atau file dari internet untuk latihan hari ini.
+
+Kita gunakan:
+
+```text
+notepad.exe
+```
+
+atau executable Windows lain yang legitimate.
+
+---
+
+# TASK 1 — Find the File
+
+Buka PowerShell.
+
+Cari lokasi Notepad:
+
+```powershell
+Get-Command notepad.exe
+```
+
+Catat hasilnya.
+
+Format:
+
+```text
+File:
+Path:
+```
+
+Kemudian cari process-nya:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "Name = 'notepad.exe'" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Kalau Notepad belum berjalan, buka Notepad terlebih dahulu.
+
+---
+
+# TASK 2 — File Metadata
+
+Sekarang gunakan:
+
+```powershell
+Get-Item "C:\Windows\System32\notepad.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime, Attributes
+```
+
+Perhatikan:
+
+```text
+Name
+Length
+CreationTime
+LastWriteTime
+LastAccessTime
+Attributes
+```
+
+### Catat:
+
+```text
+Name:
+Size:
+Created:
+Modified:
+Last Access:
+Attributes:
+```
+
+---
+
+# TASK 3 — Digital Signature
+
+Sekarang:
+
+```powershell
+Get-AuthenticodeSignature "C:\Windows\System32\notepad.exe"
+```
+
+Kamu kemungkinan akan mendapatkan informasi seperti:
+
+```text
+Status
+StatusMessage
+Path
+SignerCertificate
+```
+
+Fokus pada:
+
+```text
+Status:
+```
+
+Dan kalau tersedia:
+
+```text
+SignerCertificate
+```
+
+Kamu belum perlu memahami semua field certificate.
+
+Untuk sekarang cukup cari:
+
+> **Apakah signature valid?**
+
+dan:
+
+> **Siapa signer/publisher-nya?**
+
+---
+
+# TASK 4 — SHA-256 Hash
+
+Sekarang jalankan:
+
+```powershell
+Get-FileHash "C:\Windows\System32\notepad.exe" -Algorithm SHA256
+```
+
+Hasil kira-kira:
+
+```text
+Algorithm   Hash                                      Path
+---------   ----                                      ----
+SHA256      ABCDEF1234567890........                  C:\Windows\...
+```
+
+Catat:
+
+```text
+Algorithm:
+SHA256:
+File:
+```
+
+### Perhatikan
+
+Jangan kaget kalau hash yang kamu dapat berbeda dari contoh.
+
+Yang penting kamu mengambil **hash file yang benar-benar ada di komputer kamu**.
+
+---
+
+# TASK 5 — Gunakan CMD juga
+
+Tadi kamu bertanya apakah nanti akan belajar melalui CMD.
+
+Sekarang kamu mulai.
+
+Buka **Command Prompt / CMD**:
+
+```cmd
+certutil -hashfile C:\Windows\System32\notepad.exe SHA256
+```
+
+Bandingkan hasilnya dengan PowerShell:
+
+```powershell
+Get-FileHash "C:\Windows\System32\notepad.exe" -Algorithm SHA256
+```
+
+### Pertanyaan:
+
+Apakah SHA-256 yang dihasilkan sama?
+
+Seharusnya hash dari **file yang sama dengan algoritma yang sama** akan cocok.
+
+Ini latihan penting karena di dunia kerja kamu akan menemukan berbagai tools dan interface.
+
+---
+
+# 8. TASK 6 — Bandingkan Dua File
+
+Sekarang kita melakukan sedikit investigation.
+
+Cari file Notepad yang kamu gunakan.
+
+Ambil hash:
+
+```powershell
+Get-FileHash "C:\Windows\System32\notepad.exe" -Algorithm SHA256
+```
+
+Kemudian ambil metadata:
+
+```powershell
+Get-Item "C:\Windows\System32\notepad.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime
+```
+
+Ambil signature:
+
+```powershell
+Get-AuthenticodeSignature "C:\Windows\System32\notepad.exe"
+```
+
+Sekarang kamu sudah mempunyai tiga kelompok evidence:
+
+```text
+Metadata
++
+Digital Signature
++
+Hash
+```
+
+---
+
+# 9. DEMONSTRATION — Cara Berpikir Analyst
+
+Misalnya kita mendapatkan file:
+
+```text
+unknown.exe
+```
+
+Data:
+
+```text
+Path:
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+
+Size:
+2.3 MB
+
+Created:
+18 September 2026 13:20
+
+Digital Signature:
+NotSigned
+
+SHA-256:
+ABC123...
+```
+
+Jangan langsung:
+
+> “Malware.”
+
+Gunakan:
+
+### Observation
+
+```text
+File berada di Temp.
+```
+
+### Observation
+
+```text
+File tidak memiliki digital signature.
+```
+
+### Observation
+
+```text
+File dibuat pada 13:20.
+```
+
+### Identifier
+
+```text
+SHA-256 = ABC123...
+```
+
+Sekarang kita punya **lebih banyak evidence** dibanding Day 3.
+
+Tapi belum selesai.
+
+Nanti hash dapat kita gunakan untuk melakukan **threat intelligence lookup**.
+
+---
+
+# 10. Penting: Hash bukan Antivirus
+
+Misalnya:
+
+```text
+SHA256:
+ABC123...
+```
+
+Hash itu sendiri tidak memberitahu:
+
+```text
+malware / benign
+```
+
+Hash hanya memberi kita fingerprint.
+
+Untuk mengetahui apakah file tersebut pernah dikenal sebagai malware, analyst dapat melakukan lookup terhadap threat intelligence source yang sesuai.
+
+Itu akan kita pelajari nanti, bukan sekarang.
+
+---
+
+# 11. MINI PROJECT
+
+Buat:
+
+```text
+SOC-Journey/
+└── Day-04/
+    ├── file-investigation.md
+    ├── commands.txt
+    └── screenshots/
+```
+
+Isi:
+
+```text
+# Day 4 — File Investigation
+
+## File
+Name:
+Path:
+
+## Metadata
+Size:
+Creation Time:
+Last Write Time:
+Last Access Time:
+Attributes:
+
+## Digital Signature
+Status:
+Signer/Publisher:
+
+## Hash
+Algorithm:
+SHA-256:
+
+## CMD vs PowerShell
+PowerShell SHA-256:
+CMD SHA-256:
+Match: YES / NO
+
+## Observation
+
+Apa yang saya temukan?
+
+Apa arti metadata file?
+
+Apa arti Digital Signature?
+
+Apa arti SHA-256?
+
+Apa perbedaan Hash dengan Digital Signature?
+
+## Investigation Thinking
+
+Apakah file ini otomatis aman hanya karena mempunyai
+Digital Signature?
+
+Apakah file otomatis malicious jika tidak mempunyai
+Digital Signature?
+
+Apakah hash sendiri dapat membuktikan file malicious?
+
+## Remaining Questions
+
+Apa yang masih belum saya ketahui?
+```
+
+---
+
+# 12. CHALLENGE
+
+Sekarang kita kembali ke kasus Day 3.
+
+Kamu menemukan:
+
+```text
+unknown.exe
+
+PID: 4216
+CPU: 92%
+Memory: 180 MB
+
+Parent:
+firefox.exe
+PID: 5500
+
+Executable Path:
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+
+Command Line:
+unknown.exe -update
+```
+
+Kemudian kamu mendapatkan file evidence:
+
+```text
+Size:
+3.8 MB
+
+Creation Time:
+2026-09-18 14:05
+
+Last Write Time:
+2026-09-18 14:05
+
+Digital Signature:
+NotSigned
+
+SHA-256:
+7B3F...A912
+```
+
+### Tugas kamu:
+
+**1. Sebutkan minimal 5 observation dari kasus tersebut.**
+
+**2. Mana yang merupakan identifier, mana yang merupakan evidence/context?**
+
+**3. Apa arti SHA-256 `7B3F...A912`?**
+
+**4. Apakah `NotSigned` otomatis berarti malicious? Jelaskan.**
+
+**5. Apakah file di Temp otomatis berarti malicious? Jelaskan.**
+
+**6. Evidence apa yang ingin kamu cari berikutnya?**
+
+Minimal 3.
+
+Jangan langsung memberikan verdict.
+
+Gunakan format:
+
+```text
+Observation:
+...
+
+Evidence:
+...
+
+What I still need:
+...
+```
+
+---
+
+# 13. SOC CONNECTION
+
+Sekarang process investigation mulai menjadi:
+
+```text
+PROCESS INVESTIGATION
+
+Process
+   ↓
+PID
+   ↓
+Executable Path
+   ↓
+FILE INVESTIGATION
+   ↓
+Metadata
+   ↓
+Digital Signature
+   ↓
+Hash
+```
+
+Nanti berkembang menjadi:
+
+```text
+Process
+   ↓
+File
+   ↓
+Hash
+   ↓
+Network
+   ↓
+Windows Event Logs
+   ↓
+Threat Intelligence
+   ↓
+MITRE ATT&CK
+   ↓
+Incident Investigation
+```
+
+Ini adalah alasan kenapa kita **tidak langsung lompat ke Wazuh**.
+
+Kamu perlu memahami apa yang sebenarnya ada di balik sebuah SIEM alert.
+
+---
+
+# 14. EVIDENCE
+
+Untuk portfolio, screenshot yang kamu simpan:
+
+### Screenshot 1
+
+`Get-Item` → file metadata
+
+### Screenshot 2
+
+`Get-AuthenticodeSignature` → Digital Signature
+
+### Screenshot 3
+
+`Get-FileHash` → SHA-256
+
+### Screenshot 4
+
+`certutil -hashfile` → CMD
+
+Jangan upload file executable Windows ke GitHub.
+
+Yang disimpan di portfolio adalah **hasil investigation dan screenshot yang relevan**, bukan executable-nya.
+
+---
+
+# 15. COMMANDS DAY 4
+
+Masukkan ke:
+
+```text
+commands.txt
+```
+
+```powershell
+# Find executable
+Get-Command notepad.exe
+
+# Process investigation
+Get-CimInstance Win32_Process -Filter "Name = 'notepad.exe'" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+
+# File metadata
+Get-Item "C:\Windows\System32\notepad.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime, Attributes
+
+# Digital Signature
+Get-AuthenticodeSignature "C:\Windows\System32\notepad.exe"
+
+# SHA-256
+Get-FileHash "C:\Windows\System32\notepad.exe" -Algorithm SHA256
+```
+
+### CMD:
+
+```cmd
+certutil -hashfile C:\Windows\System32\notepad.exe SHA256
+```
+
+---
+
+# 16. REVIEW
+
+Kamu harus bisa menjelaskan dengan bahasamu sendiri:
+
+**1.** Apa itu file metadata?
+
+**2.** Apa yang dimaksud Digital Signature?
+
+**3.** Apa itu hash?
+
+**4.** Apa fungsi SHA-256?
+
+**5.** Apa perbedaan hash dan Digital Signature?
+
+**6.** Apakah Digital Signature valid otomatis berarti file aman?
+
+**7.** Apakah unsigned file otomatis malware?
+
+**8.** Apakah file yang berada di Temp otomatis malware?
+
+**9.** Kenapa hash berguna sebagai IOC?
+
+**10.** Mengapa kita membandingkan hash dari file yang sama menggunakan PowerShell dan CMD?
+
+---
+
+# 17. PASS CRITERIA
+
+Day 4 dianggap **PASS** kalau kamu mampu:
+
+```text
+✅ menjelaskan metadata
+✅ mengambil metadata file
+✅ memahami Digital Signature
+✅ mengambil Digital Signature
+✅ memahami hash
+✅ mengambil SHA-256
+✅ menggunakan PowerShell untuk hash
+✅ menggunakan CMD certutil untuk hash
+✅ membedakan hash vs Digital Signature
+✅ tidak menganggap unsigned = malware
+✅ tidak menganggap Temp = malware
+✅ memahami hash sebagai identifier/IOC
+✅ mampu menggabungkan evidence Day 3 + Day 4
+```
+
+### Target utama Day 4
+
+Saya ingin kamu mulai terbiasa dengan pola ini:
+
+```text
+Saya menemukan process
+        ↓
+Saya menemukan executable
+        ↓
+Saya memeriksa file
+        ↓
+Saya mengumpulkan metadata
+        ↓
+Saya memeriksa signature
+        ↓
+Saya mengambil hash
+        ↓
+Baru saya mencari evidence berikutnya
+```
+
+**Jangan belajar VirusTotal atau threat-intelligence lookup dulu.** Kuasai dulu cara **mengambil evidence dari endpoint sendiri**. Setelah itu kita akan punya dasar yang kuat untuk belajar bagaimana hash digunakan dalam investigasi nyata.
