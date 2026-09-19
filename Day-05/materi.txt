@@ -1,0 +1,895 @@
+# DAY 5 — WINDOWS SERVICES & PROCESS CONTEXT
+
+## Objective
+
+Di Day 3 kamu belajar:
+
+```text
+Process
+↓
+PID
+↓
+PPID
+↓
+Executable
+↓
+Path
+↓
+Command Line
+```
+
+Di Day 4 kamu menambahkan:
+
+```text
+Metadata
+↓
+Digital Signature
+↓
+SHA-256
+```
+
+Sekarang kita tambahkan satu bagian penting:
+
+```text
+Windows Service
+↓
+Service Account
+↓
+Service State
+↓
+Service Binary Path
+↓
+Process
+```
+
+Tujuan Day 5:
+
+> Memahami apa itu **Windows Service** dan bagaimana service dapat menjalankan executable di background.
+
+Kamu juga akan mulai belajar bahwa **tidak semua process berasal dari aplikasi yang kamu buka secara langsung**.
+
+---
+
+# 1. THEORY
+
+## A. Apa itu Windows Service?
+
+**Windows Service** adalah program/komponen yang dirancang untuk berjalan di background dan dikelola oleh Windows.
+
+Contohnya bisa berupa:
+
+* networking
+* update
+* security
+* printing
+* synchronization
+* application background services
+
+User tidak harus membuka GUI aplikasi agar service bekerja.
+
+Contoh sederhana:
+
+```text
+Windows
+   ↓
+Service
+   ↓
+Process
+   ↓
+Executable
+```
+
+---
+
+# 2. Service ≠ Process
+
+Ini penting.
+
+**Service** adalah konsep/komponen yang dikelola oleh Windows Service Control Manager.
+
+**Process** adalah instance program yang sedang berjalan.
+
+Sebuah service dapat menjalankan executable yang kemudian menjadi process.
+
+Contoh model sederhana:
+
+```text
+Windows Service
+       ↓
+service executable
+       ↓
+process
+       ↓
+PID
+```
+
+Jadi:
+
+```text
+Service Name
+≠
+PID
+```
+
+Service dapat memiliki process yang terkait dengannya.
+
+---
+
+# 3. Kenapa SOC perlu peduli?
+
+Bayangkan kamu melihat:
+
+```text
+unknown.exe
+PID 4216
+CPU 90%
+```
+
+Setelah investigation, ternyata executable tersebut dijalankan sebagai bagian dari sebuah service:
+
+```text
+UnknownUpdater
+    ↓
+C:\Users\...\Temp\unknown.exe
+```
+
+Sekarang kamu punya pertanyaan baru:
+
+> Mengapa file tersebut terdaftar sebagai service?
+
+> Kapan service tersebut dijalankan?
+
+> Dengan account apa?
+
+> Executable apa yang digunakan?
+
+Ini dapat memberikan **context tambahan**.
+
+---
+
+# 4. Service State
+
+Service memiliki status.
+
+Contoh:
+
+```text
+Running
+Stopped
+```
+
+Secara sederhana:
+
+```text
+Running = service sedang aktif
+Stopped = service tidak sedang aktif
+```
+
+Tetapi:
+
+> **Running ≠ malicious**
+
+dan:
+
+> **Stopped ≠ safe**
+
+Status hanya menunjukkan keadaan service.
+
+---
+
+# 5. Service Account
+
+Service dapat berjalan menggunakan account tertentu.
+
+Misalnya:
+
+```text
+LocalSystem
+LocalService
+NetworkService
+```
+
+atau account tertentu.
+
+Ini penting karena **identity/service account memberikan context mengenai privilege dan lingkungan eksekusi**.
+
+Untuk sekarang jangan masuk terlalu jauh ke permission.
+
+Cukup pahami:
+
+> **Who is running this service?**
+
+---
+
+# 6. Service Binary Path
+
+Salah satu informasi terpenting.
+
+Misalnya:
+
+```text
+Service:
+ExampleService
+
+Binary Path:
+C:\Program Files\Example\example.exe
+```
+
+Kita dapat menghubungkan:
+
+```text
+Service
+   ↓
+Executable
+   ↓
+Process
+   ↓
+PID
+```
+
+Ini sangat berguna untuk investigation.
+
+---
+
+# 7. HANDS-ON
+
+Hari ini gunakan **PowerShell sebagai read-only investigation**.
+
+Jangan mengubah, menghentikan, atau menghapus service.
+
+---
+
+## TASK 1 — List Services
+
+Jalankan:
+
+```powershell
+Get-Service
+```
+
+Kamu akan melihat:
+
+```text
+Status
+Name
+DisplayName
+```
+
+Contoh:
+
+```text
+Status   Name       DisplayName
+------   ----       -----------
+Running  Spooler    Print Spooler
+Stopped  wuauserv   Windows Update
+```
+
+Catatan:
+
+```text
+Status      = kondisi service
+Name        = nama service
+DisplayName = nama yang ditampilkan ke user
+```
+
+---
+
+# TASK 2 — Find Running Services
+
+Karena `Get-Service` dapat menghasilkan banyak sekali data, kita mulai filtering.
+
+```powershell
+Get-Service |
+Where-Object {$_.Status -eq "Running"} |
+Select-Object Name, Status, DisplayName
+```
+
+Tujuannya:
+
+> hanya menampilkan service yang sedang Running.
+
+Catat **3 service**.
+
+Format:
+
+```text
+Service 1
+Name:
+Status:
+DisplayName:
+
+Service 2
+Name:
+Status:
+DisplayName:
+
+Service 3
+Name:
+Status:
+DisplayName:
+```
+
+---
+
+# TASK 3 — Investigate One Service
+
+Pilih salah satu service yang **Running**.
+
+Kemudian jalankan:
+
+```powershell
+Get-CimInstance Win32_Service -Filter "Name = 'Spooler'" |
+Select-Object Name, DisplayName, State, StartMode, StartName, ProcessId, PathName
+```
+
+⚠️ Kalau kamu memilih service lain, ganti `Spooler` dengan `Name` service milikmu.
+
+Contoh:
+
+```powershell
+Get-CimInstance Win32_Service -Filter "Name = 'NAMA_SERVICE'" |
+Select-Object Name, DisplayName, State, StartMode, StartName, ProcessId, PathName
+```
+
+Perhatikan:
+
+```text
+Name
+DisplayName
+State
+StartMode
+StartName
+ProcessId
+PathName
+```
+
+---
+
+# 8. Apa arti field tersebut?
+
+### Name
+
+Nama internal service.
+
+Contoh:
+
+```text
+Spooler
+```
+
+### DisplayName
+
+Nama yang lebih mudah dibaca user.
+
+Contoh:
+
+```text
+Print Spooler
+```
+
+### State
+
+Status service.
+
+```text
+Running
+Stopped
+```
+
+### StartMode
+
+Kapan/how service dikonfigurasi untuk start.
+
+Contoh yang mungkin kamu lihat:
+
+```text
+Auto
+Manual
+Disabled
+```
+
+Kita belum perlu mendalami semuanya.
+
+### StartName
+
+Account yang digunakan service.
+
+Contoh:
+
+```text
+LocalSystem
+```
+
+### ProcessId
+
+PID process yang terkait dengan service.
+
+Ini menarik karena sekarang kita bisa melakukan **correlation dengan process investigation**.
+
+### PathName
+
+Executable/binary path yang digunakan service.
+
+Ini juga sangat penting.
+
+---
+
+# 9. TASK 4 — Correlate Service dengan Process
+
+Misalnya hasilmu:
+
+```text
+Service Name:
+Spooler
+
+ProcessId:
+1234
+
+PathName:
+C:\Windows\System32\spoolsv.exe
+```
+
+Sekarang cari PID tersebut:
+
+```powershell
+Get-Process -Id 1234
+```
+
+Kamu bisa mengganti `1234` dengan PID yang benar-benar kamu dapat.
+
+Misalnya:
+
+```text
+PID 1234
+↓
+spoolsv.exe
+```
+
+Sekarang relationship-nya:
+
+```text
+Service
+   ↓
+Process
+   ↓
+PID
+   ↓
+Executable
+```
+
+Ini adalah **correlation**.
+
+---
+
+# 10. TASK 5 — Lihat Detail Process
+
+Gunakan PID yang tadi kamu dapat:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = 1234" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Ganti `1234` dengan PID milikmu.
+
+Sekarang kamu menggabungkan materi:
+
+### Day 3
+
+```text
+PID
+PPID
+Path
+CommandLine
+```
+
+dengan:
+
+### Day 5
+
+```text
+Service
+State
+StartName
+ProcessId
+PathName
+```
+
+---
+
+# 11. TASK 6 — Lihat Service dari CMD
+
+Sekarang kita gunakan CMD.
+
+Buka:
+
+**Command Prompt**
+
+Jalankan:
+
+```cmd
+sc query
+```
+
+Ini akan menampilkan service yang ada pada Windows.
+
+Untuk melihat service tertentu:
+
+```cmd
+sc query Spooler
+```
+
+Kamu akan melihat informasi seperti:
+
+```text
+SERVICE_NAME: Spooler
+STATE: 4 RUNNING
+```
+
+Hari ini kamu tidak perlu menghafal semua output `sc`.
+
+Tujuannya hanya:
+
+> mulai mengenal bahwa **CMD dan PowerShell dapat digunakan untuk mengambil evidence yang sama dari sudut yang berbeda.**
+
+---
+
+# 12. MINI PROJECT
+
+Buat:
+
+```text
+SOC-Journey/
+└── Day-05/
+    ├── service-investigation.md
+    ├── commands.txt
+    └── screenshots/
+```
+
+Isi:
+
+```text
+# Day 5 — Windows Service Investigation
+
+## Service
+
+Name:
+DisplayName:
+State:
+StartMode:
+StartName:
+ProcessId:
+PathName:
+
+## Related Process
+
+Name:
+PID:
+PPID:
+ExecutablePath:
+CommandLine:
+
+## Observation
+
+Apa yang saya temukan?
+
+Service ini menjalankan executable apa?
+
+Service menggunakan account apa?
+
+Apakah service memiliki process yang sedang berjalan?
+
+Apakah ProcessId service bisa ditemukan di process list?
+
+Apa hubungan service dengan process?
+
+## Investigation Thinking
+
+Apa yang masih belum saya ketahui?
+```
+
+---
+
+# 13. CHALLENGE
+
+Sekarang kasus baru.
+
+Kamu menemukan service:
+
+```text
+Service Name:
+WindowsUpdater
+
+DisplayName:
+Windows Update Helper
+
+State:
+Running
+
+StartMode:
+Auto
+
+StartName:
+LocalSystem
+
+ProcessId:
+4216
+
+PathName:
+C:\Users\Buya\AppData\Local\Temp\updater.exe
+```
+
+Kemudian process investigation:
+
+```text
+Name:
+updater.exe
+
+PID:
+4216
+
+ParentProcessId:
+5500
+
+CommandLine:
+updater.exe -silent
+
+ExecutablePath:
+C:\Users\Buya\AppData\Local\Temp\updater.exe
+```
+
+Dan parent process:
+
+```text
+PID 5500
+Name:
+svchost.exe
+```
+
+### Pertanyaan:
+
+**1. Apa saja observation yang kamu dapatkan?**
+
+**2. Apa hubungan antara service dan `updater.exe`?**
+
+**3. Apa arti `ProcessId: 4216` pada informasi service?**
+
+**4. Apa arti `StartName: LocalSystem`?**
+
+**5. Apakah service tersebut otomatis malicious?**
+
+**6. Evidence apa yang ingin kamu cari berikutnya?**
+
+Minimal **5 evidence**.
+
+Gunakan pola:
+
+```text
+Observation:
+...
+
+Evidence I need:
+...
+```
+
+Jangan memberikan persentase seperti “70% malicious”.
+
+Kita ingin melatih:
+
+**Observation → Evidence → Analysis**
+
+---
+
+# 14. SOC CONNECTION
+
+Sekarang investigation kita menjadi lebih luas.
+
+Sebelumnya:
+
+```text
+Process
+   ↓
+PID
+   ↓
+Executable
+   ↓
+File
+```
+
+Sekarang:
+
+```text
+Service
+   ↓
+Process
+   ↓
+PID
+   ↓
+Executable
+   ↓
+File
+   ↓
+Metadata
+   ↓
+Digital Signature
+   ↓
+Hash
+```
+
+Inilah alasan kenapa SOC Analyst perlu memahami **Windows internals**, walaupun belum sampai level Windows expert.
+
+Ketika SIEM/EDR memberikan alert:
+
+```text
+Suspicious Process
+```
+
+kamu harus bisa melakukan pivot:
+
+```text
+PID
+→ Process
+→ Parent
+→ Path
+→ CommandLine
+→ Service
+→ File
+→ Hash
+→ Network
+→ Logs
+```
+
+Kita belum melakukan semuanya sekarang.
+
+Kita sedang membangun kemampuan **pivot dari satu evidence ke evidence lain**.
+
+---
+
+# 15. EVIDENCE
+
+Simpan screenshot:
+
+**Screenshot 1**
+
+Running services.
+
+**Screenshot 2**
+
+Detail service:
+
+```text
+State
+StartMode
+StartName
+ProcessId
+PathName
+```
+
+**Screenshot 3**
+
+Process yang memiliki PID service tersebut.
+
+**Screenshot 4**
+
+CMD `sc query`.
+
+Jangan mengubah service apa pun.
+
+---
+
+# 16. COMMANDS DAY 5
+
+Masukkan ke `commands.txt`.
+
+### PowerShell
+
+```powershell
+# Semua service
+Get-Service
+
+# Running services
+Get-Service |
+Where-Object {$_.Status -eq "Running"} |
+Select-Object Name, Status, DisplayName
+
+# Detail service
+Get-CimInstance Win32_Service -Filter "Name = 'Spooler'" |
+Select-Object Name, DisplayName, State, StartMode, StartName, ProcessId, PathName
+
+# Cari process berdasarkan PID
+Get-Process -Id 1234
+
+# Detail process berdasarkan PID
+Get-CimInstance Win32_Process -Filter "ProcessId = 1234" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+### CMD
+
+```cmd
+sc query
+```
+
+Service tertentu:
+
+```cmd
+sc query Spooler
+```
+
+---
+
+# 17. REVIEW
+
+Jawab dengan bahasamu sendiri:
+
+**1.** Apa itu Windows Service?
+
+**2.** Apa perbedaan Service dan Process?
+
+**3.** Apa fungsi `ProcessId` pada informasi service?
+
+**4.** Apa yang dimaksud `StartName`?
+
+**5.** Apa fungsi `PathName`?
+
+**6.** Apakah service `Running` otomatis berarti malicious?
+
+**7.** Apakah service dengan `StartMode = Auto` otomatis malicious?
+
+**8.** Mengapa hubungan Service → Process → PID penting dalam investigation?
+
+**9.** Kalau sebuah service memiliki:
+
+```text
+ProcessId: 4216
+PathName: C:\Temp\updater.exe
+```
+
+apa yang bisa kamu lakukan berikutnya?
+
+**10.** Sebutkan minimal 5 evidence yang dapat kamu cari untuk menyelidiki service yang terlihat unusual.
+
+---
+
+# 18. PASS CRITERIA
+
+Day 5 dianggap **PASS** kalau kamu bisa:
+
+```text
+✅ menjelaskan Windows Service
+✅ membedakan Service dan Process
+✅ melihat daftar service
+✅ melakukan filtering Running services
+✅ mengambil State
+✅ mengambil StartMode
+✅ mengambil StartName
+✅ mengambil ProcessId
+✅ mengambil PathName
+✅ menghubungkan Service → PID → Process
+✅ menggunakan PowerShell
+✅ menggunakan CMD sc
+✅ tidak menganggap Running/Auto/Temp = malware
+✅ melakukan evidence-based investigation
+```
+
+### Pola yang harus mulai tertanam
+
+```text
+Service
+   ↓
+ProcessId
+   ↓
+Process
+   ↓
+ExecutablePath
+   ↓
+CommandLine
+   ↓
+File
+   ↓
+Signature
+   ↓
+Hash
+```
+
+**Day 5 belum menyentuh Windows Event Logs secara mendalam.** Kita pastikan dulu kamu benar-benar nyaman melakukan **correlation antara Service dan Process**. Setelah itu, log akan jauh lebih mudah dipahami.
