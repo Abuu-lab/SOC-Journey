@@ -1,0 +1,59 @@
+File Investigation
+
+## File
+Name: notepad.exe
+Path: C:\Windows\...
+
+## Metadata
+Name           : notepad.exe
+Length         : 356352
+CreationTime   : 9/9/2026 10:54:17 PM
+LastWriteTime  : 9/9/2026 10:54:17 PM
+LastAccessTime : 9/18/2026 10:21:09 PM
+Attributes     : Archive
+
+## Digital Signature
+Status: Valid
+Signer/Publisher: DC91E564D5BC1E3A8E02D6A8508682ABEA8A2443
+
+## Hash
+Algorithm: SHA-256
+SHA-256: 87CA8213820A0ECAC9CD131B5E6BE9268A56E4E121482A5816EE7BAEFC9CE042
+
+## CMD vs PowerShell
+PowerShell SHA-256:
+CMD SHA-256:
+Match: YES
+
+## Observation
+
+Apa yang saya temukan?
+saya menemukan informasi dalam evidence metadata yang penting untuk mendukung investigasi seperti tgl dibuat tgl edit jam dan menit, saya menemukan kode hash juga kode ini bisa berubah total hanya karena 1 karakter yg berubah, digital signature bisa mengetahui bahwa ini resmi atau ngga
+
+Apa arti metadata file?
+informasi tentang kapan file dibuat kapan file di edit kapan terakhir di akses attributenya apa
+
+Apa arti Digital Signature?
+seperti pengakuan digital , bersertifikat atau tidaknya sebuah aplikasi resmi atau tidaknya. dan berbayar
+
+Apa arti SHA-256?
+kode hash unik , bisa dijadikan salah satu indicator untuk mengetahui apakah itu malware atau bukan. kode atau perintah virus umumnya sama jadi kode hashnya juga sama
+tapi bisa jadi bukan karena peretas punya cara untuk mengelabuhi dengan menambahkan huruf atau string didalam kode virus. sehingga tidak bisa terdeteksi
+
+Apa perbedaan Hash dengan Digital Signature?
+Digital Signature memberitahu bahwa file tersebut resmi atau tidak, sudah terdaftar atau tidak
+kalau hash dia hanya kode unik yang mengatasnamakan file tersebut, kode hash bisa sama dengan file lainnya asalkan isinya sama persis 100% tapi kalua beda 1 karakter akan berubah total kode hash nya
+
+## Investigation Thinking
+
+Apakah file ini otomatis aman hanya karena mempunyai
+Digital Signature? TIDAK. karena peretas bisa memanipulasi dengan mengambil sertifikat asli dari perusahaan aplikasi tersebut , mungkin yg dinamakan private key
+
+Apakah file otomatis malicious jika tidak mempunyai
+Digital Signature? tidak juga, karena bisa jadi pembuatnya seorang individu yg belum punya uang untuk mendaftarkan aplikasi karena mahal, atau bisa jadi aplikasi tersebut open source yg belum didaftarkan. biasanya tujuan2nya untuk perbuatan baik
+
+Apakah hash sendiri dapat membuktikan file malicious?
+tidak, file malware A bisa memiliki hash yg sama dengan malware A lainnya
+malware B memiliki kode hash yg berbeda dengan malware A karena isi kode virus didalamnya berbeda
+
+tapi didalam file tersebut peretas bisa menambahkan spasi untuk mengelabuhi antivirus, karena menambahkan spasi atau 1 huruf bisa merubah hash seluruhnya
