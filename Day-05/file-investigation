@@ -1,0 +1,289 @@
+Mini Project: Windows Service Investigation
+
+## Project Title
+
+**Windows Service → Process Investigation**
+
+## Objective
+
+Melakukan investigasi sederhana terhadap Windows Service dengan menghubungkan:
+
+```text
+Service → Process → PID → PPID → Executable
+```
+
+---
+
+# Part 1 — Initial Service Investigation
+
+Service yang diperiksa:
+
+```text
+Name      : Dhcp
+State     : Running
+StartMode : Auto
+StartName : NT Authority\LocalService
+ProcessId : 2300
+PathName  : C:\WINDOWS\system32\svchost.exe -k LocalServiceNetworkRestricted -p
+```
+
+### My Observation
+
+Saya melihat:
+
+* Service bernama `Dhcp`.
+* Service sedang berjalan.
+* Service berjalan secara otomatis.
+* Service menggunakan `LocalService`.
+* Service memiliki `ProcessId 2300`.
+* Service memiliki PathName.
+
+### Correction / Analysis
+
+Observasi tersebut benar.
+
+Interpretasi yang lebih tepat:
+
+* `Dhcp` adalah Service Name.
+* `Running` berarti service sedang aktif.
+* `Auto` berarti service dikonfigurasi untuk otomatis dimulai.
+* `LocalService` adalah account yang digunakan service.
+* `2300` adalah ProcessId dari process yang terkait dengan service.
+* PathName menunjukkan executable beserta arguments.
+
+---
+
+# Part 2 — Process Investigation
+
+Command:
+
+```powershell
+Get-Process -Id 2300
+```
+
+Result:
+
+```text
+ProcessName : svchost
+Id          : 2300
+```
+
+### Finding
+
+Service `Dhcp` terkait dengan:
+
+```text
+svchost.exe
+PID 2300
+```
+
+Relationship:
+
+```text
+Dhcp Service
+    ↓
+ProcessId 2300
+    ↓
+svchost.exe
+```
+
+---
+
+# Part 3 — Parent Process Investigation
+
+Command:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = 2300" |
+Select-Object Name, ProcessId, ParentProcessId
+```
+
+Result:
+
+```text
+Name            : svchost.exe
+ProcessId       : 2300
+ParentProcessId : 1424
+```
+
+### Finding
+
+PID `1424` adalah parent process dari PID `2300`.
+
+Relationship:
+
+```text
+PID 1424
+   ↓
+svchost.exe PID 2300
+```
+
+---
+
+# Part 4 — Investigate Parent Process
+
+Command:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = 1424" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Result:
+
+```text
+Name            : services.exe
+ProcessId       : 1424
+ParentProcessId : 1304
+ExecutablePath  :
+CommandLine     :
+```
+
+### Finding
+
+PID `1424` adalah:
+
+```text
+services.exe
+```
+
+dengan parent PID:
+
+```text
+1304
+```
+
+ExecutablePath dan CommandLine tidak tersedia pada query tersebut.
+
+### Important Note
+
+```text
+Missing data ≠ Data does not exist
+```
+
+Data kosong hanya berarti informasi tersebut tidak tersedia pada query yang dilakukan.
+
+---
+
+# Final Process Tree
+
+```text
+PID 1304
+   ↓
+services.exe
+PID 1424
+   ↓
+svchost.exe
+PID 2300
+   ↓
+Dhcp Service
+```
+
+---
+
+# Part 5 — PathName Analysis
+
+Original PathName:
+
+```text
+C:\WINDOWS\system32\svchost.exe -k LocalServiceNetworkRestricted -p
+```
+
+### My Answer
+
+Executable:
+
+```text
+C:\WINDOWS\system32\svchost.exe
+```
+
+Arguments:
+
+```text
+-k LocalServiceNetworkRestricted -p
+```
+
+### Correction
+
+**Correct.**
+
+PathName dapat terdiri dari:
+
+```text
+Executable
++
+Arguments
+```
+
+---
+
+# Investigation Conclusion
+
+Berdasarkan evidence yang dikumpulkan:
+
+```text
+Dhcp Service
+    ↓
+PID 2300
+    ↓
+svchost.exe
+    ↓
+PPID 1424
+    ↓
+services.exe
+```
+
+Service:
+
+```text
+State     = Running
+StartMode = Auto
+StartName = LocalService
+```
+
+PathName:
+
+```text
+C:\WINDOWS\system32\svchost.exe
+-k LocalServiceNetworkRestricted -p
+```
+
+### Conclusion
+
+Data yang dikumpulkan menunjukkan hubungan antara `Dhcp Service`, `svchost.exe`, dan `services.exe`.
+
+**Tidak ada kesimpulan malicious/benign yang dibuat hanya berdasarkan data tersebut.**
+
+Untuk security investigation yang lebih dalam, diperlukan evidence tambahan seperti:
+
+* Digital Signature
+* SHA-256
+* File Metadata
+* CommandLine
+* Network Connection
+* Windows Event Logs
+* Threat Intelligence
+
+---
+
+# SOC Investigation Mindset
+
+```text
+APA YANG SAYA LIHAT?
+        ↓
+APA ARTINYA?
+        ↓
+APA YANG BELUM SAYA TAHU?
+        ↓
+EVIDENCE APA YANG BISA MENJAWAB?
+        ↓
+ANALYSIS
+        ↓
+CONCLUSION
+```
+
+## Key Lesson
+
+> **Evidence first, conclusion later.**
+
+Jangan menyimpulkan malicious hanya karena sesuatu terlihat unusual.
