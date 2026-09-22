@@ -1,0 +1,165 @@
+Commands: Windows Services & Process Investigation
+
+## 1. Melihat semua Windows Services
+
+```powershell
+Get-Service
+```
+
+Purpose:
+
+> Melihat daftar Windows Services.
+
+---
+
+## 2. Melihat Services yang sedang Running
+
+```powershell
+Get-Service |
+Where-Object {$_.Status -eq "Running"} |
+Select-Object Name, Status, DisplayName
+```
+
+Purpose:
+
+> Menampilkan service yang sedang aktif.
+
+---
+
+## 3. Investigasi detail sebuah Service
+
+Contoh menggunakan BFE:
+
+```powershell
+Get-CimInstance Win32_Service -Filter "Name = 'BFE'" |
+Select-Object Name, DisplayName, State, StartMode, StartName, ProcessId, PathName
+```
+
+Purpose:
+
+> Melihat State, StartMode, Service Account, PID, dan PathName sebuah service.
+
+---
+
+## 4. Mencari Process berdasarkan PID
+
+Contoh:
+
+```powershell
+Get-Process -Id 2300
+```
+
+Purpose:
+
+> Mengetahui process yang memiliki PID tertentu.
+
+---
+
+## 5. Melihat Process + PID + PPID + Path + CommandLine
+
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = 2300" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Purpose:
+
+> Menghubungkan PID dengan process, parent process, executable path, dan command line.
+
+---
+
+## 6. Melihat Service yang Running beserta informasi investigasi
+
+```powershell
+Get-CimInstance Win32_Service |
+Where-Object {$_.State -eq "Running"} |
+Select-Object Name, State, StartMode, StartName, ProcessId, PathName
+```
+
+Purpose:
+
+> Mendapatkan informasi awal untuk Service Investigation.
+
+---
+
+## 7. Menggunakan CMD untuk Service
+
+```cmd
+sc query
+```
+
+Purpose:
+
+> Melihat Windows Services menggunakan CMD.
+
+Untuk service tertentu:
+
+```cmd
+sc query Spooler
+```
+
+---
+
+# Important Concepts
+
+```text
+Service
+├── State
+├── StartMode
+├── StartName
+├── ProcessId
+└── PathName
+
+Process
+├── PID
+├── PPID
+├── ExecutablePath
+└── CommandLine
+```
+
+### Core Relationship
+
+```text
+SERVICE
+   ↓
+ProcessId
+   ↓
+PROCESS
+   ↓
+PID / PPID
+   ↓
+EXECUTABLE
+```
+
+### Important Reminder
+
+```text
+PID  = ID process itu sendiri
+PPID = PID milik parent process
+
+StartName = account yang digunakan service
+
+PathName = executable + kemungkinan arguments
+
+ExecutablePath = lokasi executable
+```
+
+### Example
+
+```text
+PathName:
+
+C:\WINDOWS\system32\svchost.exe -k LocalServiceNetworkRestricted -p
+```
+
+Executable:
+
+```text
+C:\WINDOWS\system32\svchost.exe
+```
+
+Arguments:
+
+```text
+-k LocalServiceNetworkRestricted -p
+```
