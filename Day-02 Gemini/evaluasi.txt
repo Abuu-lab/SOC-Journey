@@ -1,0 +1,26 @@
+EVALUASI MENTOR — DAY 2
+
+STATUS: LULUS (PASS) DENGAN CATATAN REVISI KONSEP
+
+Pekerjaan Hands-on dan Challenge kamu SANGAT BAGUS! Perintah PowerShell yang kamu racik (Get-Process svchost | Select Id, @{N=...}) menunjukkan kamu sudah mulai terbiasa memanipulasi data CLI di tingkat profesional.
+
+Namun, ada 2 pemahaman konsep pada Self Test yang perlu ditekankan dan diluruskan agar kamu tidak salah paham di dunia kerja nanti:
+Review & Koreksi Self Test
+
+    Mematikan Komputer Saat Terinfeksi: BENAR. Mematikan listrik/komputer akan menghapus seluruh data di RAM (Volatile Data), sehingga bukti vital hilang.
+
+    Fileless Malware: PERLU KLARIFIKASI.
+
+        Jawabanmu: "Malware di belakang layar / hidden file."
+
+        Koreksi Mentor: Jika masih ada "file tersembunyi" di SSD/HDD, itu disebut Hidden File. Fileless Malware sama sekali TIDAK menuliskan file .exe atau script apa pun ke dalam SSD/HDD. Malware ini hidup dan berjalan murni di dalam RAM (misalnya menyuntikkan kode langsung ke memori powershell.exe melalui jaringan).
+
+    lsass.exe & Credential Dumping: BENAR. lsass.exe menyimpan hash dan token password di RAM.
+
+    Physical Memory vs Virtual Memory: KOREKSI TOTAL.
+
+        Jawabanmu: "Virtual memory adalah memori permanen penyedia layanan virtual/cloud."
+
+        Koreksi Mentor: Ini kesalahpahaman yang lumrah untuk pemula! Dalam arsitektur Sistem Operasi (bukan cloud computing), Virtual Memory adalah teknik OS yang menggunakan sebagian ruang SSD/HDD (seperti file pagefile.sys di Windows) sebagai perpanjangan dari RAM ketika RAM fisik (Physical Memory/WorkingSet) sudah penuh. OS memetakan alamat memori virtual agar aplikasi merasa memiliki memori besar, padahal sebagian data disimpan sementara di disk.
+
+    Memory Acquisition: BENAR. Istilahnya adalah Memory Dump.
