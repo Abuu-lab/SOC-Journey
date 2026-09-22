@@ -1,0 +1,161 @@
+# Day 05 — Evaluation
+
+## Topic
+
+**Windows Services & Process Context**
+
+## Status
+
+**READY / PASSED**
+
+Day 5 dinyatakan selesai setelah melakukan reinforcement dan hands-on investigation pada Windows Service nyata.
+
+---
+
+## Skills Demonstrated
+
+### 1. Service Identification
+
+Mampu mengidentifikasi:
+
+* Service Name
+* State
+* StartMode
+* StartName
+* ProcessId
+* PathName
+
+---
+
+### 2. Service → Process Mapping
+
+Mampu menghubungkan:
+
+```text
+Dhcp Service
+    ↓
+ProcessId 2300
+    ↓
+svchost.exe
+```
+
+---
+
+### 3. Process → Parent Process Mapping
+
+Mampu memahami:
+
+```text
+svchost.exe
+PID 2300
+PPID 1424
+```
+
+Artinya:
+
+> PID `1424` adalah parent process dari PID `2300`.
+
+Kemudian ditemukan:
+
+```text
+PID 1424
+↓
+services.exe
+```
+
+---
+
+### 4. PathName Analysis
+
+Mampu memisahkan:
+
+```text
+C:\WINDOWS\system32\svchost.exe
+```
+
+sebagai executable dan:
+
+```text
+-k LocalServiceNetworkRestricted -p
+```
+
+sebagai arguments.
+
+---
+
+### 5. Evidence-Based Thinking
+
+Mulai mampu membedakan:
+
+```text
+Observation
+    ≠
+Conclusion
+```
+
+Contoh:
+
+```text
+State = Running
+```
+
+hanya berarti service sedang berjalan.
+
+```text
+StartMode = Auto
+```
+
+berarti service dikonfigurasi untuk otomatis dimulai.
+
+Keduanya tidak otomatis berarti malicious.
+
+---
+
+## Important Correction Areas
+
+Hal yang masih perlu terus diperkuat:
+
+1. Jangan mengatakan Service "menghasilkan PID".
+2. `ProcessId` pada Service menunjuk ke PID process yang terkait.
+3. `StartName` berarti service account.
+4. Jangan tertukar antara PID dan PPID.
+5. `Service ≠ Process`.
+6. `PathName` dapat berisi executable + arguments.
+7. `ExecutablePath` menunjukkan lokasi executable.
+8. Data kosong pada query tidak berarti data tersebut tidak ada.
+
+---
+
+## SOC Investigation Pattern
+
+Pola yang mulai dikuasai:
+
+```text
+SERVICE
+   ↓
+PROCESS
+   ↓
+PID / PPID
+   ↓
+EXECUTABLE
+   ↓
+FILE
+   ↓
+SIGNATURE / HASH / METADATA
+   ↓
+NETWORK / LOGS
+   ↓
+ANALYSIS
+   ↓
+CONCLUSION
+```
+
+## Final Assessment
+
+**Day 5: PASSED**
+
+Skill level:
+
+**Developing → Ready**
+
+Tidak perlu menghafalkan semua command sekaligus. Fokus utama adalah memahami hubungan antar-evidence.
