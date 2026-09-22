@@ -1,0 +1,269 @@
+# ROADMAP JUNIOR SOC ANALYST (12–18 BULAN)
+
+Jalur ini dirancang secara linier dan tunggal tanpa banyak pilihan bercabang untuk mencegah *decision paralysis*.
+
+### Primary Tech Stack (Satu Jalur Utama):
+
+* **Virtualization:** VirtualBox
+* **Operating Systems:** Windows 10/11 VM, Ubuntu Server / Kali Linux VM
+* **Networking & Packet Analysis:** Wireshark, Nmap
+* **Logging & Endpoint Monitoring:** Windows Event Viewer, Sysmon
+* **SIEM Platform:** Wazuh (Open Source & Enterprise-ready)
+* **Scripting & Automation:** Python & Bash
+* **Framework & Intelligence:** MITRE ATT&CK, CyberChef, VirusTotal
+* **Certification Target:** CompTIA Security+ (diambil pada Bulan ke-6/7 sebagai validasi teori)
+
+---
+
+## FASE MASTEPLAN & MILESTONES
+
+```
+FASE 1: System & Network Fundamentals (Bulan 1–3) | Level 0 – Level 3
+FASE 2: Security & Defense Fundamentals (Bulan 4–6) | Level 4 – Level 6 [Security+ Target]
+FASE 3: Logging, SIEM & Home Lab (Bulan 7–9) | Level 7 – Level 9
+FASE 4: Threat Analysis & Investigation (Bulan 10–14) | Level 10 – Level 15
+FASE 5: Detection Engineering & SOC Readiness (Bulan 15–18) | Level 16 – Level 20
+
+```
+
+---
+
+### FASE 1: System & Network Fundamentals (Bulan 1–3)
+
+**Tujuan:** Menguasai cara kerja internal komputer, sistem operasi, dan komunikasi jaringan dari tingkat bit/paket.
+
+* **Level 0: Computer Fundamentals** — Hardware, OS architecture, process, memory, file system.
+* **Level 1: Networking Fundamentals** — OSI Model, TCP/IP, Subnetting, Port, Protocol (DNS, HTTP/S, DHCP, ARP).
+* **Level 2: Linux Fundamentals** — Linux CLI, User/Group Permission, Systemd, Logging (`/var/log`), Bash basic.
+* **Level 3: Windows Fundamentals** — Windows Internals, Architecture, Registry, PowerShell basic, System Services.
+
+**Target Skill:** Mampu bernavigasi lewat CLI tanpa GUI, menganalisis alur komunikasi jaringan dasar, dan memahami bagaimana OS mengeksekusi program.
+**Project Portfolio #1:** Network Mapping & System Inspection Report.
+
+---
+
+### FASE 2: Security Fundamentals & Core Security Tools (Bulan 4–6)
+
+**Tujuan:** Memahami konsep keamanan dasar, ancaman utama, dan cara menggunakan security tools standar industri.
+
+* **Level 4: Cybersecurity Fundamentals** — CIA Triad, Threat vs Vulnerability vs Risk, Authentication/Authorization, Active Directory basics.
+* **Level 5: Security Tools** — Wireshark (packet analysis), Nmap (network scanning), Netcat, CyberChef.
+* **Level 6: SOC Fundamentals** — Peran SOC, SOC Workflows, Alert Life Cycle, Escalation Process, True vs False Positive.
+
+**Certification Milestone:** Pada akhir Bulan ke-6, persiapkan dan ambil **CompTIA Security+ (SY0-701)**. Sertifikasi ini berfungsi memperkuat landasan teori dan memperbagus resume.
+
+---
+
+### FASE 3: Logging, SIEM & Home Lab Setup (Bulan 7–9)
+
+**Tujuan:** Membangun infrastruktur pemantauan keamanan sendiri (*Home Lab*) dan mulai mengumpulkan serta menganalisis logs.
+
+* **Level 7: Logging & Monitoring** — Windows Event Logs, Sysmon, Linux Syslog, Log collection & parsing.
+* **Level 8: SIEM** — Arsitektur SIEM, Penginstalan Wazuh Server & Wazuh Agent, Log ingestion, Dashboarding.
+* **Level 9: Alert Triage** — Analisis alert, identifikasi False Positive, korelasi antar log event.
+
+**Project Portfolio #2:** Building an Enterprise-Grade Home Lab with Wazuh SIEM & Sysmon.
+
+---
+
+### FASE 4: Threat Analysis, Investigation & Hunting (Bulan 10–14)
+
+**Tujuan:** Memahami teknik serangan secara mendalam, melakukan investigasi pada endpoint & network, serta melacak indikator ancaman.
+
+* **Level 10: Incident Investigation** — Investigation methodology, timeline creation, root cause analysis.
+* **Level 11: Network Security Monitoring** — PCAP analysis, detecting network anomalies, malicious traffic detection.
+* **Level 12: Endpoint Security** — EDR concepts, process trees analysis, persistence detection, memory triage basics.
+* **Level 13: Threat Intelligence** — IOC (IP, Hash, Domain), Cyber Kill Chain, OSINT integration (VirusTotal, AlienVault).
+* **Level 14: MITRE ATT&CK** — Mapping tactics, techniques, and sub-techniques to defensive rules.
+* **Level 15: Threat Hunting** — Hypothesis-driven hunting, finding undetected threats using logs.
+
+**Project Portfolio #3:** Investigating a Suspicious PowerShell & Phishing Incident.
+
+---
+
+### FASE 5: Detection Engineering, Automation & Career Readiness (Bulan 15–18)
+
+**Tujuan:** Membuat rule deteksi baru, mengotomatisasi tugas berulang, mensimulasikan serangan penuh, dan mempersiapkan diri menghadapi interview SOC.
+
+* **Level 16: Incident Response** — Incident Response Lifecycle (NIST / SANS), containment, remediation, post-incident reporting.
+* **Level 17: Detection Engineering Fundamentals** — Writing Sigma Rules, Wazuh Custom Rules, Tuning alerts.
+* **Level 18: Automation / Scripting** — Python for Log Analysis & IOC Extraction, Bash automation.
+* **Level 19: Advanced SOC Simulations** — Full-spectrum attack simulation (Red vs Blue di Home Lab sendiri).
+* **Level 20: Junior SOC Readiness** — Resume optimization, GitHub Portfolio preparation, Mock Interview, SOC Technical Test practice.
+
+**Project Portfolio #4:** End-to-End SOC Simulation: Attack, Detection, Investigation, and Executive Incident Report.
+
+---
+
+# DAY 1 — Computer Architecture & Process Fundamentals
+
+## Objective
+
+Setelah menyelesaikan hari ini, kamu harus mampu:
+
+1. Menjelaskan bagaimana CPU, RAM, dan Disk berinteraksi saat sebuah program dijalankan.
+2. Memeriksa daftar *Process* yang sedang berjalan di komputer menggunakan Command Line (CLI).
+3. Mengidentifikasi PID (Process ID), Executable Path, dan konsumsi memori dari sebuah proses.
+
+---
+
+## Theory
+
+### 1. WHAT — Apa itu Computer Architecture & Process?
+
+Komputer pada dasarnya terdiri dari tiga komponen utama:
+
+* **CPU (Central Processing Unit):** Otak yang mengeksekusi instruksi.
+* **RAM (Random Access Memory):** Memori sementara yang sangat cepat. Data di sini hilang jika komputer dimatikan (*volatile*).
+* **Disk/Storage (SSD/HDD):** Memori permanen tempat menyimpan file dan program (*non-volatile*).
+
+Sebuah **Program** adalah kode/file mati yang tersimpan di Disk (contoh: `chrome.exe`).
+Ketika program tersebut kamu buka, OS menyalin kode tersebut dari Disk ke RAM, lalu CPU mulai mengeksekusi instruksinya. Program yang sedang berjalan di RAM dan dieksekusi CPU inilah yang disebut **Process**.
+
+### 2. WHY — Kenapa SOC Analyst perlu memahami ini?
+
+Malware (virus, ransomware, trojan) pada akhirnya hanyalah **Process** yang berjalan di RAM.
+Seorang SOC Analyst **TIDAK BISA** membedakan mana proses aman dan mana proses berbahaya jika tidak memahami bentuk normal dari sebuah proses di dalam sistem operasi.
+
+### 3. HOW — Bagaimana cara kerjanya?
+
+1. User menjalankan aplikasi (contoh: double-click `notepad.exe`).
+2. Operating System (OS) membuat struktur data baru dan memberikan nomor unik yang disebut **Process ID (PID)**.
+3. OS mengalokasikan ruang memori di RAM untuk proses tersebut.
+4. CPU mengeksekusi thread instruksi dari proses tersebut.
+
+### 4. EXAMPLE — Contoh nyata
+
+Ketika kamu membuka browser Chrome:
+
+* File eksekusi ada di `C:\Program Files\Google\Chrome\Application\chrome.exe`.
+* OS membuat proses `chrome.exe` dengan PID misalnya `4512`.
+* `chrome.exe` memakan 500 MB RAM dan 2% CPU usage.
+
+### 5. ATTACK — Bagaimana teknik ini disalahgunakan?
+
+Penyerang (Attacker) sering menggunakan teknik:
+
+* **Process Masquerading:** Penyerang menamai malware mereka `svchost.exe` atau `taskmgr.exe` agar terlihat seperti proses resmi milik Windows, padahal berjalan dari direktori yang tidak wajar (misal: `C:\Users\Public\svchost.exe`).
+* **Process Injection:** Penyerang menyuntikkan kode berbahaya ke dalam proses sah yang sedang berjalan (misalnya menyuntikkan kode ke `explorer.exe`) agar terhindar dari deteksi Antivirus.
+
+### 6. DEFENSE — Bagaimana SOC mendeteksi/mencegahnya?
+
+SOC Analyst menggunakan tools pemantauan (seperti EDR atau Sysmon) untuk memeriksa:
+
+* Dari direktori mana file `.exe` tersebut berjalan?
+* Siapa proses induknya (*Parent Process*)?
+* Apakah proses tersebut menggunakan resource (CPU/RAM) secara tidak wajar?
+
+---
+
+## Hands-on
+
+Kita akan menggunakan Command Line bawaan OS kamu (Windows Command Prompt / PowerShell atau Linux Terminal).
+
+### Jika kamu menggunakan Windows:
+
+1. Buka **Command Prompt (cmd)** sebagai Administrator (Ketik `cmd` di Start Search -> Right click -> Run as Administrator).
+2. Ketik perintah berikut untuk melihat semua proses yang sedang berjalan:
+```cmd
+tasklist
+
+```
+
+
+3. Untuk melihat proses secara detail termasuk lokasi path filenya, gunakan PowerShell. Buka **PowerShell** lalu jalankan:
+```powershell
+Get-Process | Select-Object Id, ProcessName, CPU, WorkingSet64 | Sort-Object WorkingSet64 -Descending | Select-Object -First 10
+
+```
+
+
+*(Perintah ini mengambil 10 proses yang paling banyak menggunakan RAM/WorkingSet64).*
+
+### Jika kamu menggunakan Linux / macOS:
+
+1. Buka **Terminal**.
+2. Jalankan perintah berikut untuk melihat seluruh proses yang berjalan:
+```bash
+ps aux
+
+```
+
+
+3. Jalankan perintah ini untuk melihat 10 proses teratas berdasarkan penggunaan memori:
+```bash
+ps aux --sort=-%mem | head -n 11
+
+```
+
+
+
+---
+
+## Challenge
+
+**Instruksi:**
+
+1. Buka aplikasi **Notepad** (di Windows) atau **Text Editor** sederhana lainnya (di Linux).
+2. Tanpa menutup aplikasi tersebut, buka CLI (Command Prompt/PowerShell/Terminal).
+3. Cari **PID (Process ID)** dari aplikasi teks editor yang baru saja kamu buka tersebut menggunakan command line.
+4. Tuliskan command tepat yang kamu gunakan beserta PID yang kamu dapatkan.
+
+*(Jangan berikan jawaban sekarang, kerjakan sendiri dan simpan buktinya!)*
+
+---
+
+## Mini Project
+
+*(Tidak ada untuk Day 1 — Mini project pertama akan diberikan di akhir minggu)*
+
+---
+
+## SOC Connection
+
+Setiap alert yang masuk ke meja SOC Analyst yang berkaitan dengan *Endpoint Detection* pasti mencantumkan **Process Name** dan **PID**.
+
+Contoh alert SOC nyata:
+
+> `Suspicious Execution: cmd.exe spawned by word.exe (PID: 8821)`
+
+Jika kamu tahu cara melacak PID dan parent process, kamu bisa langsung mengisolasi komputer yang terinfeksi sebelum serangan menyebar.
+
+---
+
+## Evidence
+
+Simpan bukti pekerjaan kamu dalam sebuah folder / file dokumen catatan belajar. Bukti yang wajib disimpan untuk Day 1:
+
+1. **Screenshot** hasil eksekusi perintah pembacaan daftar proses di CLI.
+2. **Text snippet** yang menunjukkan command dan baris output yang memuat PID dari aplikasi pada bagian **Challenge**.
+
+---
+
+## Self Test
+
+Jawab pertanyaan ini di lembar kerja/catatanmu:
+
+1. Apa perbedaan utama antara *Program* dan *Process*?
+2. Karakteristik utama dari RAM yang membedakannya dari SSD/HDD adalah bersifat *volatile*. Apa artinya?
+3. Apa kepanjangan dari PID dan apa fungsinya dalam Sistem Operasi?
+4. Jika sebuah proses berbahaya bernama `lsass.exe` berjalan dari direktori `C:\Users\Downloads\lsass.exe`, mengapa seorang SOC Analyst harus curiga?
+5. Mengapa penyerang sering melakukan teknik *Process Masquerading*?
+
+---
+
+## Pass Criteria
+
+Kamu dianggap **LULUS Day 1** jika:
+
+1. Berhasil menjalankan perintah CLI untuk melihat daftar proses pada sistem lokal.
+2. Berhasil menemukan PID dari aplikasi yang diminta pada bagian **Challenge**.
+3. Menjawab ke-5 pertanyaan **Self Test** dengan pemahaman konsep yang benar (tidak sekadar asal tebak).
+
+---
+
+### MENTOR NOTICE:
+
+Kirimkan **Jawaban Challenge**, **Evidence (Screenshot/Text)**, dan **Jawaban Self Test** milikmu ke saya.
+
+Saya akan mereview pekerjaanmu secara detail. Jika sudah memenuhi kriteria lulus, kita akan langsung naik ke **DAY 2**. Jika belum, saya akan memberikan petunjuk (*hint*) untuk perbaikan!
