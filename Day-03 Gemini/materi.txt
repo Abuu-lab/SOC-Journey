@@ -1,0 +1,156 @@
+Operating System Architecture: Kernel Mode vs User Mode
+
+## Objective
+
+Setelah menyelesaikan hari ini, kamu harus mampu:
+
+1. Memahami arsitektur keamanan OS: Perbedaan antara **Kernel Mode (Ring 0)** dan **User Mode (Ring 3)**.
+2. Menjelaskan bagaimana aplikasi meminta akses ke hardware melalui **System Calls (Syscalls)**.
+3. Memeriksa daftar **Drivers** (program Kernel) dan **Services** yang berjalan di Windows menggunakan CLI.
+
+---
+
+## Theory
+
+### 1. WHAT — Apa itu Kernel Mode & User Mode?
+
+Sistem operasi (seperti Windows dan Linux) membagi ruang eksekusi menjadi beberapa tingkat hak akses (*CPU Privilege Rings*):
+
+* **Kernel Mode (Ring 0):** Pusat terdalam dari OS. Memiliki akses tanpa batas ke hardware, CPU, dan seluruh memori RAM. Komponen yang berjalan di sini adalah *OS Kernel* dan *Hardware Drivers* (driver VGA, driver WiFi, dll).
+* **User Mode (Ring 3):** Area terluar yang terisolasi. Tempat berjalannya semua aplikasi biasa (Browser, Discord, Word, Notepad). Aplikasi di User Mode **tidak boleh** mengakses hardware atau memori aplikasi lain secara langsung.
+
+```
++-------------------------------------------------+
+|             USER MODE (Ring 3)                  |
+|   [ Chrome.exe ]  [ Notepad.exe ]  [ Python ]   |
++------------------------+------------------------+
+                         |  System Calls (Syscalls)
++------------------------v------------------------+
+|            KERNEL MODE (Ring 0)                 |
+|   [ OS Kernel ]   [ Memory Mgr ]  [ Drivers ]   |
++------------------------+------------------------+
+                         |
+                 [ HARDWARE / RAM ]
+
+```
+
+### 2. WHY — Kenapa SOC Analyst perlu memahami ini?
+
+Batas antara User Mode dan Kernel Mode adalah **benteng keamanan utama OS**.
+Jika malware berjalan di User Mode, Antivirus/EDR masih bisa menghentikannya dengan mudah. Namun, jika malware berhasil masuk ke **Kernel Mode** (dikenal sebagai *Rootkit* atau *Kernel Driver Exploit*), malware tersebut bisa:
+
+* Mematikan Antivirus/EDR tanpa terdeteksi.
+* Menyembunyikan proses dan filenya sendiri dari OS.
+* Membaca seluruh RAM tanpa halangan.
+
+### 3. HOW — Bagaimana cara kerjanya (System Call)?
+
+Ketika aplikasi User Mode (misalnya Notepad) ingin menyimpan file ke SSD:
+
+1. Notepad **TIDAK BISA** langsung menulis byte ke SSD.
+2. Notepad harus mengirim permintaan resmi yang disebut **System Call (Syscall)** ke Kernel.
+3. Kernel memeriksa apakah user memiliki izin (*permission*).
+4. Jika diizinkan, Kernel-lah yang memerintahkan hardware SSD untuk menulis file tersebut.
+
+### 4. EXAMPLE — Contoh nyata
+
+Aplikasi Antivirus / EDR modern memasang **Kernel Driver** khusus. Driver ini mencegat semua *System Calls* yang dikirim oleh aplikasi User Mode untuk menganalisis apakah ada perintah yang mencurigakan sebelum dieksekusi.
+
+### 5. ATTACK — Bagaimana teknik ini disalahgunakan?
+
+* **Bring Your Own Vulnerable Driver (BYOVD):** Penyerang membawa driver resmi milik vendor terkenal yang memiliki celah keamanan (*vulnerability*), menginstallnya ke Windows target, lalu memanfaatkannya untuk melompati proteksi dari User Mode ke Kernel Mode (Ring 0).
+
+### 6. DEFENSE — Bagaimana SOC mendeteksi atau mencegahnya?
+
+* Windows memiliki fitur bernama **Driver Signature Enforcement** (semua driver Kernel harus ditandatangani secara digital oleh Microsoft).
+* SOC memantau event pembuatan Service atau pemasangan Driver baru (Windows Event ID `7045` / Sysmon Event ID `6`).
+
+---
+
+## Hands-on
+
+Kita akan memeriksa komponen yang berjalan di tingkat Kernel (Driver) dan Service menggunakan PowerShell.
+
+1. Buka **PowerShell** (Run as Administrator).
+2. Tampilkan seluruh **Hardware Driver** yang terinstall dan sedang berjalan (*Running*) di Windows:
+```powershell
+Get-WmiObject Win32_SystemDriver | Where-Object {$_.State -eq "Running"} | Select-Object Name, DisplayName, State, ServiceType | Select-Object -First 10
+
+```
+
+
+3. Alternatif perintah bawaan Windows CLI untuk melihat daftar driver lengkap:
+```cmd
+driverquery
+
+```
+
+
+4. Tampilkan daftar **Services** yang berjalan di background sistem:
+```powershell
+Get-Service | Where-Object {$_.Status -eq "Running"} | Select-Object Name, DisplayName, Status | Select-Object -First 10
+
+```
+
+
+
+---
+
+## Challenge
+
+**Instruksi:**
+
+1. Gunakan PowerShell untuk mencari **Service** yang berhubungan dengan keamanan bawaan Windows, yaitu **Windows Defender** (Nama servicetypical: `WinDefend` atau `Sense`).
+2. Tuliskan perintah PowerShell yang kamu gunakan untuk memeriksa status service `WinDefend`.
+3. Tampilkan output yang menunjukkan apakah Service tersebut sedang **Running** atau **Stopped**.
+
+*(Kerjakan sendiri di komputermu!)*
+
+---
+
+## SOC Connection
+
+Salah satu indikator pertama sebuah sistem telah diretas secara kritis adalah ketika **EDR / Antivirus Agent tiba-tiba mati**.
+
+Ketika ada alert:
+
+> `Critical Alert: Windows Defender Service (WinDefend) has been STOPPED`
+
+Seorang SOC Analyst harus paham bahwa ada kemungkinan penyerang menggunakan akses Administrator atau *Kernel Exploit* untuk mematikan pertahanan sistem.
+
+---
+
+## Evidence
+
+Simpan ke dalam folder catatan belajar:
+
+1. Screenshot / text snippet perintah `Get-Service` dan `driverquery` pada bagian **Hands-on**.
+2. Perintah PowerShell dan hasil output status `WinDefend` pada bagian **Challenge**.
+
+---
+
+## Self Test
+
+Jawab pertanyaan ini di lembar kerja/catatanmu:
+
+1. Mengapa aplikasi di *User Mode* (Ring 3) tidak boleh mengakses memori atau hardware secara langsung?
+2. Apakah yang dimaksud dengan *System Call (Syscall)* dan mengapa itu penting dalam arsitektur OS?
+3. Kenapa malware jenis *Rootkit* yang berjalan di *Kernel Mode* (Ring 0) jauh lebih berbahaya daripada malware biasa di *User Mode*?
+4. Jika terjadi *crash* fatal pada aplikasi di *User Mode* (misal Chrome error), OS tetap berjalan normal. Namun, apa yang terjadi jika kode di *Kernel Mode* mengalami *crash*?
+5. Mengapa penyerang mengincar teknik *Bring Your Own Vulnerable Driver (BYOVD)*?
+
+---
+
+## Pass Criteria
+
+Kamu dianggap **LULUS Day 3** jika:
+
+1. Berhasil menjalankan perintah eksekusi pengecekan Driver dan Service di PowerShell.
+2. Berhasil menyelesaikan **Challenge** dengan menampilkan status service `WinDefend`.
+3. Menjawab ke-5 pertanyaan **Self Test** dengan tepat berdasarkan pemahaman arsitektur Kernel & User mode.
+
+---
+
+### MENTOR NOTICE:
+
+Kirimkan **Jawaban Challenge**, **Evidence (Text/Screenshot)**, dan **Jawaban Self Test** Day 3 milikmu! Saya akan mengevaluasi hasilnya sebelum kita lanjut ke **DAY 4 — Windows Process Hierarchy & Parent-Child Relationships**.
