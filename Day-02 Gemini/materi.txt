@@ -1,0 +1,139 @@
+# DAY 2 — Memory (RAM) & Volatile Data Fundamentals
+
+## Objective
+
+Setelah menyelesaikan hari ini, kamu harus mampu:
+
+1. Menjelaskan konsep **Volatile Data** dan mengapa RAM menjadi lokasi berburu (*hunting*) utama bagi SOC Analyst.
+2. Memahami konsep dasar **Fileless Malware** dan **Credential Dumping**.
+3. Memeriksa penggunaan *Virtual Memory* dan *Physical Memory* (Working Set) dari sebuah proses menggunakan PowerShell CLI.
+
+---
+
+## Theory
+
+### 1. WHAT — Apa itu Volatile Data & Process Memory?
+
+**Volatile Data** adalah data yang tersimpan di RAM dan akan hilang secara permanen jika komputer dimatikan atau di-restart.
+
+Di dalam RAM, setiap proses yang berjalan memiliki alokasi memori tersendiri yang menyimpan:
+
+* Kode program yang dieksekusi.
+* Teks/string yang dimasukkan user (termasuk *password* dalam bentuk *plaintext* sebelum dienkripsi).
+* Kunci enkripsi (*encryption keys*).
+* Network connection sockets yang sedang aktif.
+
+### 2. WHY — Kenapa SOC Analyst perlu memahami ini?
+
+Antivirus tradisional hanya mengecek file mati di dalam SSD/HDD. Penyerang modern tahu hal ini, sehingga mereka membuat malware yang **hanya berjalan di dalam RAM** tanpa pernah menyimpan file ke dalam disk (*Fileless Malware*).
+
+Jika kamu hanya memeriksa SSD/HDD, kamu tidak akan menemukan malware tersebut. Kamu harus memeriksa isi **RAM (Volatile Memory)**.
+
+### 3. HOW — Bagaimana cara kerjanya?
+
+1. Saat sebuah aplikasi berjalan, OS memberikan ruang alamat memori (*Virtual Address Space*).
+2. Data sensitif seperti kredensial login dimasukkan ke RAM untuk diproses CPU.
+3. Selama proses masih berjalan, data tersebut ada dalam wujud asli di RAM.
+
+### 4. EXAMPLE — Contoh nyata
+
+Ketika kamu mengetik password di browser atau aplikasi login:
+
+* Password tersebut disimpan sementara di dalam RAM proses aplikasi tersebut.
+* Aplikasi *Credential Dumping* seperti **Mimikatz** dapat membaca alokasi RAM milik proses `lsass.exe` (proses penanganan keamanan Windows) untuk mencuri password Windows dalam bentuk teks polos atau hash.
+
+### 5. ATTACK — Bagaimana teknik ini disalahgunakan?
+
+* **Credential Dumping:** Penyerang mengakses RAM dari proses `lsass.exe` untuk mengambil password administrator yang tersimpan di memori.
+* **Fileless Attack:** Penyerang mengeksekusi script PowerShell berbahaya yang langsung mendownload dan menjalankan kode langsung ke RAM tanpa membuat file baru di C:.
+
+### 6. DEFENSE — Bagaimana SOC mendeteksi atau mencegahnya?
+
+* SOC menggunakan **EDR (Endpoint Detection and Response)** untuk memantau proses yang mencoba membaca RAM milik proses lain (seperti mencoba membaca RAM `lsass.exe`).
+* Mengumpulkan **Memory Dump** (salinan seluruh isi RAM) ketika terjadi insiden kritis untuk dianalisis secara digital forensik.
+
+---
+
+## Hands-on
+
+Kita akan menggunakan **PowerShell** untuk memeriksa metrik penggunaan memori proses pada Windows.
+
+1. Buka **PowerShell** (Run as Administrator).
+2. Jalankan perintah ini untuk melihat metrik memori lengkap dari 5 proses teratas:
+```powershell
+Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5 Name, Id, WorkingSet, VirtualMemorySize, PrivateMemorySize
+
+```
+
+
+* **WorkingSet (WS):** Jumlah RAM fisik nyata yang sedang digunakan proses saat ini (dalam bytes).
+* **PrivateMemorySize (PM):** Memori yang dialokasikan khusus untuk proses tersebut dan tidak bisa dibagi dengan proses lain.
+* **VirtualMemorySize (VM):** Total ruang alamat memori virtual yang dipesan oleh proses.
+
+
+3. Konversi nilai byte tersebut ke **Megabytes (MB)** agar lebih mudah dibaca oleh analyst:
+```powershell
+Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5 Name, Id, @{Name="RAM_Usage_MB";Expression={[math]::round($_.WorkingSet / 1MB, 2)}}
+
+```
+
+
+
+---
+
+## Challenge
+
+**Instruksi:**
+
+1. Gunakan PowerShell untuk mencari proses bernama **`svchost`**.
+2. Tampilkan daftar seluruh proses `svchost` beserta **ID (PID)**, **WorkingSet dalam MB**, dan **Path lokasi eksekusinya (Path)**.
+3. Tuliskan perintah PowerShell yang kamu gunakan dan cantumkan **satu contoh baris outputnya**.
+
+*(Kerjakan sendiri di komputermu, jangan beri jawaban sebelum mencoba!)*
+
+---
+
+## SOC Connection
+
+Saat terjadi serangan serangan ransomware atau peretasan tingkat tinggi, aturan emas pertama seorang *Incident Responder* atau *SOC Analyst* adalah:
+
+> **"JANGAN MATIKAN KOMPUTER TERINFEKSI!"**
+
+Jika komputer dimatikan (*shutdown/restart*), seluruh **Volatile Data** di dalam RAM (kunci enkripsi ransomware, jejak koneksi peretas, dan malware di memori) akan terhapus selamanya, sehingga kamu kehilangan bukti vital untuk investigasi.
+
+---
+
+## Evidence
+
+Simpan ke dalam catatan/folder bukti belajar:
+
+1. **Screenshot** atau **text snippet** hasil eksekusi perintah PowerShell pada bagian **Hands-on**.
+2. Perintah PowerShell dan hasil output untuk bagian **Challenge**.
+
+---
+
+## Self Test
+
+Jawab pertanyaan ini di lembar kerja/catatanmu:
+
+1. Mengapa mematikan komputer yang terinfeksi malware bisa menyulitkan investigasi SOC Analyst?
+2. Apa yang dimaksud dengan *Fileless Malware*?
+3. Mengapa proses `lsass.exe` sering menjadi target utama serangan *Credential Dumping* oleh penyerang?
+4. Sebutkan perbedaan antara *Physical Memory* (RAM nyata/WorkingSet) dan *Virtual Memory*!
+5. Apa istilah untuk tindakan mengambil salinan seluruh isi RAM ke dalam sebuah file untuk dianalisis nanti?
+
+---
+
+## Pass Criteria
+
+Kamu dianggap **LULUS Day 2** jika:
+
+1. Berhasil menjalankan perintah kustomisasi PowerShell untuk memformat tampilan konsumsi memori proses dalam satuan MB.
+2. Menyelesaikan **Challenge** dengan perintah PowerShell yang tepat.
+3. Jawab seluruh pertanyaan **Self Test** dengan logis dan menggunakan pemahamanmu sendiri.
+
+---
+
+### MENTOR NOTICE:
+
+Kirimkan **Jawaban Challenge**, **Evidence (Text/Screenshot)**, dan **Jawaban Self Test** Day 2 milikmu. Saya akan mengevaluasi apakah kamu sudah siap lanjut ke **DAY 3 — Operating System Architecture & Kernel/User Mode**.
