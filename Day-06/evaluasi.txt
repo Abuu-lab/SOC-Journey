@@ -1,0 +1,619 @@
+Bagus. Aku sudah cek **semua Day 6**, bukan hanya command-nya. Secara keseluruhan kamu **sudah menangkap konsep utamanya**, tapi ada **2–3 konsep yang perlu diluruskan** supaya tidak terbawa ke Day berikutnya.
+
+## 🟢 HASIL DAY 6: PASSED — dengan beberapa koreksi
+
+Kamu **belum perlu mengulang seluruh Day 6**. Kita hanya perbaiki bagian yang masih kurang tepat.
+
+---
+
+# 1. TASK 1 — Metadata ✅
+
+Hasilmu:
+
+```text
+Name           : svchost.exe
+Length         : 92480
+CreationTime   : 5/13/2026 4:10:56 PM
+LastWriteTime  : 5/13/2026 4:10:56 PM
+LastAccessTime : 9/23/2026 7:47:02 PM
+```
+
+**Benar.**
+
+Kamu sudah bisa mengambil metadata file.
+
+Yang penting kamu pahami:
+
+```text
+CreationTime
+    ↓
+kapan file dibuat
+
+LastWriteTime
+    ↓
+kapan isi/atribut tertentu terakhir ditulis/diubah
+
+LastAccessTime
+    ↓
+kapan file terakhir diakses menurut timestamp filesystem
+```
+
+Dan benar bahwa metadata memberikan **context**, bukan langsung menentukan malware/benign.
+
+---
+
+# 2. TASK 2 — Digital Signature ✅
+
+Hasil:
+
+```text
+Status : Valid
+```
+
+Ini bagus.
+
+Tapi ada satu hal penting:
+
+Kamu menyebut:
+
+> "kode digital signature"
+
+Lebih tepat jangan menyebutnya sebagai **kode**.
+
+`SignerCertificate` yang kamu lihat adalah informasi mengenai **certificate yang digunakan untuk signature**.
+
+Jadi:
+
+```text
+Digital Signature
+       ↓
+Certificate
+       ↓
+Signer / publisher information
+       ↓
+Windows validates the signature
+```
+
+Untuk sekarang cukup ingat:
+
+> **Digital Signature membantu kita memeriksa siapa yang menandatangani file dan apakah signature dapat divalidasi.**
+
+Dan:
+
+```text
+Valid ≠ pasti aman
+```
+
+---
+
+# 3. TASK 3 — SHA-256 ✅
+
+Hash kamu:
+
+```text
+42E1DAFDE1096D3B9455D7C8C4A535448537147595ECF0017DFCC5B07FCBB5D5
+```
+
+Benar.
+
+Penjelasanmu juga sudah bagus:
+
+> "Ketika isi file berubah sedikit saja, file hash-nya akan berubah."
+
+Untuk pemahaman dasar **ini benar**.
+
+Jadi:
+
+```text
+File content
+     ↓
+SHA-256 algorithm
+     ↓
+64-character hexadecimal hash
+```
+
+Hash ini kemudian bisa digunakan sebagai **file identifier/fingerprint** untuk dibandingkan dengan threat intelligence pada tahap berikutnya.
+
+---
+
+# 4. CHALLENGE
+
+### 1. Apakah sudah cukup untuk menyatakan malicious?
+
+Jawabanmu:
+
+> "Belum cukup masih banyak evidence yang belum dicari."
+
+✅ **BENAR.**
+
+Ini mindset SOC yang benar.
+
+---
+
+### 2. Minimal 5 evidence tambahan
+
+Kamu memberikan:
+
+* Metadata
+* ExecutablePath
+* CommandLine
+* Digital Signature
+* SHA-256
+* Network
+
+✅ **Lebih dari cukup.**
+
+Tapi ada satu koreksi kecil:
+
+Dalam skenario yang diberikan, kita **sudah memiliki**:
+
+```text
+Executable Path
+CommandLine
+```
+
+Jadi kalau pertanyaannya benar-benar:
+
+> "Evidence tambahan apa yang belum kita punya?"
+
+lebih bagus kamu mencari misalnya:
+
+```text
+Metadata
+Digital Signature
+SHA-256
+Network connections
+File reputation / Threat Intelligence
+User/account
+File creation/modification context
+```
+
+Kamu sebenarnya sudah tahu sebagian besar ini. 👍
+
+---
+
+# 5. Fingerprint file
+
+Jawaban:
+
+> SHA-256 atau hash
+
+✅ **BENAR.**
+
+Untuk konteks kita:
+
+```text
+SHA-256 = fingerprint file
+```
+
+---
+
+# 6. Signature
+
+Jawaban:
+
+> Digital Signature, siapa signernya
+
+🟢 **BENAR.**
+
+Lebih lengkap:
+
+```text
+Digital Signature
+→ status signature
+→ certificate
+→ signer/publisher information
+```
+
+---
+
+# 7. Kapan file dibuat/diubah?
+
+Jawaban:
+
+> Metadata, LastWriteTime, LastAccessTime, CreationTime, Name, Length
+
+🟢 **BENAR**, dengan satu catatan:
+
+`Name` dan `Length` adalah metadata juga, tetapi **tidak memberi tahu kapan file dibuat/diubah**.
+
+Jadi untuk pertanyaan waktu, fokus pada:
+
+```text
+CreationTime
+LastWriteTime
+LastAccessTime
+```
+
+---
+
+# 8. PID vs PPID vs SHA-256 vs Signature vs Metadata
+
+Jawabanmu sudah cukup bagus.
+
+Tapi aku ingin kamu mengubah cara mengingatnya menjadi seperti ini:
+
+### PID
+
+> **ID untuk process saat ini.**
+
+Contoh:
+
+```text
+firefox.exe
+PID 5500
+```
+
+### PPID
+
+> **PID milik parent process.**
+
+Contoh:
+
+```text
+unknown.exe
+PID 4216
+PPID 5500
+```
+
+Artinya:
+
+```text
+unknown.exe
+    ↓
+PPID = 5500
+    ↓
+cari PID 5500
+    ↓
+firefox.exe
+```
+
+### SHA-256
+
+> **Fingerprint berdasarkan content file.**
+
+### Digital Signature
+
+> **Informasi signature/certificate yang membantu memvalidasi publisher/signing identity dan integritas signature.**
+
+### Metadata
+
+> **Informasi tentang file.**
+
+Misalnya:
+
+```text
+Name
+Length
+CreationTime
+LastWriteTime
+LastAccessTime
+```
+
+---
+
+# 9. ⚠️ KOREKSI PENTING: VALID SIGNATURE
+
+Kamu menjawab:
+
+> "bisa saja peretas memilih credential atau meniru agar system mengira bahwa itu valid"
+
+Konsep besarnya kamu sudah menangkap:
+
+> **Valid signature tidak otomatis berarti aman.**
+
+Tetapi jangan menghafal bahwa attacker **"meniru signature"**.
+
+Lebih tepat:
+
+> A malicious file can still have a valid digital signature, misalnya software malicious memang ditandatangani dengan certificate yang sah atau certificate yang sah disalahgunakan/dicuri.
+
+Jadi:
+
+```text
+Valid
+  ↓
+Signature berhasil divalidasi
+  ↓
+BUKAN
+  ↓
+File pasti aman
+```
+
+Ini penting sekali untuk SOC.
+
+---
+
+# 10. ACTIVE RECALL
+
+## A. Process
+
+Jawaban:
+
+> program yang sedang berjalan
+
+🟢 **BENAR.**
+
+Lebih tepat:
+
+> A **process** is an instance of a program currently running under the operating system.
+
+---
+
+## B. PID
+
+Jawabanmu:
+
+> identitas atau ID milik process
+
+🟢 **BENAR.**
+
+---
+
+## C. PPID
+
+> ID milik parent process
+
+🟢 **BENAR.**
+
+---
+
+## D. Service vs Process
+
+Jawabanmu:
+
+> Process itu ada kaitannya dengan service
+
+🟡 **INI YANG PERLU DIPERBAIKI.**
+
+Kamu sudah tahu hubungannya, tetapi belum menjelaskan perbedaannya.
+
+Ingat:
+
+> **Service adalah background component managed by Windows Service Control Manager. Process adalah instance program yang sedang berjalan.**
+
+Contoh Day 5:
+
+```text
+Dhcp Service
+      ↓
+svchost.exe
+PID 2300
+```
+
+Jadi:
+
+```text
+Service ≠ Process
+```
+
+Mereka **berhubungan**, tetapi bukan hal yang sama.
+
+---
+
+# 11. StartName
+
+Jawaban:
+
+> nama account yang sedang menjalankan service
+
+🟢 **BENAR.**
+
+Contoh:
+
+```text
+StartName:
+NT Authority\LocalService
+```
+
+Itu **service account**, bukan nama service.
+
+---
+
+# 12. ExecutablePath vs PathName
+
+Jawabanmu:
+
+> ExecutablePath itu letak process
+> PathName itu letak process dan argument
+
+🟡 Hampir benar.
+
+Koreksi:
+
+### ExecutablePath
+
+Lokasi **executable file**.
+
+```text
+C:\Windows\System32\svchost.exe
+```
+
+### PathName
+
+Bisa berisi:
+
+```text
+Executable path + arguments
+```
+
+Contoh:
+
+```text
+C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p
+```
+
+Dan satu hal:
+
+> `ExecutablePath` bukan "letak process".
+
+Lebih tepat:
+
+> **ExecutablePath = lokasi file executable yang dijalankan oleh process.**
+
+---
+
+# 13. PPID svchost.exe
+
+Jawaban:
+
+> 1424
+
+🟢 **BENAR.**
+
+Karena:
+
+```text
+services.exe PID 1424
+       ↓
+svchost.exe PID 2300
+```
+
+Maka:
+
+```text
+svchost.exe
+PID  = 2300
+PPID = 1424
+```
+
+---
+
+# 14. Apakah langsung kill suspicious process?
+
+Jawabanmu:
+
+> tidak, karena jika langsung kill process kita akan kehilangan bukti penting
+
+🟢 **BENAR.**
+
+Ini sudah menunjukkan mindset investigation.
+
+Tambahan penting:
+
+Jangan selalu menganggap **shutdown PC = otomatis kehilangan semua evidence**, tetapi dalam incident response, tindakan seperti killing process, reboot, atau shutdown **dapat mengubah/menghilangkan volatile evidence** seperti informasi yang ada di memory dan state proses.
+
+Jadi prinsip awal kita:
+
+```text
+Observe
+   ↓
+Collect evidence
+   ↓
+Analyze
+   ↓
+Decide response
+```
+
+bukan:
+
+```text
+Suspicious
+   ↓
+KILL!!!
+```
+
+😄
+
+---
+
+# 15. MINI PROJECT
+
+Bagian metadata:
+
+🟢 **BENAR**
+
+Kamu memahami bahwa metadata memberikan informasi tentang file.
+
+### Digital Signature
+
+Kamu menulis:
+
+> "melihat kode digital signature, mungkin kode itu bisa kita process dan melihat siapa signernya"
+
+🟡 Ini perlu diperbaiki.
+
+Jangan pikir kita harus "memproses kode signature" sendiri.
+
+PowerShell sudah memberikan informasi signature:
+
+```text
+Status
+SignerCertificate
+```
+
+Jadi:
+
+> Digital Signature digunakan untuk memeriksa status signature dan certificate/signer information.
+
+---
+
+# 16. SHA-256
+
+Jawabanmu:
+
+> file Hash, yang dihasilkan dari isi file
+
+🟢 **BENAR.**
+
+Ini sudah cukup kuat.
+
+---
+
+# 17. FINAL ASSESSMENT
+
+Jawaban:
+
+> belum. masih banyak evidence lain seperti commandline, pathname, network data dan lebih banyak lagi
+
+🟢 **BENAR.**
+
+Dan ini justru salah satu hal terpenting yang aku lihat dari Day 6.
+
+Kamu **tidak langsung membuat verdict** hanya karena:
+
+```text
+svchost.exe
+Valid signature
+SHA-256
+```
+
+Kamu memahami:
+
+> **Evidence harus dikumpulkan dan dikorelasikan.**
+
+Itulah dasar SOC thinking.
+
+---
+
+# 🧠 DAY 6 SCORE
+
+| Materi                       | Status             |
+| ---------------------------- | ------------------ |
+| Metadata                     | 🟢 Paham           |
+| Digital Signature            | 🟢 Paham           |
+| SHA-256                      | 🟢 Paham           |
+| PID                          | 🟢 Paham           |
+| PPID                         | 🟢 Paham           |
+| Service vs Process           | 🟡 Perlu penguatan |
+| StartName                    | 🟢 Paham           |
+| ExecutablePath               | 🟢 Paham           |
+| PathName                     | 🟢 Paham           |
+| Evidence-based investigation | 🟢 Paham           |
+| Valid ≠ Safe                 | 🟢 Paham           |
+
+## 🟢 DAY 6: PASSED
+
+Tapi ada **3 kalimat yang ingin kamu hafalkan**, bukan sekadar dibaca:
+
+> **Service ≠ Process.**
+
+> **Valid Digital Signature ≠ Automatically Safe.**
+
+> **One Indicator ≠ Verdict.**
+
+Dan satu lagi dari Day 3–6:
+
+> **Evidence first → conclusion later.**
+
+---
