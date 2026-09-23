@@ -1,0 +1,653 @@
+# 🛡️ DAY 6 — FILE INVESTIGATION
+
+### Hash • Digital Signature • Metadata
+
+Hari ini kita naik satu langkah dari **Process Investigation (Day 3)** dan **Service Investigation (Day 5)**.
+
+Di Day 6, fokus kita adalah:
+
+> **Process → Executable → File → Metadata → Digital Signature → SHA-256**
+
+Tujuan akhirnya bukan sekadar bisa menjalankan command, tetapi kamu mulai berpikir seperti SOC Analyst:
+
+> **“File ini sebenarnya apa? Di mana lokasinya? Kapan dibuat/diubah? Siapa yang menandatangani? Fingerprint-nya apa?”**
+
+---
+
+# 1. REVIEW CEPAT DAY 5
+
+Sebelum masuk materi baru, ingat kembali:
+
+### Service ≠ Process
+
+Contoh:
+
+```text
+Dhcp Service
+      ↓
+svchost.exe
+PID 2300
+      ↓
+services.exe
+PID 1424
+      ↓
+PID 1304
+```
+
+Lebih tepatnya hubungan prosesnya:
+
+```text
+PID 1304
+   ↓
+services.exe PID 1424
+   ↓
+svchost.exe PID 2300
+```
+
+Service **Dhcp** menggunakan/terkait dengan process `svchost.exe` PID `2300`.
+
+### Ingat:
+
+**PID**
+→ ID untuk process saat ini.
+
+**PPID**
+→ nilai PID dari parent process.
+
+**StartName**
+→ account yang digunakan service.
+
+**PathName**
+→ executable path + kemungkinan arguments.
+
+Contoh:
+
+```text
+C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p
+```
+
+Bagian:
+
+```text
+C:\Windows\System32\svchost.exe
+```
+
+adalah executable.
+
+Sedangkan:
+
+```text
+-k LocalServiceNetworkRestricted -p
+```
+
+adalah arguments.
+
+---
+
+# 2. KENAPA FILE INVESTIGATION PENTING?
+
+Misalnya kamu menemukan:
+
+```text
+unknown.exe
+PID: 4216
+Path:
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+```
+
+Kita belum boleh langsung mengatakan:
+
+> "Ini malware."
+
+Kenapa?
+
+Karena **path saja belum cukup**.
+
+Kita perlu mengumpulkan evidence.
+
+Misalnya:
+
+```text
+Process
+   ↓
+Executable Path
+   ↓
+File
+   ↓
+Metadata
+   ↓
+Digital Signature
+   ↓
+SHA-256
+   ↓
+Threat Intelligence
+```
+
+Nah, Day 6 kita belajar bagian tengahnya.
+
+---
+
+# 3. FILE METADATA
+
+**Metadata** adalah informasi mengenai sebuah file.
+
+Contohnya:
+
+* Name
+* Length
+* CreationTime
+* LastWriteTime
+* LastAccessTime
+
+Misalnya:
+
+```text
+Name          : unknown.exe
+Length        : 248832
+CreationTime  : 2026-09-20
+LastWriteTime : 2026-09-21
+```
+
+Informasi ini membantu kita memahami **context** file.
+
+Misalnya file baru dibuat beberapa menit sebelum sebuah suspicious process muncul.
+
+Itu bisa menjadi **additional evidence**.
+
+Tetapi:
+
+> **Metadata ≠ proof of malware**
+
+Metadata membantu investigation, bukan memberikan verdict sendirian.
+
+---
+
+# 4. PRAKTIK 1 — FILE METADATA
+
+Kita gunakan file Windows yang legitimate agar aman:
+
+```text
+C:\Windows\System32\svchost.exe
+```
+
+Jalankan PowerShell:
+
+```powershell
+Get-Item "C:\Windows\System32\svchost.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
+```
+
+Kamu akan mendapatkan informasi seperti:
+
+```text
+Name
+Length
+CreationTime
+LastWriteTime
+LastAccessTime
+```
+
+### Yang harus kamu pahami:
+
+**Name**
+
+Nama file.
+
+**Length**
+
+Ukuran file dalam bytes.
+
+**CreationTime**
+
+Waktu file dibuat.
+
+**LastWriteTime**
+
+Waktu terakhir file dimodifikasi.
+
+**LastAccessTime**
+
+Waktu terakhir file diakses, jika informasi tersebut tersedia/tercatat.
+
+---
+
+# 5. DIGITAL SIGNATURE
+
+Sekarang kita naik satu level.
+
+Windows menggunakan **Authenticode** untuk digital signatures pada executable tertentu.
+
+Command:
+
+```powershell
+Get-AuthenticodeSignature "C:\Windows\System32\svchost.exe"
+```
+
+Perhatikan terutama:
+
+```text
+Status
+SignerCertificate
+```
+
+Status bisa menunjukkan misalnya:
+
+```text
+Valid
+NotSigned
+UnknownError
+HashMismatch
+```
+
+### Kalau `Valid`
+
+Artinya signature dapat divalidasi berdasarkan mekanisme trust Windows.
+
+Tetapi:
+
+> **Valid signature ≠ pasti aman.**
+
+Ini sangat penting untuk SOC.
+
+Sebuah malicious file masih dapat menggunakan certificate yang valid, misalnya jika software berbahaya memang ditandatangani atau certificate yang sah disalahgunakan.
+
+Jadi jangan berpikir:
+
+```text
+Valid = Safe
+```
+
+Gunakan:
+
+```text
+Valid = evidence
+```
+
+---
+
+# 6. `NotSigned` JUGA BUKAN BERARTI MALWARE
+
+Misalnya:
+
+```text
+Status : NotSigned
+```
+
+Jangan langsung:
+
+> "Malware!"
+
+Karena ada legitimate software yang memang tidak memiliki digital signature.
+
+Jadi:
+
+```text
+Signed ≠ Automatically Safe
+Unsigned ≠ Automatically Malicious
+```
+
+Ini adalah mindset penting dalam investigation.
+
+---
+
+# 7. SHA-256
+
+Sekarang kita mencari **fingerprint** file.
+
+Gunakan:
+
+```powershell
+Get-FileHash "C:\Windows\System32\svchost.exe" -Algorithm SHA256
+```
+
+Output akan memiliki:
+
+```text
+Algorithm
+Hash
+Path
+```
+
+Contoh bentuknya:
+
+```text
+Algorithm : SHA256
+Hash      : A1B2C3D4...
+Path      : C:\Windows\System32\svchost.exe
+```
+
+Hash adalah nilai yang dihasilkan berdasarkan isi file.
+
+Kalau isi file berubah, hash biasanya berubah.
+
+Jadi SHA-256 dapat membantu kita menjawab:
+
+> **“File yang sedang saya investigasi ini fingerprint-nya apa?”**
+
+---
+
+# 8. BEDAKAN 3 HAL INI
+
+Ini harus mulai kamu hafalkan.
+
+### Metadata
+
+Menjawab:
+
+> **“Informasi file ini apa?”**
+
+Contoh:
+
+```text
+Size
+CreationTime
+LastWriteTime
+```
+
+---
+
+### Digital Signature
+
+Menjawab:
+
+> **“Siapa yang menandatangani file ini dan apakah signature dapat divalidasi?”**
+
+Contoh:
+
+```text
+Status: Valid
+Signer: Microsoft Corporation
+```
+
+---
+
+### SHA-256
+
+Menjawab:
+
+> **“Fingerprint file ini apa?”**
+
+Contoh:
+
+```text
+SHA256:
+A1B2C3D4...
+```
+
+Memory trick:
+
+```text
+Metadata   → FILE INFORMATION
+Signature  → SIGNER / TRUST
+SHA-256    → FINGERPRINT
+```
+
+---
+
+# 9. SOC INVESTIGATION MINDSET
+
+Sekarang gabungkan Day 3 + Day 5 + Day 6.
+
+Misalnya ditemukan:
+
+```text
+unknown.exe
+PID: 4216
+PPID: 5500
+Path:
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+```
+
+Jangan berhenti di sana.
+
+Kita bisa membuat investigation chain:
+
+```text
+Process
+   ↓
+PID
+   ↓
+PPID
+   ↓
+Parent Process
+   ↓
+Executable Path
+   ↓
+File
+   ↓
+Metadata
+   ↓
+Digital Signature
+   ↓
+SHA-256
+   ↓
+Threat Intelligence
+```
+
+Ini jauh lebih bagus daripada:
+
+> "Namanya unknown.exe, berarti virus."
+
+SOC Analyst bekerja dengan **evidence**, bukan tebakan.
+
+---
+
+# 10. HANDS-ON LAB DAY 6
+
+Sekarang giliran kamu.
+
+Kita akan menggunakan:
+
+```text
+C:\Windows\System32\svchost.exe
+```
+
+### TASK 1 — Metadata
+
+Jalankan:
+
+```powershell
+Get-Item "C:\Windows\System32\svchost.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
+```
+
+Catat hasilnya.
+
+---
+
+### TASK 2 — Digital Signature
+
+Jalankan:
+
+```powershell
+Get-AuthenticodeSignature "C:\Windows\System32\svchost.exe"
+```
+
+Perhatikan:
+
+```text
+Status
+SignerCertificate
+```
+
+Kirim hasilnya.
+
+---
+
+### TASK 3 — SHA-256
+
+Jalankan:
+
+```powershell
+Get-FileHash "C:\Windows\System32\svchost.exe" -Algorithm SHA256
+```
+
+Kirim hasilnya.
+
+---
+
+# 11. CHALLENGE DAY 6 🧠
+
+Jangan cari jawabannya dulu.
+
+Bayangkan kamu mendapat alert:
+
+```text
+Process: unknown.exe
+PID: 4216
+PPID: 5500
+Parent: firefox.exe
+
+Path:
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+
+CommandLine:
+unknown.exe -update
+```
+
+Kamu sekarang sudah punya ilmu Day 3 + Day 4 + Day 5 + Day 6.
+
+### Pertanyaan:
+
+**1.** Apakah informasi di atas sudah cukup untuk menyatakan `unknown.exe` malicious?
+
+**2.** Sebutkan minimal **5 evidence** tambahan yang ingin kamu periksa.
+
+**3.** Kalau ingin mengetahui fingerprint file `unknown.exe`, apa yang kamu cari?
+
+**4.** Kalau ingin mengetahui apakah file tersebut memiliki signature, apa yang kamu periksa?
+
+**5.** Kalau ingin mengetahui kapan file dibuat/diubah, apa yang kamu periksa?
+
+**6.** Jelaskan perbedaan:
+
+```text
+PID
+PPID
+SHA-256
+Digital Signature
+Metadata
+```
+
+**7.** Apa arti:
+
+```text
+Valid Digital Signature
+```
+
+dan mengapa itu **tidak otomatis berarti file tersebut aman?**
+
+---
+
+# 12. ACTIVE RECALL DAY 1–5 🔄
+
+Sekarang jangan buka catatan kalau bisa.
+
+Jawab dari ingatan:
+
+**A.** Apa itu Process?
+
+**B.** Apa fungsi PID?
+
+**C.** Apa arti PPID?
+
+**D.** Apa perbedaan Service dan Process?
+
+**E.** Apa fungsi `StartName` pada Windows Service?
+
+**F.** Apa perbedaan `ExecutablePath` dan `PathName`?
+
+**G.** Dalam:
+
+```text
+services.exe PID 1424
+      ↓
+svchost.exe PID 2300
+```
+
+berapa PPID `svchost.exe`?
+
+**H.** Kalau kamu menemukan process suspicious, apakah langsung kill process tersebut? Jelaskan alasanmu.
+
+---
+
+# 13. DAY 6 MINI PROJECT
+
+Buat satu investigation sederhana berdasarkan:
+
+```text
+svchost.exe
+```
+
+Gunakan hasil dari tiga command tadi.
+
+Format laporan:
+
+```text
+=== DAY 6 FILE INVESTIGATION ===
+
+File:
+C:\Windows\System32\svchost.exe
+
+1. Metadata
+Name:
+Length:
+CreationTime:
+LastWriteTime:
+LastAccessTime:
+
+2. Digital Signature
+Status:
+Signer:
+
+3. SHA-256
+Hash:
+
+4. Analysis
+Apa yang bisa disimpulkan dari metadata?
+
+Apa yang bisa disimpulkan dari digital signature?
+
+Apa fungsi SHA-256?
+
+5. Final Assessment
+Apakah evidence yang tersedia sudah cukup
+untuk menentukan malicious atau benign?
+Jelaskan.
+```
+
+**Jangan khawatir kalau belum bisa mengisi bagian analysis dengan sempurna.** Justru dari jawabanmu aku bisa melihat bagian mana yang masih belum benar-benar masuk.
+
+---
+
+## 🎯 TARGET DAY 6
+
+Setelah selesai, kamu seharusnya bisa melihat sebuah executable dan berpikir:
+
+```text
+Where is the file?
+        ↓
+What are its metadata?
+        ↓
+Is it signed?
+        ↓
+Who signed it?
+        ↓
+What is its SHA-256?
+        ↓
+What other evidence do I need?
+```
+
+Bukan:
+
+```text
+unknown.exe = malware
+```
+
+Karena prinsip kita tetap:
+
+> **UNUSUAL ≠ MALICIOUS**
+> **ONE INDICATOR ≠ VERDICT**
+> **EVIDENCE FIRST → CONCLUSION LATER**
+
+Sekarang **kerjakan Task 1–3 + Challenge + Active Recall**. Kirim semuanya sekaligus. Aku akan koreksi **Day 6 secara keseluruhan**, dan kalau masih ada bagian yang belum kuat, kita ulang bagian itu dulu—**belum Day 7**.
