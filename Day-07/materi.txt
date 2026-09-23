@@ -1,0 +1,797 @@
+Betul. Kita pakai aturan evaluasi yang kamu tetapkan:
+
+**76–100% = PASS**, meskipun ada beberapa kesalahan kecil. Kesalahan yang belum sempurna akan **diingatkan kembali pada Day berikutnya melalui active recall**, bukan menghambat progres.
+
+Jadi Day 6 **PASSED**, dan kita langsung lanjut.
+
+# 🛡️ DAY 7 — WINDOWS PROCESS INVESTIGATION: PROCESS TREE & COMMAND LINE
+
+Hari ini kita menggabungkan **Day 3 + Day 4 + Day 5 + Day 6**.
+
+Fokus utama:
+
+> **Process → Parent Process → Command Line → Executable → File → Signature → Hash**
+
+Target Day 7 adalah mulai bisa melihat sebuah process dan bertanya:
+
+> **“Kenapa process ini berjalan? Siapa yang menjalankannya? File apa yang dijalankan? Dengan command apa? Dan apakah konteksnya masuk akal?”**
+
+Ini mulai mendekati cara berpikir seorang **SOC Analyst** saat melakukan endpoint investigation.
+
+---
+
+# 1. REVIEW DAY 6
+
+Sebelum materi baru, kita ingat kembali tiga hal:
+
+### Metadata
+
+Memberikan informasi tentang file:
+
+```text
+Name
+Length
+CreationTime
+LastWriteTime
+LastAccessTime
+```
+
+### Digital Signature
+
+Membantu memeriksa:
+
+```text
+Status
+Certificate
+Signer / publisher information
+```
+
+Ingat:
+
+> **Valid ≠ Automatically Safe**
+
+### SHA-256
+
+Fingerprint berdasarkan content file.
+
+```text
+File
+ ↓
+SHA-256
+ ↓
+Hash
+```
+
+Hash bisa digunakan kemudian untuk **Threat Intelligence**.
+
+---
+
+# 2. KENAPA PROCESS TREE PENTING?
+
+Misalnya SOC menemukan:
+
+```text
+unknown.exe
+PID 4216
+```
+
+Kalau kita hanya melihat:
+
+```text
+unknown.exe
+```
+
+informasinya sedikit.
+
+Tetapi kalau kita melihat:
+
+```text
+explorer.exe
+    ↓
+firefox.exe
+    ↓
+unknown.exe
+```
+
+kita mendapatkan **context**.
+
+Kita mulai bertanya:
+
+> Kenapa Firefox membuat process tersebut?
+
+Kemudian kita menemukan:
+
+```text
+firefox.exe
+    ↓
+unknown.exe
+```
+
+Ini belum otomatis malicious.
+
+Tetapi menjadi **suspicious context** yang perlu diperiksa.
+
+---
+
+# 3. PROCESS TREE
+
+**Process Tree** adalah hubungan antara process dan parent process.
+
+Contoh:
+
+```text
+services.exe
+      ↓
+svchost.exe
+      ↓
+child process
+```
+
+Atau:
+
+```text
+explorer.exe
+      ↓
+powershell.exe
+      ↓
+something.exe
+```
+
+Kita dapat membaca:
+
+```text
+Parent
+  ↓
+Child
+```
+
+Contoh:
+
+```text
+PID 5000
+explorer.exe
+
+PID 5500
+powershell.exe
+PPID 5000
+```
+
+Maka:
+
+```text
+explorer.exe PID 5000
+        ↓
+powershell.exe PID 5500
+```
+
+Karena:
+
+```text
+powershell.exe PPID = 5000
+```
+
+---
+
+# 4. COMMAND LINE
+
+Salah satu evidence penting dalam process investigation adalah:
+
+> **Command Line**
+
+Misalnya process:
+
+```text
+powershell.exe
+```
+
+Nama process saja belum banyak memberi informasi.
+
+Tetapi:
+
+```text
+powershell.exe -ExecutionPolicy Bypass -File C:\Temp\update.ps1
+```
+
+memberikan jauh lebih banyak context.
+
+Kita bisa melihat:
+
+* executable
+* arguments
+* script/file yang dipanggil
+* parameter
+* lokasi file
+* action yang diminta
+
+Karena itu:
+
+> **Process Name ≠ Full Context**
+
+---
+
+# 5. COMMAND LINE ≠ EXECUTABLE PATH
+
+Ini harus jelas.
+
+Misalnya:
+
+```text
+ExecutablePath:
+C:\Windows\System32\cmd.exe
+```
+
+Sedangkan:
+
+```text
+CommandLine:
+cmd.exe /c whoami
+```
+
+### ExecutablePath
+
+Menjawab:
+
+> **File executable-nya berada di mana?**
+
+### CommandLine
+
+Menjawab:
+
+> **Process tersebut dijalankan dengan command/arguments apa?**
+
+---
+
+# 6. PRAKTIK 1 — MELIHAT PROCESS TREE
+
+Gunakan PowerShell:
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId
+```
+
+Kamu sudah pernah menggunakan command ini di Day 3.
+
+Hari ini jangan sekadar menjalankan.
+
+Coba cari hubungan:
+
+```text
+Process
+PID
+PPID
+```
+
+Cari satu process yang memiliki parent process yang bisa kamu identifikasi.
+
+---
+
+# 7. PRAKTIK 2 — MELIHAT COMMAND LINE
+
+Gunakan:
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, CommandLine
+```
+
+Cari minimal **3 process**.
+
+Untuk setiap process, lihat:
+
+```text
+Name
+PID
+PPID
+CommandLine
+```
+
+Perhatikan apakah command line:
+
+* kosong
+* hanya executable
+* mempunyai arguments
+* menunjuk ke file/script tertentu
+
+---
+
+# 8. PRAKTIK 3 — GABUNGKAN SEMUANYA
+
+Sekarang gunakan:
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Ini menjadi salah satu command penting kita.
+
+Kamu mendapatkan:
+
+```text
+Name
+ProcessId
+ParentProcessId
+ExecutablePath
+CommandLine
+```
+
+Bayangkan SOC mendapatkan:
+
+```text
+Name:
+unknown.exe
+
+ProcessId:
+4216
+
+ParentProcessId:
+5500
+
+ExecutablePath:
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+
+CommandLine:
+unknown.exe -update
+```
+
+Sekarang kamu memiliki jauh lebih banyak evidence.
+
+---
+
+# 9. INVESTIGATION CHAIN
+
+Hari ini kita mulai menggunakan pola:
+
+```text
+Process
+ ↓
+PID
+ ↓
+PPID
+ ↓
+Parent Process
+ ↓
+ExecutablePath
+ ↓
+CommandLine
+ ↓
+File
+ ↓
+Metadata
+ ↓
+Digital Signature
+ ↓
+SHA-256
+```
+
+Tidak semua investigation harus selalu menggunakan semuanya.
+
+Tetapi ini adalah **mental model**.
+
+---
+
+# 10. CONTOH INVESTIGATION
+
+Misalnya:
+
+```text
+Process:
+update.exe
+
+PID:
+6000
+
+PPID:
+5000
+
+Parent:
+powershell.exe
+
+ExecutablePath:
+C:\Users\User\AppData\Local\Temp\update.exe
+
+CommandLine:
+update.exe -silent
+```
+
+Kita belum boleh mengatakan:
+
+> malware.
+
+Kita hanya mengatakan:
+
+> **The process has suspicious characteristics and requires further investigation.**
+
+Evidence yang sudah ada:
+
+```text
+1. Parent Process
+2. Executable Path
+3. Command Line
+4. PID / PPID
+```
+
+Kemudian kita bisa lanjut:
+
+```text
+5. Metadata
+6. Digital Signature
+7. SHA-256
+8. Network Activity
+9. Threat Intelligence
+```
+
+---
+
+# 11. ACTIVE RECALL — DAY 1–6
+
+Sekarang sebelum challenge, kita ulang sedikit materi lama.
+
+### Q1
+
+Apa perbedaan:
+
+```text
+PID
+PPID
+```
+
+---
+
+### Q2
+
+Jika:
+
+```text
+firefox.exe
+PID 5500
+
+unknown.exe
+PID 4216
+PPID 5500
+```
+
+siapa parent `unknown.exe`?
+
+---
+
+### Q3
+
+Apa fungsi `ExecutablePath`?
+
+---
+
+### Q4
+
+Apa fungsi `CommandLine`?
+
+---
+
+### Q5
+
+Apa fungsi `StartName` pada Windows Service?
+
+---
+
+### Q6
+
+Apa perbedaan **Service** dan **Process**?
+
+---
+
+### Q7
+
+Apa fungsi SHA-256?
+
+---
+
+### Q8
+
+Apa fungsi Digital Signature?
+
+---
+
+### Q9
+
+Apakah:
+
+```text
+Valid Digital Signature
+```
+
+berarti:
+
+```text
+Definitely Safe
+```
+
+?
+
+Jelaskan.
+
+---
+
+### Q10
+
+Kalau menemukan process suspicious, apakah langsung kill process?
+
+Kenapa?
+
+---
+
+# 12. DAY 7 CHALLENGE 🧠
+
+Sekarang kasus baru.
+
+SOC menerima alert:
+
+```text
+Process:
+powershell.exe
+
+PID:
+8120
+
+PPID:
+5000
+
+ExecutablePath:
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+
+CommandLine:
+powershell.exe -ExecutionPolicy Bypass -File C:\Users\Buya\AppData\Local\Temp\update.ps1
+```
+
+Parent process:
+
+```text
+explorer.exe
+PID 5000
+```
+
+### Pertanyaan:
+
+**1.** Buat process tree berdasarkan informasi tersebut.
+
+---
+
+**2.** Apa yang bisa kamu simpulkan dari `PID` dan `PPID`?
+
+---
+
+**3.** Apa yang bisa kamu simpulkan dari `ExecutablePath`?
+
+---
+
+**4.** Apa informasi tambahan yang diberikan `CommandLine` dibandingkan hanya melihat `powershell.exe`?
+
+---
+
+**5.** Apakah informasi tersebut sudah cukup untuk mengatakan bahwa PowerShell tersebut malicious?
+
+Jelaskan.
+
+---
+
+**6.** Sebutkan minimal **5 evidence tambahan** yang ingin kamu periksa.
+
+---
+
+**7.** Kalau kamu ingin memeriksa file:
+
+```text
+C:\Users\Buya\AppData\Local\Temp\update.ps1
+```
+
+evidence apa saja yang ingin kamu cari?
+
+Gunakan ilmu Day 6.
+
+---
+
+**8.** Jika file tersebut memiliki:
+
+```text
+Digital Signature: Valid
+```
+
+apakah investigation selesai?
+
+Kenapa?
+
+---
+
+# 13. DAY 7 HANDS-ON MINI INVESTIGATION
+
+Sekarang lakukan investigation terhadap process yang benar-benar ada di laptopmu.
+
+Gunakan:
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Pilih **3 process** yang menarik.
+
+Jangan pilih hanya berdasarkan "nama aneh".
+
+Pilih process yang menurutmu menarik untuk dianalisis.
+
+Untuk masing-masing:
+
+```text
+Process:
+PID:
+PPID:
+Parent Process:
+ExecutablePath:
+CommandLine:
+```
+
+Kemudian jawab:
+
+### Analysis
+
+**1.** Apakah process tersebut terlihat normal atau perlu investigation lebih lanjut?
+
+**2.** Evidence apa yang membuatmu berpikir demikian?
+
+**3.** Evidence apa yang masih ingin kamu cari?
+
+**4.** Kalau executable-nya ingin kamu investigasi lebih dalam, apa yang akan kamu lakukan?
+
+Gunakan:
+
+```text
+Metadata
+Digital Signature
+SHA-256
+```
+
+yang sudah dipelajari Day 6.
+
+---
+
+# 14. MINI SOC REPORT
+
+Setelah selesai, buat laporan sederhana:
+
+```text
+=== DAY 7 PROCESS INVESTIGATION ===
+
+Process:
+PID:
+PPID:
+Parent Process:
+
+ExecutablePath:
+
+CommandLine:
+
+Analysis:
+
+Evidence ditemukan:
+1.
+2.
+3.
+
+Evidence yang masih diperlukan:
+1.
+2.
+3.
+
+Assessment:
+Benign / Suspicious / Belum dapat ditentukan
+
+Reason:
+```
+
+**Catatan penting:**
+`Benign / Suspicious / Belum dapat ditentukan` bukan berarti kamu harus memaksakan verdict. Kalau evidence belum cukup, **“Belum dapat ditentukan” adalah jawaban yang valid**.
+
+---
+
+# 15. ATTACK METHOD & DEFENSE — DAY 7
+
+Sekarang sedikit pengenalan SOC terhadap attack technique.
+
+Attackers dapat menggunakan **PowerShell** untuk menjalankan command atau script pada Windows.
+
+Contoh sederhana:
+
+```text
+powershell.exe
+       ↓
+script.ps1
+       ↓
+action
+```
+
+Karena PowerShell merupakan legitimate Windows tool, keberadaannya sendiri **bukan bukti malware**.
+
+Yang perlu diperiksa adalah **context**:
+
+```text
+Parent Process
+CommandLine
+User
+Script Path
+File
+Network
+Event Logs
+```
+
+### Defense
+
+SOC dapat memonitor:
+
+* PowerShell process creation
+* Command Line
+* Parent Process
+* Script execution
+* Windows Event Logs
+* Endpoint telemetry
+
+Jadi prinsipnya:
+
+> **Living-off-the-land / legitimate tools can be abused, so context matters.**
+
+Kita belum perlu masuk terlalu dalam ke PowerShell attack technique sekarang. Hari ini fokusnya tetap **process investigation**.
+
+---
+
+# 🎯 TARGET DAY 7
+
+Setelah Day 7, kamu harus mulai bisa melihat:
+
+```text
+powershell.exe
+PID 8120
+PPID 5000
+Path:
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+
+Command:
+powershell.exe -ExecutionPolicy Bypass -File ...
+```
+
+dan tidak berhenti di:
+
+> "PowerShell = bahaya."
+
+Tetapi berpikir:
+
+```text
+Who started it?
+       ↓
+What PID?
+       ↓
+What parent?
+       ↓
+What executable?
+       ↓
+What command?
+       ↓
+What file?
+       ↓
+What metadata?
+       ↓
+What signature?
+       ↓
+What hash?
+       ↓
+What network activity?
+       ↓
+What other evidence?
+```
+
+Itulah **SOC investigation thinking** yang sedang kita bangun sedikit demi sedikit.
+
+### Status aturan belajar kita
+
+**76–100% → PASSED → lanjut.**
+**Di bawah 76% → kita perbaiki bagian yang belum kuat.**
+
+Dan **kesalahan kecil yang masih tersisa akan kita bawa sebagai reminder ke active recall Day berikutnya**, bukan otomatis mengulang satu hari penuh.
