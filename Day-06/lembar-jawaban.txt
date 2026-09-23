@@ -1,0 +1,170 @@
+GPT
+Task 1
+Get-Item "C:\Windows\System32\svchost.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
+
+Name           : svchost.exe
+Length         : 92480
+CreationTime   : 5/13/2026 4:10:56 PM
+LastWriteTime  : 5/13/2026 4:10:56 PM
+LastAccessTime : 9/23/2026 7:47:02 PM
+
+Task 2
+Digital Signature
+
+Jalankan:
+Get-AuthenticodeSignature "C:\Windows\System32\svchost.exe"
+
+SignerCertificate                         Status                                 Path
+-----------------                         ------                                 ----
+DC91E564D5BC1E3A8E02D6A8508682ABEA8A2443  Valid                                  svchost.exe
+
+TASK 3 — SHA-256
+
+Jalankan:
+Get-FileHash "C:\Windows\System32\svchost.exe" -Algorithm SHA256
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          42E1DAFDE1096D3B9455D7C8C4A535448537147595ECF0017DFCC5B07FCBB5D5       C:\Windows\System32\svchost.exe
+
+
+CHALLENGE DAY 6 🧠
+
+Process: unknown.exe
+PID: 4216
+PPID: 5500
+Parent: firefox.exe
+
+Path:
+C:\Users\Buya\AppData\Local\Temp\unknown.exe
+
+CommandLine:
+unknown.exe -update
+
+Kamu sekarang sudah punya ilmu Day 3 + Day 4 + Day 5 + Day 6.
+
+Pertanyaan:
+
+1. Apakah informasi di atas sudah cukup untuk menyatakan unknown.exe malicious?
+belum cukup masih banyak evidence yg belum dicari
+
+2. Sebutkan minimal 5 evidence tambahan yang ingin kamu periksa.
+- Metadata
+- Executablepath
+- CommandLine
+- Digital Signature
+- SHA 256
+- Network
+
+3. Kalau ingin mengetahui fingerprint file unknown.exe, apa yang kamu cari?
+SHA 256 atau hash nya
+
+4. Kalau ingin mengetahui apakah file tersebut memiliki signature, apa yang kamu periksa?
+Digital Signature, siapa signer nya
+
+5. Kalau ingin mengetahui kapan file dibuat/diubah, apa yang kamu periksa?
+Metadata, lastwritetime,lastaccesstime,lastcreationtime,name,length
+
+6. Jelaskan perbedaan:
+
+PID: ID milik process
+PPID: ID milik Parent Process
+SHA-256: file Hash, kode yang berasal atau dari isi file tersebut
+Digital Signature: untuk melihat siapa signernya, contoh kita bisa melihat
+Metadata
+untuk melihat informasi contohnya kapan diubah,kapandibuat, kapan di akses, namanya
+
+7. Apa arti:
+
+Valid Digital Signature
+itu berarti programnya sudah terkonfirmasi valid oleh system
+
+dan mengapa itu tidak otomatis berarti file tersebut aman?
+bisa saja peretas memilih kredential atau meniru agar system mengira bahwa itu valid
+
+
+ACTIVE RECALL DAY 1–5 🔄
+
+A. Apa itu Process?
+adalah program yang sedang berjalan
+
+B. Apa fungsi PID?
+identitas atau ID milik process tersebut untuk membantu memudahkan investigasi
+
+C. Apa arti PPID?
+ID milik parent process
+
+D. Apa perbedaan Service dan Process?
+Process itu ada kaitannya dengan service
+
+E. Apa fungsi StartName pada Windows Service?
+adalah nama account yang sedang menjalankan service
+
+F. Apa perbedaan ExecutablePath dan PathName?
+ExecutablePath itu letak process
+pathname itu didalamnya ada letakprocess dan ada isi argument
+
+G. Dalam:
+
+services.exe PID 1424
+      ↓
+svchost.exe PID 2300
+
+berapa PPID svchost.exe?
+1424
+
+H. Kalau kamu menemukan process suspicious, apakah langsung kill process tersebut? Jelaskan alasanmu.
+tidak, karena jika langsung kill process kita akan kehilangan bukti penting
+apalagi langsung shutdown PC, akan kehilangan jejak
+karena biasanya malicious itu prosesnya kebanyakan di ram
+
+
+DAY 6 MINI PROJECT
+
+Buat satu investigation sederhana berdasarkan:
+
+svchost.exe
+
+Gunakan hasil dari tiga command tadi.
+
+Format laporan:
+
+=== DAY 6 FILE INVESTIGATION ===
+
+File:
+C:\Windows\System32\svchost.exe
+
+1. Metadata
+Name           : svchost.exe
+Length         : 92480
+CreationTime   : 5/13/2026 4:10:56 PM
+LastWriteTime  : 5/13/2026 4:10:56 PM
+LastAccessTime : 9/23/2026 8:27:02 PM
+
+2. Digital Signature
+SignerCertificate                         Status                                 Path
+-----------------                         ------                                 ----
+DC91E564D5BC1E3A8E02D6A8508682ABEA8A2443  Valid                                  svchost.exe
+
+3. SHA-256
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          42E1DAFDE1096D3B9455D7C8C4A535448537147595ECF0017DFCC5B07FCBB5D5       C:\Windows\System32\svchost.exe
+
+4. Analysis
+Apa yang bisa disimpulkan dari metadata?
+kita bisa menyimpulkan aktifitas pemakaian seperti kapan dibuat,kapan diubah,kapan diakses
+
+Apa yang bisa disimpulkan dari digital signature?
+kita bisa melihat kode digital signature, mungkin kode itu bisa kita process dan melihat siapa signernya
+
+Apa fungsi SHA-256?
+itu adalah file Hash, yang dihasilkan dari isi file, Ketika isi file berubah sedikit saja. file hash nya akan berubah
+
+5. Final Assessment
+Apakah evidence yang tersedia sudah cukup
+untuk menentukan malicious atau benign?
+Jelaskan. belum. masih banyak evidence lain
+seperti commandline,pathname,network data dan lebih bnyak lagi cuman saya belum tau
+
