@@ -1,0 +1,132 @@
+Iya, benar 😄 **Day 6 commands belum aku pisahkan.** Ini khusus kumpulan command Day 6 saja, seperti format sebelumnya.
+
+# 💻 DAY 6 — COMMANDS
+
+### 1. File Metadata
+
+```powershell
+Get-Item "C:\Windows\System32\svchost.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
+```
+
+Untuk melihat:
+
+* `Name` → nama file
+* `Length` → ukuran file
+* `CreationTime` → waktu dibuat
+* `LastWriteTime` → terakhir ditulis/diubah
+* `LastAccessTime` → terakhir diakses
+
+---
+
+### 2. Digital Signature
+
+```powershell
+Get-AuthenticodeSignature "C:\Windows\System32\svchost.exe"
+```
+
+Fokus pada:
+
+```text
+Status
+SignerCertificate
+```
+
+Contoh:
+
+```text
+Status : Valid
+```
+
+Ingat:
+
+**Valid ≠ Automatically Safe**
+
+---
+
+### 3. SHA-256 Hash
+
+```powershell
+Get-FileHash "C:\Windows\System32\svchost.exe" -Algorithm SHA256
+```
+
+Fokus pada:
+
+```text
+Algorithm
+Hash
+Path
+```
+
+Konsep:
+
+```text
+File
+ ↓
+SHA-256
+ ↓
+Fingerprint / Hash
+```
+
+---
+
+### 4. File Metadata untuk File Lain
+
+Kalau nanti kamu menemukan file suspicious:
+
+```powershell
+Get-Item "C:\path\unknown.exe" |
+Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
+```
+
+---
+
+### 5. Digital Signature untuk File Lain
+
+```powershell
+Get-AuthenticodeSignature "C:\path\unknown.exe"
+```
+
+---
+
+### 6. SHA-256 untuk File Lain
+
+```powershell
+Get-FileHash "C:\path\unknown.exe" -Algorithm SHA256
+```
+
+---
+
+## 🧠 DAY 6 COMMAND MAP
+
+Hafalkan pola sederhananya:
+
+```text
+Get-Item
+    ↓
+Metadata
+
+Get-AuthenticodeSignature
+    ↓
+Digital Signature
+
+Get-FileHash
+    ↓
+SHA-256
+```
+
+Jadi kalau suatu saat kamu menemukan executable suspicious:
+
+```text
+unknown.exe
+     ↓
+Get-Item
+     ↓
+Get-AuthenticodeSignature
+     ↓
+Get-FileHash -Algorithm SHA256
+```
+
+**Itu tiga command utama Day 6.**
+
+Day 7 yang tadi sudah kita mulai tetap lanjut dengan command Day 7; tidak perlu mengulang Day 6.
