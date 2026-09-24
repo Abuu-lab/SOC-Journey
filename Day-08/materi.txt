@@ -1,0 +1,892 @@
+# 🛡️ DAY 8 — WINDOWS USER CONTEXT & PRIVILEGES
+
+### Process siapa yang menjalankan? Account apa yang digunakan? Seberapa tinggi privilege-nya?
+
+Day 7 kita sudah bisa menjawab:
+
+> **Process apa yang berjalan? Siapa parent-nya? File executable-nya di mana? Dan dijalankan dengan command apa?**
+
+Sekarang kita tambahkan satu pertanyaan penting:
+
+> **“Process ini berjalan atas nama siapa?”**
+
+Karena dalam SOC, `powershell.exe` yang dijalankan oleh **user biasa** bisa memiliki konteks berbeda dengan `powershell.exe` yang berjalan sebagai **SYSTEM** atau account berprivilege tinggi.
+
+Hari ini kita belajar **User Context** dan dasar **Privileges**.
+
+---
+
+# 1. REVIEW DAY 7
+
+Ingat investigation chain:
+
+```text
+Process
+   ↓
+PID
+   ↓
+PPID
+   ↓
+Parent Process
+   ↓
+ExecutablePath
+   ↓
+CommandLine
+```
+
+Sekarang kita tambahkan:
+
+```text
+User / Account
+   ↓
+Privilege Context
+```
+
+Sehingga:
+
+```text
+Process
+ ↓
+Who launched / owns the process?
+ ↓
+What account?
+ ↓
+What privilege context?
+```
+
+Ini penting karena **the same executable can have different security implications depending on the user context.**
+
+---
+
+# 2. WINDOWS USER ACCOUNT
+
+Di Windows ada berbagai account/context.
+
+Contoh sederhana:
+
+```text
+Buya
+Administrator
+SYSTEM
+LocalService
+NetworkService
+```
+
+Kita belum perlu menghafal semuanya secara mendalam.
+
+Yang penting sekarang:
+
+> **Process berjalan dalam suatu security context/account.**
+
+Misalnya:
+
+```text
+powershell.exe
+User: Buya
+```
+
+berbeda konteks dengan:
+
+```text
+powershell.exe
+User: SYSTEM
+```
+
+Keduanya sama-sama `powershell.exe`, tetapi **security context-nya berbeda**.
+
+---
+
+# 3. USER ≠ PROCESS
+
+Ini sama seperti konsep Service vs Process.
+
+Jangan mencampurkan:
+
+```text
+User
+Process
+Service
+```
+
+Contoh:
+
+```text
+User:
+Buya
+
+Process:
+powershell.exe
+
+PID:
+8120
+```
+
+Artinya:
+
+> Account `Buya` memiliki/menjalankan process `powershell.exe` tersebut dalam konteks user tersebut.
+
+User bukan process.
+
+---
+
+# 4. APA ITU PRIVILEGE?
+
+**Privilege** adalah permission/ability tertentu yang dimiliki security context.
+
+Sederhananya:
+
+```text
+Low privilege
+     ↓
+akses terbatas
+
+Higher privilege
+     ↓
+akses lebih besar
+```
+
+Contoh sederhana:
+
+User biasa mungkin tidak bisa melakukan beberapa administrative actions.
+
+Sedangkan Administrator atau SYSTEM memiliki kemampuan lebih besar terhadap operating system.
+
+Jadi SOC harus peduli ketika misalnya:
+
+```text
+Normal user
+    ↓
+suddenly launches
+    ↓
+high-privilege process
+```
+
+Karena context tersebut bisa menjadi penting dalam investigation.
+
+Tetapi sekali lagi:
+
+> **High privilege ≠ malicious.**
+
+Administrator dan Windows system components memang membutuhkan privilege tinggi.
+
+---
+
+# 5. KENAPA USER CONTEXT PENTING DALAM SOC?
+
+Bayangkan ada:
+
+```text
+powershell.exe
+PID 8000
+```
+
+Nama process saja belum cukup.
+
+Kita perlu mengetahui:
+
+```text
+Who?
+  ↓
+Which account?
+  ↓
+What parent?
+  ↓
+What command?
+  ↓
+What file?
+```
+
+Misalnya:
+
+```text
+explorer.exe
+    ↓
+powershell.exe
+    ↓
+User: Buya
+```
+
+berbeda konteks dengan:
+
+```text
+services.exe
+    ↓
+powershell.exe
+    ↓
+User: SYSTEM
+```
+
+Kita belum mengatakan salah satu pasti malicious.
+
+Kita mengatakan:
+
+> **The security context is different, therefore the investigation context is different.**
+
+---
+
+# 6. COMMAND — CURRENT USER
+
+Command yang sudah kamu kenal sejak Day 1:
+
+```cmd
+whoami
+```
+
+Contoh:
+
+```text
+buya
+```
+
+Tujuannya:
+
+> melihat identity/security context dari session yang sedang kamu gunakan.
+
+---
+
+# 7. COMMAND — CURRENT USER + GROUPS
+
+Sekarang:
+
+```cmd
+whoami /groups
+```
+
+Ini akan menampilkan groups yang terkait dengan security context kamu.
+
+Misalnya ada group seperti:
+
+```text
+BUILTIN\Administrators
+BUILTIN\Users
+```
+
+Jangan langsung menganggap semua group berarti unrestricted access.
+
+Hari ini cukup pahami:
+
+> **Groups help determine what permissions/privileges a security context may have.**
+
+---
+
+# 8. MELIHAT USER YANG MENJALANKAN PROCESS
+
+Sekarang kita masuk ke bagian yang lebih penting.
+
+PowerShell:
+
+```powershell
+Get-Process -IncludeUserName |
+Select-Object ProcessName, Id, UserName
+```
+
+Perhatikan:
+
+```text
+ProcessName
+Id
+UserName
+```
+
+Contoh:
+
+```text
+ProcessName   Id      UserName
+-----------   --      --------
+firefox      20516   LAPTOP\Buya
+```
+
+Sekarang process investigation kita sudah berkembang.
+
+Sebelumnya:
+
+```text
+Process → PID → PPID
+```
+
+Sekarang:
+
+```text
+Process → PID → PPID → User
+```
+
+---
+
+# 9. GABUNGKAN DENGAN PROCESS INVESTIGATION
+
+Kita sebelumnya mendapatkan:
+
+```text
+powershell.exe
+PID 18636
+PPID 7476
+```
+
+Sekarang kita ingin mengetahui:
+
+> **Who is running PID 18636?**
+
+Kamu bisa menggunakan:
+
+```powershell
+Get-Process -Id 18636 -IncludeUserName |
+Select-Object ProcessName, Id, UserName
+```
+
+Kalau PID tersebut sudah tidak ada, tentu command bisa gagal karena process-nya sudah 종료/exit.
+
+Ini kembali ke pelajaran Day 7:
+
+> **Processes are dynamic.**
+
+---
+
+# 10. USER CONTEXT + PROCESS TREE
+
+Sekarang mental model kita:
+
+```text
+explorer.exe
+PID 5000
+User: Buya
+      ↓
+powershell.exe
+PID 8120
+User: Buya
+```
+
+Kita bisa bertanya:
+
+> Who launched it?
+
+> What is the parent?
+
+> Which account owns/runs it?
+
+> What command was used?
+
+> What executable was used?
+
+Itulah **context correlation**.
+
+---
+
+# 11. COMMAND LINE + USER CONTEXT
+
+Misalnya:
+
+```text
+Process:
+powershell.exe
+
+User:
+Buya
+
+CommandLine:
+powershell.exe -File C:\Temp\test.ps1
+```
+
+Kita sekarang tahu lebih banyak daripada hanya:
+
+```text
+powershell.exe
+```
+
+Investigation:
+
+```text
+Process
+ ↓
+User = Buya
+ ↓
+Parent = explorer.exe
+ ↓
+CommandLine = ...
+ ↓
+File = ...
+```
+
+Ini mulai membentuk **timeline dan behavioral context**.
+
+---
+
+# 12. PRAKTIK 1 — IDENTITAS USER
+
+Jalankan:
+
+```cmd
+whoami
+```
+
+Lalu:
+
+```cmd
+whoami /groups
+```
+
+Catat hasil yang menurutmu paling penting.
+
+Tidak perlu copy semua kalau output sangat panjang.
+
+---
+
+# 13. PRAKTIK 2 — PROCESS + USER
+
+Jalankan:
+
+```powershell
+Get-Process -IncludeUserName |
+Select-Object ProcessName, Id, UserName
+```
+
+Cari minimal **3 process**.
+
+Catat:
+
+```text
+ProcessName:
+PID:
+UserName:
+```
+
+---
+
+# 14. PRAKTIK 3 — INVESTIGASI SATU PROCESS
+
+Pilih satu process dari Praktik 2.
+
+Kemudian:
+
+```powershell
+Get-Process -Id <PID> -IncludeUserName |
+Select-Object ProcessName, Id, UserName
+```
+
+Ganti `<PID>` dengan PID milik process yang kamu pilih.
+
+Contoh:
+
+```powershell
+Get-Process -Id 20516 -IncludeUserName |
+Select-Object ProcessName, Id, UserName
+```
+
+---
+
+# 15. PRAKTIK 4 — GABUNGKAN DENGAN DAY 7
+
+Sekarang cari process yang sama menggunakan command Day 7:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = <PID>" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Sekarang kamu punya:
+
+```text
+UserName
+   +
+PID
+   +
+PPID
+   +
+ExecutablePath
+   +
+CommandLine
+```
+
+Ini sudah jauh lebih dekat dengan endpoint investigation.
+
+---
+
+# 16. CHALLENGE DAY 8 🧠
+
+Kasus:
+
+```text
+Process:
+powershell.exe
+
+PID:
+8200
+
+PPID:
+5100
+
+Parent:
+explorer.exe
+
+User:
+Buya
+
+ExecutablePath:
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+
+CommandLine:
+powershell.exe -ExecutionPolicy Bypass -File C:\Users\Buya\AppData\Local\Temp\update.ps1
+```
+
+Jawab:
+
+### 1.
+
+Siapa user yang menjalankan process?
+
+### 2.
+
+Siapa parent process-nya?
+
+### 3.
+
+Apa arti:
+
+```text
+PPID = 5100
+```
+
+### 4.
+
+Apa yang bisa kamu simpulkan dari `ExecutablePath`?
+
+### 5.
+
+Apa yang ditambahkan `User` sebagai evidence dibanding Day 7?
+
+### 6.
+
+Apakah `User = Buya` membuktikan process tersebut benign?
+
+### 7.
+
+Apakah `powershell.exe` dengan user `Buya` otomatis malicious?
+
+### 8.
+
+Apa yang membuat kasus ini perlu investigation lebih lanjut?
+
+### 9.
+
+Sebutkan minimal **5 evidence** yang ingin kamu kumpulkan berikutnya.
+
+### 10.
+
+Bedakan:
+
+```text
+User
+Process
+PID
+PPID
+Privilege
+```
+
+---
+
+# 17. MINI SOC INVESTIGATION
+
+Sekarang buat kasus dari process yang benar-benar ada di laptopmu.
+
+Gunakan:
+
+```powershell
+Get-Process -IncludeUserName |
+Select-Object ProcessName, Id, UserName
+```
+
+Pilih **1 process**.
+
+Kemudian gabungkan dengan:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = <PID>" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Buat laporan:
+
+```text
+=== DAY 8 PROCESS USER CONTEXT INVESTIGATION ===
+
+Process:
+PID:
+PPID:
+User:
+
+Parent Process:
+
+ExecutablePath:
+
+CommandLine:
+
+1. User Context
+Siapa yang menjalankan process?
+
+2. Process Context
+Siapa parent process-nya?
+
+3. File Context
+Di mana executable berada?
+
+4. Command Context
+Bagaimana process dijalankan?
+
+5. Assessment
+Looks normal / Needs investigation / Belum dapat ditentukan
+
+6. Evidence
+Evidence yang sudah dimiliki:
+
+Evidence yang masih diperlukan:
+```
+
+---
+
+# 18. ATTACK METHOD — PRIVILEGE ABUSE
+
+Sekarang sedikit pengenalan cybersecurity.
+
+Salah satu tujuan attacker dalam banyak attack chain adalah memperoleh **higher privileges**.
+
+Secara konsep:
+
+```text
+Normal User
+    ↓
+Exploit / Abuse
+    ↓
+Higher Privilege
+```
+
+Tujuan attacker bisa berupa kemampuan mengakses resource yang sebelumnya tidak dapat diakses.
+
+Ini disebut:
+
+> **Privilege Escalation**
+
+Tetapi hari ini kita **belum belajar teknik privilege escalation secara praktis**.
+
+Kita hanya membangun kemampuan mendeteksi **security context**.
+
+---
+
+# 19. DEFENSE / SOC VIEW
+
+SOC dapat memperhatikan:
+
+```text
+User
++
+Process
++
+Parent Process
++
+CommandLine
++
+Executable
++
+Privilege Context
+```
+
+Contoh:
+
+```text
+Normal user
+      ↓
+Office application
+      ↓
+PowerShell
+      ↓
+suspicious script
+```
+
+Itu memberikan investigator lebih banyak context dibanding hanya melihat:
+
+```text
+powershell.exe
+```
+
+Jadi:
+
+> **Context is more valuable than process name alone.**
+
+---
+
+# 20. ACTIVE RECALL DAY 1–7 🔄
+
+Jawab dari ingatan.
+
+### Q1
+
+Apa itu Process?
+
+### Q2
+
+Apa fungsi PID?
+
+### Q3
+
+Apa arti PPID?
+
+### Q4
+
+Apa perbedaan `ExecutablePath` dan `CommandLine`?
+
+### Q5
+
+Apa fungsi `StartName`?
+
+### Q6
+
+Apa perbedaan Service dan Process?
+
+### Q7
+
+Apa fungsi SHA-256?
+
+### Q8
+
+Apa fungsi Digital Signature?
+
+### Q9
+
+Apa arti `Valid` pada digital signature?
+
+### Q10
+
+Apakah `Valid` berarti file pasti aman?
+
+### Q11
+
+Mengapa process suspicious tidak langsung di-kill?
+
+### Q12
+
+Dalam:
+
+```text
+services.exe PID 1424
+    ↓
+svchost.exe PID 2300
+```
+
+berapa PPID `svchost.exe`?
+
+### Q13
+
+Kalau query PID parent tidak menghasilkan data, apakah otomatis berarti parent process tidak pernah ada?
+
+### Q14
+
+Apa perbedaan:
+
+```text
+Metadata
+SHA-256
+Digital Signature
+```
+
+### Q15
+
+Apa fungsi:
+
+```cmd
+whoami
+```
+
+---
+
+# 💻 DAY 7 — COMMANDS
+
+Sesuai permintaanmu, ini **semua command utama yang kita pelajari di Day 7**:
+
+### 1. Process + PID + PPID
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId
+```
+
+### 2. Process + PID + PPID + CommandLine
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, CommandLine
+```
+
+### 3. Process + PID + PPID + ExecutablePath + CommandLine
+
+```powershell
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+### 🧠 DAY 7 COMMAND MAP
+
+```text
+Get-CimInstance Win32_Process
+        ↓
+Process investigation
+
+Select-Object Name
+        ↓
+Process name
+
+ProcessId
+        ↓
+PID
+
+ParentProcessId
+        ↓
+PPID
+
+ExecutablePath
+        ↓
+WHERE is the executable?
+
+CommandLine
+        ↓
+HOW was it executed?
+```
+
+---
+
+# 🎯 TARGET DAY 8
+
+Hari ini kamu harus mulai berpikir seperti ini:
+
+```text
+PROCESS
+   ↓
+WHO?
+   ↓
+USER
+   ↓
+PARENT?
+   ↓
+PPID
+   ↓
+WHERE?
+   ↓
+EXECUTABLE PATH
+   ↓
+HOW?
+   ↓
+COMMAND LINE
+   ↓
+PRIVILEGE?
+   ↓
+SECURITY CONTEXT
+```
+
+Dan tetap pegang prinsip:
+
+> **Unusual ≠ Malicious**
+
+> **High Privilege ≠ Malicious**
+
+> **One Indicator ≠ Verdict**
+
+> **Evidence First → Conclusion Later**
+
+Kirim **Praktik 1–4 + Challenge + Active Recall + Mini SOC Investigation** sekaligus seperti Day 7. Aku akan hitung berdasarkan aturan kita: **76–100% = PASS**, lalu kesalahan kecil akan kita bawa sebagai **reminder ke Day 9**.
