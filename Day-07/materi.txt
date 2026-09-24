@@ -1,6 +1,4 @@
-Betul. Kita pakai aturan evaluasi yang kamu tetapkan:
 
-**76–100% = PASS**, meskipun ada beberapa kesalahan kecil. Kesalahan yang belum sempurna akan **diingatkan kembali pada Day berikutnya melalui active recall**, bukan menghambat progres.
 
 Jadi Day 6 **PASSED**, dan kita langsung lanjut.
 
