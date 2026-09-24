@@ -1,0 +1,71 @@
+Kerja bagus! Performa kamu di **DAY 3** sangat solid. Inisiatif kamu dalam mencari solusi perintah PowerShell di **Challenge 1** adalah bukti karakter penting seorang SOC Analyst: **inisiatif pemecahan masalah (*problem-solving*)**.
+
+---
+
+## Status Evaluasi: LULUS DAY 3! (Nilai: 9.5 / 10)
+
+### 1. Hands-On Lab Review (100% SUCCESS)
+
+* **LAB 1:** Berhasil mengeksekusi dan membaca driver Kernel yang aktif di RAM (`ACPI.sys`, `afd.sys`, `amdgpio2.sys`).
+* **LAB 2:** Berhasil melakukan query konfigurasi `WinDefend` (`AUTO_START`, `LocalSystem`).
+* **LAB 3:** Berhasil membuat *dummy service* `SOC_Test_Service` dan membersihkannya kembali (`DeleteService SUCCESS`).
+
+---
+
+### 2. Challenge Review
+
+* **Challenge 1:**
+Perintah yang kamu dapatkan sudah **sangat tepat**:
+```powershell
+Get-CimInstance -ClassName Win32_SystemDriver | Where-Object { $_.PathName -notlike "*\System32\drivers\*" -and $_.PathName -ne $null } | Select-Object Name, DisplayName, PathName | Format-Table -AutoSize
+
+```
+
+
+* **Penjelasan Singkat:**
+* **`-notlike "*\System32\drivers\*"`**: Membuang semua driver bawaan lokasi standar.
+* **`-ne $null`**: Membuang hasil yang jalur file-nya kosong agar output rapi.
+
+
+
+
+* **Challenge 2:**
+Hasil dan syntax perintah `Get-Service` tepat.
+* **Challenge 3 (Analisis Log Event ID 7045):**
+1. **True Positive:** Jawabanmu tepat. Path dari folder `Downloads` ditambah eksekusi `nc.exe` (*Netcat*) dengan argumen `cmd.exe` adalah ciri khas **Reverse Shell**.
+2. **LocalSystem:** Jawabanmu benar dari sisi penyamaran. Secara teknis, `LocalSystem` adalah akun dengan hak akses tertinggi di Windows (**NT AUTHORITY\SYSTEM**), lebih tinggi dari Administrator biasa.
+3. **Immediate Containment:** **Isolasi jaringan** adalah tindakan penanganan pertama yang tepat.
+
+
+
+---
+
+## Pembahasan Materi yang Belum Dipahami
+
+Berikut adalah penjelasan sederhana untuk 2 poin pertanyaan yang kamu tanyakan:
+
+### Pertanyaan 3: Bagaimana Alur System Call (Syscall) Bekerja? (Analisis Restoran)
+
+Aplikasi biasa di User Mode (seperti Notepad) **dilarang keras** langsung menyentuh harddisk atau memori.
+
+---
+
+Bayangkan **User Mode** adalah **Pelanggan Restoran**, dan **Kernel Mode** adalah **Dapur Restoran**:
+
+1. **User Application (Notepad):** Kamu (Pelanggan) ingin menyimpan file. Kamu tidak boleh masuk langsung ke dapur memasak sendiri.
+2. **System Call Interface (Pelayan/Waiter):** Kamu memanggil pelayan via fungsi Windows (`WriteFile` / `ntdll.dll`). Pelayan mencatat pesananmu ke dalam format standar (nomor **Syscall**).
+3. **Transition (Pintu Dapur):** Pelayan membawa pesanan melewati pintu khusus (instruksi CPU `syscall`).
+4. **Kernel Mode (Koki/Chef):** Koki di dapur menerima pesanan, memeriksa apakah kamu punya hak (*permission*), lalu menulis data langsung ke harddisk/SSD (**Hardware**).
+5. **Return:** Koki memberitahu pelayan "Selesai", dan pelayan menyampaikan ke Notepad "File Berhasil Disimpan".
+
+---
+
+### Pertanyaan 8: Nomor Event ID untuk Service Baru & Kegunaannya
+
+* **Windows Event ID 7045:** Mencatat setiap ada **Service Baru yang diinstall/dibuat** di dalam sistem.
+* **Windows Event ID 7036:** Mencatat perubahan status service (misal: Service Defender berubah dari **RUNNING** menjadi **STOPPED**).
+
+**Mengapa ini vital bagi SOC Analyst?**
+Penyerang sering menggunakan Service sebagai metode **Persistence** (agar malware otomatis berjalan kembali setiap PC dinyalakan). Memantau Event ID 7045 memberikan peringatan dini (*alert*) saat ada service mencurigakan yang baru dibuat.
+
+---
