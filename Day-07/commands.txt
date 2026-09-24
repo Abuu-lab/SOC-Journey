@@ -1,0 +1,37 @@
+COMMANDS
+
+1. Process + PID + PPID
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId
+2. Process + PID + PPID + CommandLine
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, CommandLine
+3. Process + PID + PPID + ExecutablePath + CommandLine
+Get-CimInstance Win32_Process |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+
+  
+🧠 DAY 7 COMMAND MAP
+Get-CimInstance Win32_Process
+        ↓
+Process investigation
+
+Select-Object Name
+        ↓
+Process name
+
+ProcessId
+        ↓
+PID
+
+ParentProcessId
+        ↓
+PPID
+
+ExecutablePath
+        ↓
+WHERE is the executable?
+
+CommandLine
+        ↓
+HOW was it executed?
