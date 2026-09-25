@@ -1,0 +1,41 @@
+COMMANDS DAY 8
+
+Ini kumpulan command yang kita pelajari hari ini.
+
+1. Current User
+whoami
+
+Fungsi:
+
+Current user / security context
+2. Current User Groups
+whoami /groups
+
+Fungsi:
+
+Group membership dan security context
+3. Semua Process + User
+Get-Process -IncludeUserName |
+Select-Object ProcessName, Id, UserName
+
+Fungsi:
+
+ProcessName
+PID
+UserName
+4. Satu Process + User
+Get-Process -Id <PID> -IncludeUserName |
+Select-Object ProcessName, Id, UserName
+
+Contoh:
+
+Get-Process -Id 6348 -IncludeUserName |
+Select-Object ProcessName, Id, UserName
+5. Satu Process + Full Context
+Get-CimInstance Win32_Process -Filter "ProcessId = <PID>" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+
+Contoh:
+
+Get-CimInstance Win32_Process -Filter "ProcessId = 6348" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
