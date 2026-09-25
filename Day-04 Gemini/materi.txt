@@ -1,0 +1,116 @@
+Bagus sekali! Kalau kamu sudah menguasai konsep PID, PPID, dan Hash dari sumber lain, berarti fondasi analisismu sudah sangat kuat. Kamu sekarang tahu cara mengidentifikasi *siapa* (proses apa) yang sedang berjalan di komputer.
+
+Langkah logis selanjutnya untuk seorang Junior SOC Analyst adalah mencari tahu **dengan siapa proses tersebut berkomunikasi di internet**. Di sinilah kita masuk ke materi **DAY 4**.
+
+---
+
+# DAY 4 (JUNIOR SOC LEVEL) — Network Activity & Connection Tracking
+
+## Objective
+
+Setelah modul ini, kamu mampu:
+
+1. Memahami konsep dasar IP Address dan Port menggunakan analogi sederhana.
+2. Menggunakan perintah `netstat` untuk melihat koneksi jaringan yang sedang aktif di komputermu.
+3. Menghubungkan koneksi jaringan yang mencurigakan kembali ke **PID** (dari pelajaran Day 3) untuk menemukan aplikasi pembuat masalah.
+
+---
+
+## Theory (Deep Dive)
+
+### 1. Analogi IP Address dan Port
+
+Bayangkan internet adalah sebuah kota besar.
+
+* **IP Address** adalah **Alamat Gedung Perkantoran**. (Contoh: `192.168.1.5` atau `8.8.8.8`). Ini memastikan data sampai ke komputer yang tepat.
+* **Port** adalah **Nomor Ruangan/Lantai** di dalam gedung tersebut. (Contoh: Port `80` atau Port `443`). Komputer memiliki lebih dari 65.000 "ruangan" (port) yang bisa digunakan aplikasi untuk keluar-masuk data.
+
+Sebagai SOC Analyst, kamu harus hafal beberapa "nomor ruangan" standar ini:
+
+| Port Number | Nama Layanan | Keterangan SOC |
+| --- | --- | --- |
+| **80** | HTTP | Trafik web biasa (Tidak dienkripsi, rawan disadap). |
+| **443** | HTTPS | Trafik web aman (Standar browser saat ini). |
+| **22** | SSH | Remote akses terminal (Sering diincar peretas untuk masuk ke server). |
+| **3389** | RDP (Remote Desktop) | Layanan untuk mengendalikan Windows dari jarak jauh. Sangat berbahaya jika terbuka ke internet umum. |
+
+### 2. Status Koneksi Jaringan
+
+Ketika kamu memeriksa jaringan, setiap koneksi memiliki *State* (Status):
+
+* **LISTENING:** Komputermu membuka "ruangan" dan *menunggu* ada yang datang/terhubung. (Sering terjadi pada server).
+* **ESTABLISHED:** Koneksi sudah tersambung dan data sedang mengalir. (Misalnya kamu sedang *streaming* YouTube).
+* **TIME_WAIT:** Koneksi baru saja selesai dan bersiap untuk ditutup.
+
+---
+
+## Multi-Part Hands-On Labs
+
+Buka **Command Prompt (Run as Administrator)**. Kali ini kita pakai Command Prompt biasa (CMD), bukan PowerShell, karena `netstat` sangat optimal dijalankan di sini.
+
+---
+
+### LAB 1: Melihat Koneksi Jaringan yang Aktif (Netstat)
+
+**Skenario:** Kamu mencurigai ada aplikasi yang diam-diam mengirim data ke internet.
+
+**Langkah Kerja:**
+
+1. Ketik perintah berikut di CMD lalu tekan Enter:
+```cmd
+netstat -ano
+
+```
+
+
+*(Penjelasan: **-a** = tampilkan semua koneksi, **-n** = tampilkan dalam bentuk angka IP/Port agar cepat, **-o** = tampilkan **PID** aplikasi tersebut).*
+2. **Analisis Output:** Kamu akan melihat beberapa kolom.
+* `Local Address`: IP komputermu dan port yang dipakai keluar. (Contoh: `192.168.1.10:55432`)
+* `Foreign Address`: IP tujuan di internet dan portnya. (Contoh: `142.250.190.46:443`)
+* `State`: Statusnya (misal `ESTABLISHED`).
+* `PID`: Angka identitas proses pembuka koneksi tersebut.
+
+
+
+### LAB 2: Melacak PID ke Nama Aplikasi
+
+**Skenario:** Dari Lab 1, kamu melihat ada IP aneh (Foreign Address) dengan status `ESTABLISHED` yang dimiliki oleh **PID 4124**. Kamu ingin tahu aplikasi apa itu.
+
+**Langkah Kerja:**
+
+1. Masih di CMD, jalankan perintah ini untuk mencari tahu nama aplikasinya:
+```cmd
+tasklist | findstr 4124
+
+```
+
+
+2. **Hasil:** Jika outputnya memunculkan `chrome.exe 4124`, berarti koneksi tersebut aman (itu cuma tab browsermu). Tapi jika outputnya `notepad.exe` atau nama aneh seperti `winupdate32.exe`, kamu punya alasan kuat untuk curiga!
+
+---
+
+## Challenge (Uji Kemampuan Praktis)
+
+Jawab skenario triase berikut:
+
+**Skenario Insiden:**
+Kamu sedang menganalisis laptop seorang karyawan yang komputernya mendadak sangat lambat. Kamu menjalankan `netstat -ano` dan menemukan satu baris mencurigakan:
+
+`TCP    192.168.1.15:49152    103.45.67.89:3389    ESTABLISHED     7712`
+
+Lalu kamu mengecek PID `7712` dengan `tasklist`, dan hasilnya adalah aplikasi bernama `calc.exe` (Kalkulator Windows).
+
+**Pertanyaan:**
+
+1. Port berapa (di sisi Foreign Address) yang sedang diakses oleh koneksi tersebut, dan layanan apa yang biasanya menggunakan port itu?
+2. Mengapa penemuan ini (Kalkulator terhubung ke port tersebut dengan status ESTABLISHED) harus langsung kamu laporkan sebagai **Insiden Keamanan Level Tinggi**? Hubungkan logikamu dengan materi PID/Proses yang sudah kamu pelajari.
+
+---
+
+## Self Test (3 Pertanyaan Ringkas)
+
+1. Apa kepanjangan dari **PID** yang muncul di kolom paling kanan saat kita mengetik `netstat -ano`?
+2. Jika sebuah baris koneksi menunjukkan status **LISTENING**, apakah artinya data sedang aktif didownload dari internet pada detik itu juga?
+3. Sebutkan satu perbedaan utama antara Port **80** dan Port **443**!
+
+---
