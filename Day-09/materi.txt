@@ -1,0 +1,1370 @@
+# 🛡️ DAY 9 — WINDOWS EVENT LOGS
+
+### Event • Log • Event ID • Timestamp • Provider • Evidence
+
+Day 1–8 kita banyak bekerja dengan **current system state**:
+
+```text
+Process
+PID
+PPID
+User
+ExecutablePath
+CommandLine
+Service
+File
+Metadata
+Digital Signature
+SHA-256
+```
+
+Sekarang kita mulai belajar sesuatu yang sangat penting untuk SOC:
+
+> **Historical evidence — apa yang sudah terjadi di Windows.**
+
+Karena process bisa sudah berhenti, user bisa sudah logout, atau file bisa sudah berubah. Dalam kondisi seperti itu, **Windows Event Logs** bisa memberikan jejak aktivitas yang terjadi sebelumnya.
+
+---
+
+# 1. APA ITU EVENT LOG?
+
+Windows menyimpan berbagai aktivitas dalam bentuk **events**.
+
+Contohnya:
+
+```text
+User login
+Process creation
+Service activity
+System startup
+Application error
+Authentication failure
+```
+
+Event tersebut disimpan ke dalam **Event Logs**.
+
+Contoh log utama:
+
+```text
+Application
+Security
+System
+```
+
+Ada juga log lain seperti:
+
+```text
+Windows PowerShell
+Task Scheduler
+Windows Defender
+```
+
+Hari ini kita fokus pada dasar-dasarnya.
+
+---
+
+# 2. EVENT LOG ≠ EVENT
+
+Ini harus dibedakan.
+
+### Event Log
+
+Tempat/kumpulan event disimpan.
+
+Misalnya:
+
+```text
+Security
+System
+Application
+```
+
+### Event
+
+Satu record aktivitas.
+
+Misalnya:
+
+```text
+Security Event
+Event ID: 4625
+Time: 20:15:32
+```
+
+Jadi:
+
+```text
+Event Log
+   ↓
+contains
+   ↓
+Events
+```
+
+---
+
+# 3. KENAPA SOC MEMBUTUHKAN EVENT LOG?
+
+Bayangkan tadi kita melihat:
+
+```text
+powershell.exe
+PID 8120
+```
+
+Kemudian 5 menit kemudian process tersebut berhenti.
+
+Kalau kita menjalankan:
+
+```powershell
+Get-Process
+```
+
+process tersebut mungkin sudah tidak terlihat.
+
+Tetapi event log bisa menyimpan catatan bahwa sesuatu pernah terjadi.
+
+Konsepnya:
+
+```text
+CURRENT STATE
+Process masih berjalan?
+        ↓
+Get-Process
+```
+
+sedangkan:
+
+```text
+HISTORICAL EVIDENCE
+Apa yang sebelumnya terjadi?
+        ↓
+Event Logs
+```
+
+Ini hubungan penting dengan Day 7.
+
+---
+
+# 4. EVENT LOG YANG HARUS KAMU KENAL
+
+## Application
+
+Berisi event dari aplikasi/software.
+
+Contoh:
+
+```text
+Application crash
+Application error
+```
+
+---
+
+## System
+
+Berisi event yang berhubungan dengan Windows/system components.
+
+Contoh:
+
+```text
+Service
+Driver
+System startup/shutdown
+```
+
+---
+
+## Security
+
+Sangat penting untuk SOC.
+
+Berisi security/auditing events seperti:
+
+```text
+Logon
+Logoff
+Authentication failure
+Process creation
+Account activity
+```
+
+Tetapi event yang muncul **bergantung pada audit policy dan konfigurasi Windows**.
+
+Jadi:
+
+> **Tidak semua Windows system akan memiliki semua security events.**
+
+---
+
+# 5. EVENT ID
+
+Setiap event biasanya memiliki **Event ID**.
+
+Contoh yang perlu mulai kamu kenal:
+
+```text
+4624
+4625
+4688
+7045
+```
+
+Secara umum:
+
+### 4624
+
+Successful logon.
+
+### 4625
+
+Failed logon.
+
+### 4688
+
+Process creation.
+
+### 7045
+
+A service was installed.
+
+Penting:
+
+> Event ID bukan verdict.
+
+Misalnya:
+
+```text
+4625
+```
+
+tidak otomatis berarti:
+
+> attacker.
+
+Bisa saja user salah memasukkan password.
+
+Sama seperti:
+
+```text
+powershell.exe
+```
+
+tidak otomatis berarti malware.
+
+Kita tetap membutuhkan **context + correlation**.
+
+---
+
+# 6. EVENT STRUCTURE
+
+Sebuah event memiliki beberapa field penting.
+
+Misalnya:
+
+```text
+Event ID
+Provider
+TimeCreated
+Level
+Message
+```
+
+Mari pahami.
+
+### Event ID
+
+Jenis event.
+
+```text
+4625
+```
+
+### Provider
+
+Komponen/software yang mencatat event.
+
+Contoh:
+
+```text
+Microsoft-Windows-Security-Auditing
+```
+
+### TimeCreated
+
+Kapan event terjadi/tercatat.
+
+### Level
+
+Contoh:
+
+```text
+Information
+Warning
+Error
+Critical
+```
+
+Jangan berpikir:
+
+```text
+Error = Security incident
+```
+
+Tidak selalu.
+
+### Message
+
+Penjelasan event.
+
+---
+
+# 7. COMMAND DASAR — GET-WINEVENT
+
+PowerShell menyediakan:
+
+```powershell
+Get-WinEvent
+```
+
+Ini akan mengambil Windows events.
+
+Kalau kamu hanya menjalankan:
+
+```powershell
+Get-WinEvent
+```
+
+output bisa sangat banyak.
+
+Maka biasanya kita batasi berdasarkan log.
+
+---
+
+# 8. MELIHAT EVENT DARI SYSTEM
+
+Gunakan:
+
+```powershell
+Get-WinEvent -LogName System -MaxEvents 10
+```
+
+Artinya:
+
+```text
+-LogName System
+→ ambil dari System log
+
+-MaxEvents 10
+→ ambil 10 event terbaru
+```
+
+---
+
+# 9. MELIHAT EVENT DARI APPLICATION
+
+```powershell
+Get-WinEvent -LogName Application -MaxEvents 10
+```
+
+---
+
+# 10. MELIHAT EVENT DARI SECURITY
+
+```powershell
+Get-WinEvent -LogName Security -MaxEvents 10
+```
+
+Kalau muncul **Access Denied**, jangan panik.
+
+Security log memiliki permission yang lebih ketat pada banyak sistem.
+
+Kita lanjut dengan event log yang bisa kamu akses.
+
+---
+
+# 11. MEMILIH FIELD
+
+Output default `Get-WinEvent` bisa terlihat penuh.
+
+Gunakan:
+
+```powershell
+Get-WinEvent -LogName System -MaxEvents 10 |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+```
+
+Sekarang kamu dapat:
+
+```text
+TimeCreated
+Id
+ProviderName
+LevelDisplayName
+Message
+```
+
+Ini jauh lebih berguna untuk investigation.
+
+---
+
+# 12. COMMAND — MELIHAT EVENT ID TERTENTU
+
+Misalnya kita ingin mencari Event ID `7045`:
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='System'
+    Id=7045
+} -MaxEvents 10
+```
+
+`7045` berkaitan dengan **service installation**.
+
+Ini menarik karena Day 5 kita belajar:
+
+```text
+Service
+Process
+PID
+PathName
+```
+
+Sekarang kita bisa melihat **historical record** tentang service activity.
+
+---
+
+# 13. COMMAND — 4624 / 4625
+
+Untuk Security log:
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='Security'
+    Id=4624
+} -MaxEvents 10
+```
+
+dan:
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='Security'
+    Id=4625
+} -MaxEvents 10
+```
+
+Sekali lagi:
+
+```text
+4624 ≠ automatically good
+4625 ≠ automatically attack
+```
+
+Kita perlu melihat:
+
+```text
+Who?
+When?
+Where?
+What account?
+How many attempts?
+Source IP?
+Logon type?
+```
+
+Belum semuanya kita pelajari hari ini. Kita akan menambahkannya secara bertahap.
+
+---
+
+# 14. EVENT 4688 — PROCESS CREATION
+
+Ini sangat relevan dengan Day 7.
+
+```text
+Process Investigation
+        ↓
+PID / PPID / CommandLine
+```
+
+Event:
+
+```text
+4688
+```
+
+berhubungan dengan **a new process being created**.
+
+Jalankan:
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='Security'
+    Id=4688
+} -MaxEvents 10
+```
+
+Kalau tidak ada hasil, jangan menyimpulkan event tersebut tidak pernah terjadi.
+
+Bisa saja:
+
+> **process creation auditing belum enabled**, event log sudah berubah/terhapus, atau filtering/configuration berbeda.
+
+Ini persis mengulang prinsip kita:
+
+> **Missing data ≠ data never existed.**
+
+---
+
+# 15. CURRENT STATE VS HISTORICAL EVIDENCE
+
+Sekarang kita punya dua dunia.
+
+### Current state
+
+```text
+Get-Process
+Get-Service
+Get-CimInstance Win32_Process
+```
+
+Memberi gambaran:
+
+> **What is happening now?**
+
+### Historical state
+
+```text
+Get-WinEvent
+```
+
+Memberi gambaran:
+
+> **What happened?**
+
+SOC Analyst membutuhkan keduanya.
+
+---
+
+# 16. CONTOH CORRELATION
+
+Misalnya ada:
+
+```text
+20:00:00
+PowerShell started
+```
+
+Kemudian:
+
+```text
+20:00:05
+Service installed
+```
+
+Kemudian:
+
+```text
+20:00:10
+Network connection
+```
+
+Jangan langsung mengatakan:
+
+> malware.
+
+Tetapi kita bisa membuat timeline:
+
+```text
+20:00:00
+PowerShell
+
+     ↓ 5 sec
+
+20:00:05
+Service installation
+
+     ↓ 5 sec
+
+20:00:10
+Network activity
+```
+
+Sekarang kita mempunyai **correlation**.
+
+Investigator mulai bertanya:
+
+> Apakah aktivitas ini saling berhubungan?
+
+---
+
+# 17. TIMELINE THINKING
+
+Ini skill penting untuk SOC.
+
+Jangan hanya mengumpulkan evidence secara terpisah.
+
+Susun berdasarkan waktu:
+
+```text
+WHO
+ ↓
+WHAT
+ ↓
+WHEN
+ ↓
+WHERE
+ ↓
+HOW
+```
+
+Untuk Day 9, fokus:
+
+> **WHEN**
+
+Contoh:
+
+```text
+19:30
+User login
+
+19:32
+PowerShell starts
+
+19:33
+File created
+
+19:35
+Service installed
+
+19:36
+Network connection
+```
+
+Itu jauh lebih informatif dibanding hanya:
+
+```text
+powershell.exe
+```
+
+---
+
+# 18. PRAKTIK 1 — SYSTEM LOG
+
+Jalankan:
+
+```powershell
+Get-WinEvent -LogName System -MaxEvents 10 |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+```
+
+Pilih **3 event** yang muncul.
+
+Catat:
+
+```text
+TimeCreated:
+Event ID:
+Provider:
+Level:
+Message:
+```
+
+---
+
+# 19. PRAKTIK 2 — APPLICATION LOG
+
+Jalankan:
+
+```powershell
+Get-WinEvent -LogName Application -MaxEvents 10 |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+```
+
+Pilih minimal **2 event**.
+
+---
+
+# 20. PRAKTIK 3 — SECURITY LOG
+
+Jalankan:
+
+```powershell
+Get-WinEvent -LogName Security -MaxEvents 10 |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+```
+
+Kalau berhasil, catat minimal **3 event**.
+
+Kalau `Access Denied`, cukup tulis:
+
+```text
+Security log: Access Denied
+```
+
+lalu lanjut.
+
+---
+
+# 21. PRAKTIK 4 — CARI EVENT 4625
+
+Jalankan:
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='Security'
+    Id=4625
+} -MaxEvents 10 |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+```
+
+Kalau tidak ada hasil:
+
+> **No event returned.**
+
+Jangan membuat event palsu dan jangan memaksakan output.
+
+---
+
+# 22. PRAKTIK 5 — CARI EVENT 4688
+
+Jalankan:
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='Security'
+    Id=4688
+} -MaxEvents 10 |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+```
+
+Kalau ada hasil, ambil satu event.
+
+Kalau kosong:
+
+```text
+Tidak ada event 4688 yang ditemukan.
+```
+
+Itu juga valid.
+
+---
+
+# 23. PRAKTIK 6 — SERVICE INSTALLATION
+
+Jalankan:
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='System'
+    Id=7045
+} -MaxEvents 10 |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+```
+
+Tujuannya adalah menghubungkan:
+
+```text
+DAY 5
+Service
+
+        +
+
+DAY 9
+Historical Service Event
+```
+
+---
+
+# 24. ACTIVE RECALL DAY 1–8 🔄
+
+Jawab tanpa membuka catatan.
+
+### Q1
+
+Apa itu Process?
+
+### Q2
+
+Apa fungsi PID?
+
+### Q3
+
+Apa arti PPID?
+
+### Q4
+
+Apa perbedaan `ExecutablePath` dan `CommandLine`?
+
+### Q5
+
+Apa arti mnemonic:
+
+```text
+ExecutablePath → ?
+CommandLine → ?
+```
+
+### Q6
+
+Apa perbedaan Service dan Process?
+
+### Q7
+
+Apa fungsi `StartName`?
+
+### Q8
+
+Apa fungsi SHA-256?
+
+### Q9
+
+Apa fungsi Digital Signature?
+
+### Q10
+
+Apakah `Valid Digital Signature` berarti file pasti aman?
+
+### Q11
+
+Apa fungsi `whoami`?
+
+### Q12
+
+Apa fungsi:
+
+```cmd
+whoami /groups
+```
+
+### Q13
+
+Apa arti `UserName` pada process investigation?
+
+### Q14
+
+Apa yang dimaksud **security context**?
+
+### Q15
+
+Kenapa process yang sudah berhenti mungkin tidak ditemukan dengan `Get-Process`?
+
+### Q16
+
+Apa prinsip:
+
+> Missing data ≠ data never existed
+
+### Q17
+
+Kalau:
+
+```text
+services.exe
+PID 1424
+
+svchost.exe
+PID 2300
+```
+
+berapa PPID `svchost.exe`?
+
+### Q18
+
+Apa perbedaan current state dan historical evidence?
+
+---
+
+# 25. CHALLENGE DAY 9 🧠
+
+Bayangkan SOC menemukan timeline berikut:
+
+```text
+20:01:10
+Event ID 4624
+User logon
+
+20:03:22
+Event ID 4688
+PowerShell process created
+
+20:03:25
+Event ID 4688
+Another process created
+
+20:04:10
+Event ID 7045
+Service installed
+```
+
+### Q1
+
+Mana yang menunjukkan:
+
+```text
+User authentication
+```
+
+### Q2
+
+Mana yang menunjukkan:
+
+```text
+Process creation
+```
+
+### Q3
+
+Mana yang menunjukkan:
+
+```text
+Service installation
+```
+
+### Q4
+
+Apakah timeline tersebut sudah cukup untuk menyatakan terjadi malicious activity?
+
+### Q5
+
+Apa yang perlu kamu cari dari event 4688?
+
+Gunakan pengetahuan Day 7.
+
+### Q6
+
+Apa yang ingin kamu cari dari event 7045?
+
+Gunakan pengetahuan Day 5.
+
+### Q7
+
+Kenapa timestamp penting dalam investigation?
+
+### Q8
+
+Buat timeline sederhana dari empat event tersebut.
+
+### Q9
+
+Kalau event `4688` tidak ditemukan di laptopmu, apakah artinya **tidak pernah ada process creation**?
+
+Jelaskan.
+
+### Q10
+
+Misalnya kamu melihat:
+
+```text
+Event ID 4625
+```
+
+Apakah otomatis berarti brute-force attack?
+
+---
+
+# 26. MINI SOC PROJECT DAY 9
+
+Kita sekarang melakukan **historical investigation** kecil.
+
+Gunakan hasil Praktik tadi.
+
+Buat:
+
+```text
+=== DAY 9 WINDOWS EVENT LOG INVESTIGATION ===
+
+1. SYSTEM LOG
+
+Event 1:
+Time:
+Event ID:
+Provider:
+Level:
+Summary:
+
+Event 2:
+Time:
+Event ID:
+Provider:
+Level:
+Summary:
+
+Event 3:
+Time:
+Event ID:
+Provider:
+Level:
+Summary:
+
+
+2. APPLICATION LOG
+
+Event 1:
+Time:
+Event ID:
+Provider:
+Level:
+Summary:
+
+Event 2:
+Time:
+Event ID:
+Provider:
+Level:
+Summary:
+
+
+3. SECURITY LOG
+
+Event 1:
+Time:
+Event ID:
+Provider:
+Level:
+Summary:
+
+Event 2:
+Time:
+Event ID:
+Provider:
+Level:
+Summary:
+
+Event 3:
+Time:
+Event ID:
+Provider:
+Level:
+Summary:
+
+
+4. SECURITY EVENT INVESTIGATION
+
+4625:
+Found / Not Found
+
+4688:
+Found / Not Found
+
+7045:
+Found / Not Found
+
+
+5. ANALYSIS
+
+Apa yang bisa diketahui dari event logs?
+
+Apa perbedaan event log dengan Get-Process?
+
+Apa pentingnya timestamp?
+
+Apakah event yang ditemukan otomatis malicious?
+
+6. FINAL ASSESSMENT
+
+Apakah ada evidence yang memerlukan investigation lebih lanjut?
+
+Evidence apa yang ingin dicari berikutnya?
+```
+
+---
+
+# 27. ATTACK METHOD — FAILED AUTHENTICATION
+
+Salah satu aktivitas yang bisa terlihat dalam Windows logs adalah **failed authentication**.
+
+Contohnya:
+
+```text
+User attempts login
+      ↓
+Wrong password
+      ↓
+Authentication fails
+      ↓
+Event 4625
+```
+
+Defensive analyst mungkin akan melihat pola:
+
+```text
+4625
+4625
+4625
+4625
+4625
+...
+```
+
+Kemudian bertanya:
+
+> Berapa kali?
+
+> Account siapa?
+
+> Kapan?
+
+> Dari mana?
+
+> Apakah pattern tersebut normal?
+
+Tetapi:
+
+> **One 4625 ≠ Brute Force**
+
+Satu user salah password sekali adalah sesuatu yang sangat berbeda dari banyak failed authentication attempts dalam waktu singkat.
+
+Ini nanti akan menjadi dasar kita untuk belajar **Brute Force Detection**.
+
+---
+
+# 28. DEFENSE METHOD
+
+SOC menggunakan **logging and monitoring** untuk mendapatkan historical evidence.
+
+Konsepnya:
+
+```text
+Activity
+   ↓
+Windows
+   ↓
+Logging
+   ↓
+Event
+   ↓
+SOC
+   ↓
+Investigation
+```
+
+Tanpa logging yang cukup, investigator bisa kehilangan visibility.
+
+Karena itu nanti kita akan belajar:
+
+```text
+Windows Event Logs
+        ↓
+Sysmon
+        ↓
+Wazuh / SIEM
+```
+
+Tapi kita **belum lompat ke Wazuh**.
+
+Kita kuasai evidence source-nya dulu.
+
+---
+
+# 29. 🧠 MINDSET DAY 9
+
+Mulai sekarang ketika melihat event:
+
+Jangan hanya membaca:
+
+```text
+Event ID 4625
+```
+
+Tanyakan:
+
+```text
+WHO?
+WHAT?
+WHEN?
+WHERE?
+HOW?
+```
+
+Contoh:
+
+```text
+WHO?
+→ account
+
+WHAT?
+→ failed logon
+
+WHEN?
+→ timestamp
+
+WHERE?
+→ source / host
+
+HOW?
+→ logon type / authentication context
+```
+
+Tidak semua field harus sudah kamu kuasai hari ini.
+
+Kita akan menambahnya satu per satu.
+
+---
+
+# 💻 DAY 9 — COMMANDS
+
+### 1. Get System Events
+
+```powershell
+Get-WinEvent -LogName System -MaxEvents 10
+```
+
+### 2. Get Application Events
+
+```powershell
+Get-WinEvent -LogName Application -MaxEvents 10
+```
+
+### 3. Get Security Events
+
+```powershell
+Get-WinEvent -LogName Security -MaxEvents 10
+```
+
+### 4. Pilih field penting
+
+```powershell
+Get-WinEvent -LogName System -MaxEvents 10 |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+```
+
+### 5. Cari Event 4624
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='Security'
+    Id=4624
+} -MaxEvents 10
+```
+
+### 6. Cari Event 4625
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='Security'
+    Id=4625
+} -MaxEvents 10
+```
+
+### 7. Cari Event 4688
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='Security'
+    Id=4688
+} -MaxEvents 10
+```
+
+### 8. Cari Event 7045
+
+```powershell
+Get-WinEvent -FilterHashtable @{
+    LogName='System'
+    Id=7045
+} -MaxEvents 10
+```
+
+---
+
+# 🧠 COMMAND MAP DAY 9
+
+```text
+Get-WinEvent
+      ↓
+Windows Event Investigation
+
+-LogName
+      ↓
+Which Event Log?
+
+-MaxEvents
+      ↓
+How many events?
+
+-FilterHashtable
+      ↓
+Filter specific events
+
+Id
+      ↓
+Which Event ID?
+
+Select-Object
+      ↓
+Which fields do I want?
+```
+
+Dan sekarang toolkit-mu mulai terbentuk:
+
+```text
+PROCESS
+Get-Process
+Get-CimInstance Win32_Process
+
+SERVICE
+Get-Service
+Get-CimInstance Win32_Service
+sc query
+
+FILE
+Get-Item
+Get-FileHash
+Get-AuthenticodeSignature
+
+USER
+whoami
+whoami /groups
+Get-Process -IncludeUserName
+
+EVENTS
+Get-WinEvent
+```
+
+---
+
+# 🎯 TARGET DAY 9
+
+Setelah Day 9, kamu harus memahami perbedaan besar ini:
+
+```text
+Get-Process
+     ↓
+"What is running NOW?"
+```
+
+vs
+
+```text
+Get-WinEvent
+     ↓
+"What happened?"
+```
+
+Kemudian mulai menghubungkan:
+
+```text
+Event
+ ↓
+Time
+ ↓
+Process
+ ↓
+User
+ ↓
+Service
+ ↓
+File
+ ↓
+Network
+```
+
+Itulah fondasi **timeline-based investigation**.
+
+Dan sesuai pola kita:
+
+**76–100% → PASS → lanjut Day berikutnya.**
+
+**Kesalahan kecil tidak akan menghentikan progres; akan dibawa sebagai reminder ke Day 10.**
+
+Sekarang kerjakan **Praktik 1–6 + Challenge + Active Recall + Mini SOC Project** dan kirim semuanya sekaligus.
