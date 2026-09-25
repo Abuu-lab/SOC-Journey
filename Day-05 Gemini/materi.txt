@@ -1,0 +1,116 @@
+# DAY 5 (JUNIOR SOC LEVEL) — Windows Event Logs & Core Event IDs
+
+## Objective
+
+Setelah modul ini, kamu mampu:
+
+1. Memahami fungsi **Windows Event Log** sebagai "CCTV Digital" di dalam komputer Windows.
+2. Menghafal **4 Event ID Utama** yang paling sering dianalisis oleh SOC Analyst dalam investigasi insiden.
+3. Menggunakan **PowerShell** untuk melakukan *query* log keamanan dengan cepat tanpa perlu scroll manual.
+
+---
+
+## Theory (Deep Dive)
+
+### 1. Apa itu Windows Event Log?
+
+Ketika seseorang mencoba *login*, membuka aplikasi, atau mengubah aturan keamanan di Windows, sistem operasi secara otomatis mencatat kejadian tersebut ke dalam sebuah berkas catatan yang disebut **Event Log**.
+
+Di Windows, log utama dibagi menjadi tiga kategori utama:
+
+* **Application Log:** Catatan tentang aktivitas aplikasi (misal: Microsoft Word crash).
+* **System Log:** Catatan tentang aktivitas komponen Windows (misal: driver gagal dimuat, sistem restart).
+* **Security Log:** Catatan tentang aktivitas keamanan (misal: login berhasil/gagal, perubahan hak akses). **Ini adalah fokus utama SOC Analyst!**
+
+---
+
+### 2. 4 Event ID Wajib bagi Junior SOC Analyst
+
+Setiap kejadian di Windows memiliki nomor identitas unik yang disebut **Event ID**. Dari ribuan Event ID yang ada, 4 nomor ini adalah fondasi paling vital:
+
+| Event ID | Nama Kejadian | Mengapa SOC Analyst Wajib Tahu? |
+| --- | --- | --- |
+| **4624** | **An account was successfully logged on** | Menandakan ada pengguna yang berhasil masuk ke sistem (baik secara lokal maupun via remote/RDP). |
+| **4625** | **An account failed to log on** | Menandakan percobaan login yang gagal. Jika Event ID 4625 muncul puluhan atau ratusan kali dalam beberapa detik, ini indikasi kuat serangan ***Brute Force / Password Guessing***. |
+| **4688** | **A new process has been created** | Mencatat setiap kali ada aplikasi atau perintah baru yang dijalankan (termasuk PID, PPID, dan CommandLine-nya!). |
+| **1102** | **The audit log was cleared** | Mencatat saat seseorang sengaja menghapus Security Log. Peretas sering melakukan ini untuk **menghilangkan jejak (*Covering Tracks*)**. Penemuan Event 1102 adalah *Alert High Severity*! |
+
+---
+
+## Multi-Part Hands-On Labs
+
+Buka **PowerShell (Run as Administrator)** di komputermu.
+
+---
+
+### LAB 1: Membuka Event Viewer GUI (Grafis)
+
+**Skenario:** Kamu ingin melihat tampilan visual dari log keamanan komputer secara langsung.
+
+**Langkah Kerja:**
+
+1. Tekan tombol `Windows + R`, ketik `eventvwr.msc` lalu tekan Enter.
+2. Di panel sebelah kiri, buka folder **Windows Logs** -> klik **Security**.
+3. Perhatikan kolom tengah: Kamu akan melihat ribuan catatan lengkap dengan `Date and Time`, `Source`, dan `Event ID`.
+
+---
+
+### LAB 2: Melakukan Query Log Login Gagal (Event ID 4625) via PowerShell
+
+**Skenario:** Mencari log manual di Event Viewer sangat lambat. Sebagai SOC Analyst, kamu perlu menggunakan perintah otomatis untuk menyaring data.
+
+**Langkah Kerja:**
+
+1. Jalankan perintah berikut di PowerShell untuk melihat 5 log percobaan login terakhir di komputermu:
+```powershell
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624} -MaxEvents 5 | Format-Table TimeCreated, Id, Message -AutoSize
+
+```
+
+
+2. Jika ingin mencari percobaan login yang gagal (Event ID 4625):
+```powershell
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} -MaxEvents 5 -ErrorAction SilentlyContinue
+
+```
+
+
+*(Catatan: Jika hasilnya kosong, artinya tidak ada riwayat login gagal di komputermu belakangan ini, yang mana itu bagus!)*
+
+---
+
+## Challenge (Uji Kemampuan Praktis)
+
+Jawab 2 skenario analisis log berikut berdasarkan pemahaman materi Day 5:
+
+### Challenge 1: Brute Force Detection
+
+Sistem SIEM di kantor tempatmu bekerja mengeluarkan peringatan (*Alert*). Setelah kamu periksa log di server target, kamu menemukan urutan Event ID berikut dalam rentang waktu 1 menit (pukul 02:00 malam):
+
+* **02:00:01 AM** - Event ID `4625` (Target Account: Administrator)
+* **02:00:02 AM** - Event ID `4625` (Target Account: Administrator)
+* **02:00:03 AM** - Event ID `4625` (Target Account: Administrator)
+* *(Terjadi berulang kali sebanyak 150 kali)* ...
+* **02:01:10 AM** - Event ID `4624` (Target Account: Administrator)
+* **02:01:15 AM** - Event ID `1102`
+
+**Pertanyaan:**
+
+1. Ceritakan kronologi serangan yang terjadi berdasarkan urutan Event ID di atas!
+2. Mengapa kemunculan **Event ID 1102** di akhir serangan membuat situasi ini menjadi sangat kritis bagi tim SOC?
+
+---
+
+### Challenge 2: Privilege Escalation & Process Tracking
+
+Seorang penyerang berhasil masuk ke komputer korban. Jika kamu ingin melacak **aplikasi/perintah apa saja yang dieksekusi oleh penyerang** setelah berhasil masuk, Event ID nomor berapa yang harus kamu filter di Security Log?
+
+---
+
+## Self Test (3 Pertanyaan Ringkas)
+
+1. Apa bedanya informasi yang dicatat oleh **Event ID 4624** dan **Event ID 4625**?
+2. Mengapa peretas yang sangat berpengalaman selalu berusaha memicu **Event ID 1102** setelah selesai melakukan aksinya?
+3. Di dalam folder kategori Windows Logs mana (`Application`, `System`, atau `Security`) kita bisa menemukan catatan tentang *login* pengguna?
+
+---
