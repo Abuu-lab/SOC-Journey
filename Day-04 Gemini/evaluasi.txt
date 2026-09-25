@@ -1,0 +1,9 @@
+Semua jawabanmu untuk Day 4 100% BENAR dan sangat tepat!
+
+    Challenge 1 & 2: Port 3389 adalah RDP, dan calc.exe (kalkulator) yang terhubung ke internet/RDP adalah Red Flag besar (biasanya teknik Process Injection atau Masquerading di mana malware menyamar sebagai kalkulator).
+
+    Self Test 1, 2, & 3: Penjelasan LISTENING serta perbedaan enkripsi Port 80 vs 443 kamu sudah paham sepenuhnya.
+
+Karena semua jawabanmu benar, tidak ada catatan kesalahan yang perlu dijadikan reminder. Pemahamanmu tentang analisis proses dan koneksi jaringan sudah sangat solid!
+
+Sekarang kita naik ke tahap berikutnya dalam tugas harian seorang Junior SOC Analyst: Membaca Jejak Digital / Log Aktivitas. Welcome to DAY 5!
