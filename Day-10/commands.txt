@@ -1,0 +1,27 @@
+DAY 10 — COMMANDS YANG BARU
+1. Event dalam 24 jam terakhir
+Get-WinEvent -FilterHashtable @{
+    LogName='System'
+    StartTime=(Get-Date).AddDays(-1)
+} -MaxEvents 20 |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+2. Time Window tertentu
+Get-WinEvent -FilterHashtable @{
+    LogName='System'
+    StartTime=(Get-Date '2026-09-28 13:00:00')
+    EndTime=(Get-Date '2026-09-28 14:00:00')
+} |
+Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
+3. Multiple Event IDs
+Get-WinEvent -FilterHashtable
+GET EVENTS
+    ↓
+FILTER
+    ↓
+READ
+    ↓
+SORT BY TIME
+    ↓
+CORRELATE
+    ↓
+INVESTIGATE
