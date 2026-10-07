@@ -1,6 +1,10 @@
-# 🛡️ DAY 11 — WINDOWS AUTHENTICATION INVESTIGATION
+# Day 11 — Materi
 
-### 4624 • 4625 • Logon Type • Account • Caller Process • Correlation
+**Windows Authentication Investigation**
+
+## 🛡️ DAY 11 — WINDOWS AUTHENTICATION INVESTIGATION
+
+#### 4624 • 4625 • Logon Type • Account • Caller Process • Correlation
 
 Day 10 kita sudah belajar:
 
@@ -32,11 +36,11 @@ ASSESSMENT
 
 ---
 
-# 1. REMINDER DAY 10
+## 1. REMINDER DAY 10
 
 Sebelum masuk materi baru, kita selesaikan sedikit yang masih salah.
 
-### Reminder 1 — Service ≠ Process
+#### Reminder 1 — Service ≠ Process
 
 ```text
 Service
@@ -50,7 +54,7 @@ Process adalah instance program yang sedang berjalan.
 
 ---
 
-### Reminder 2 — Security Context
+#### Reminder 2 — Security Context
 
 Secara sederhana:
 
@@ -70,7 +74,7 @@ User: NT AUTHORITY\SYSTEM
 
 ---
 
-### Reminder 3 — Current vs Historical
+#### Reminder 3 — Current vs Historical
 
 ```text
 Get-Process
@@ -86,7 +90,7 @@ What happened?
 
 ---
 
-### Reminder 4 — `TimeCreated`
+#### Reminder 4 — `TimeCreated`
 
 `TimeCreated` pada event berarti:
 
@@ -98,7 +102,7 @@ Bukan otomatis:
 
 ---
 
-### Reminder 5 — Timeline
+#### Reminder 5 — Timeline
 
 Cara paling dasar:
 
@@ -120,7 +124,7 @@ Sort-Object TimeCreated
 
 ---
 
-### Reminder 6 — Causality
+#### Reminder 6 — Causality
 
 Kalau:
 
@@ -146,7 +150,7 @@ Ini penting.
 
 ---
 
-# 2. APA ITU AUTHENTICATION?
+## 2. APA ITU AUTHENTICATION?
 
 **Authentication** secara sederhana adalah proses untuk memverifikasi identity.
 
@@ -176,7 +180,7 @@ Kalau gagal:
 
 ---
 
-# 3. EVENT 4624
+## 3. EVENT 4624
 
 `4624` menunjukkan:
 
@@ -196,7 +200,7 @@ Kita harus melihat context.
 
 ---
 
-# 4. EVENT 4625
+## 4. EVENT 4625
 
 `4625` menunjukkan:
 
@@ -230,7 +234,7 @@ Itu bisa normal.
 
 ---
 
-# 5. LOGON TYPE
+## 5. LOGON TYPE
 
 Ini adalah bagian penting Day 11.
 
@@ -242,13 +246,13 @@ Logon Type
 
 Contoh umum yang akan kita gunakan:
 
-### Logon Type 2
+#### Logon Type 2
 
 > **Interactive logon**
 
 Secara sederhana: logon secara langsung pada komputer.
 
-### Logon Type 3
+#### Logon Type 3
 
 > **Network logon**
 
@@ -265,7 +269,7 @@ Hari ini fokus:
 
 ---
 
-# 6. KENAPA LOGON TYPE PENTING?
+## 6. KENAPA LOGON TYPE PENTING?
 
 Misalnya:
 
@@ -301,7 +305,7 @@ Was it failed?
 
 ---
 
-# 7. EVENT 4625 YANG KAMU TEMUKAN
+## 7. EVENT 4625 YANG KAMU TEMUKAN
 
 Pada Day 9/10 kamu pernah menemukan event:
 
@@ -326,7 +330,7 @@ Nah, sekarang kita akan **investigasi event seperti itu secara berurutan**.
 
 ---
 
-# 8. AUTHENTICATION EVENT STRUCTURE
+## 8. AUTHENTICATION EVENT STRUCTURE
 
 Saat menemukan 4625, mulai ambil:
 
@@ -362,7 +366,7 @@ FROM WHERE?
 
 ---
 
-# 9. SUBJECT VS ACCOUNT FOR WHICH LOGON FAILED
+## 9. SUBJECT VS ACCOUNT FOR WHICH LOGON FAILED
 
 Ini mulai agak penting.
 
@@ -406,7 +410,7 @@ karena itu menjawab:
 
 ---
 
-# 10. FAILURE REASON
+## 10. FAILURE REASON
 
 Misalnya:
 
@@ -437,7 +441,7 @@ Pattern
 
 ---
 
-# 11. CALLER PROCESS
+## 11. CALLER PROCESS
 
 Ini bagian yang menghubungkan Day 9 dengan Day 7.
 
@@ -470,7 +474,7 @@ Lalu masuk ke Process Investigation.
 
 ---
 
-# 12. HEX PID
+## 12. HEX PID
 
 Kadang Event Log tidak memberikan PID dalam decimal.
 
@@ -509,7 +513,7 @@ Tidak perlu takut dengan hexadecimal. Kita akan belajar perlahan.
 
 ---
 
-# 13. PRAKTIK 1 — CARI EVENT 4625
+## 13. PRAKTIK 1 — CARI EVENT 4625
 
 Jalankan:
 
@@ -537,7 +541,7 @@ Source Network Address:
 
 ---
 
-# 14. PRAKTIK 2 — KONVERSI CALLER PID
+## 14. PRAKTIK 2 — KONVERSI CALLER PID
 
 Misalnya event memberikan:
 
@@ -556,7 +560,7 @@ Catat hasil decimal-nya.
 
 ---
 
-# 15. PRAKTIK 3 — CARI PROCESS BERDASARKAN PID
+## 15. PRAKTIK 3 — CARI PROCESS BERDASARKAN PID
 
 Setelah mendapatkan decimal PID:
 
@@ -588,7 +592,7 @@ Process mungkin sudah exit
 
 ---
 
-# 16. PRAKTIK 4 — INVESTIGASI PROCESS TERSEBUT
+## 16. PRAKTIK 4 — INVESTIGASI PROCESS TERSEBUT
 
 Kalau process masih ada:
 
@@ -617,7 +621,7 @@ Ini adalah **correlation**.
 
 ---
 
-# 17. PRAKTIK 5 — USER CONTEXT
+## 17. PRAKTIK 5 — USER CONTEXT
 
 Kemudian:
 
@@ -640,7 +644,7 @@ User
 
 ---
 
-# 18. PRAKTIK 6 — FILE INVESTIGATION
+## 18. PRAKTIK 6 — FILE INVESTIGATION
 
 Kalau executable path berhasil ditemukan:
 
@@ -650,20 +654,20 @@ C:\Program Files\Example\example.exe
 
 baru kita gunakan ilmu Day 6:
 
-### Metadata
+#### Metadata
 
 ```powershell
 Get-Item "C:\Program Files\Example\example.exe" |
 Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
 ```
 
-### Digital Signature
+#### Digital Signature
 
 ```powershell
 Get-AuthenticodeSignature "C:\Program Files\Example\example.exe"
 ```
 
-### SHA-256
+#### SHA-256
 
 ```powershell
 Get-FileHash "C:\Program Files\Example\example.exe" -Algorithm SHA256
@@ -677,7 +681,7 @@ Kita melakukan berdasarkan **object yang sedang kita investigasi**.
 
 ---
 
-# 19. FULL INVESTIGATION CHAIN DAY 11
+## 19. FULL INVESTIGATION CHAIN DAY 11
 
 Ini pola penting hari ini:
 
@@ -720,13 +724,13 @@ SHA-256
 
 ---
 
-# 20. PRAKTIK END-TO-END DAY 11
+## 20. PRAKTIK END-TO-END DAY 11
 
 Sekarang kita buat **satu investigation lengkap**, bukan lagi praktik terpisah.
 
 Ambil satu `4625` dari laptopmu.
 
-### STEP 1 — Alert
+#### STEP 1 — Alert
 
 ```text
 Event ID:
@@ -735,7 +739,7 @@ Event ID:
 
 ---
 
-### STEP 2 — Identify
+#### STEP 2 — Identify
 
 Catat:
 
@@ -751,7 +755,7 @@ Source:
 
 ---
 
-### STEP 3 — Caller PID
+#### STEP 3 — Caller PID
 
 Kalau PID berbentuk:
 
@@ -767,7 +771,7 @@ konversi:
 
 ---
 
-### STEP 4 — Process
+#### STEP 4 — Process
 
 Cari:
 
@@ -778,7 +782,7 @@ Select-Object ProcessName, Id, UserName
 
 ---
 
-### STEP 5 — Process Context
+#### STEP 5 — Process Context
 
 ```powershell
 Get-CimInstance Win32_Process -Filter "ProcessId = <PID>" |
@@ -787,7 +791,7 @@ Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 
 ---
 
-### STEP 6 — Parent
+#### STEP 6 — Parent
 
 Kalau mendapatkan:
 
@@ -804,7 +808,7 @@ Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 
 ---
 
-### STEP 7 — File
+#### STEP 7 — File
 
 Kalau executable path tersedia:
 
@@ -815,7 +819,7 @@ Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
 
 ---
 
-### STEP 8 — Signature
+#### STEP 8 — Signature
 
 ```powershell
 Get-AuthenticodeSignature "<ExecutablePath>"
@@ -823,7 +827,7 @@ Get-AuthenticodeSignature "<ExecutablePath>"
 
 ---
 
-### STEP 9 — Hash
+#### STEP 9 — Hash
 
 ```powershell
 Get-FileHash "<ExecutablePath>" -Algorithm SHA256
@@ -831,7 +835,7 @@ Get-FileHash "<ExecutablePath>" -Algorithm SHA256
 
 ---
 
-# 21. ANALYSIS
+## 21. ANALYSIS
 
 Sekarang kamu punya banyak evidence.
 
@@ -841,7 +845,7 @@ Jangan langsung menulis:
 
 Pisahkan:
 
-### Observation
+#### Observation
 
 Apa yang benar-benar terlihat?
 
@@ -854,7 +858,7 @@ Logon Type 2.
 Caller Process X.
 ```
 
-### Correlation
+#### Correlation
 
 Contoh:
 
@@ -866,19 +870,19 @@ Caller Process X
 Process started by Y
 ```
 
-### Hypothesis
+#### Hypothesis
 
 Contoh:
 
 > Authentication failure may have been generated by an application running under the user context.
 
-### Evidence Gap
+#### Evidence Gap
 
 Apa yang belum kita ketahui?
 
 ---
 
-# 22. ASSESSMENT
+## 22. ASSESSMENT
 
 Untuk level kita sekarang, gunakan:
 
@@ -898,7 +902,7 @@ hanya karena ada satu suspicious indicator.
 
 ---
 
-# 23. CHALLENGE DAY 11 🧠
+## 23. CHALLENGE DAY 11 🧠
 
 Kasus:
 
@@ -928,19 +932,19 @@ Source:
 127.0.0.1
 ```
 
-### Q1
+#### Q1
 
 Apa yang terjadi?
 
-### Q2
+#### Q2
 
 Account siapa yang mengalami failed logon?
 
-### Q3
+#### Q3
 
 Apa arti Logon Type `2`?
 
-### Q4
+#### Q4
 
 Apa arti:
 
@@ -949,15 +953,15 @@ Caller Process ID:
 0x3000
 ```
 
-### Q5
+#### Q5
 
 Bagaimana mengubah `0x3000` menjadi decimal?
 
-### Q6
+#### Q6
 
 Setelah mendapatkan decimal PID, command apa yang digunakan untuk mencari process + user?
 
-### Q7
+#### Q7
 
 Command apa yang digunakan untuk mencari:
 
@@ -970,25 +974,25 @@ CommandLine
 
 ?
 
-### Q8
+#### Q8
 
 Kalau process tersebut sudah berhenti, apakah kita gagal melakukan investigation?
 
-### Q9
+#### Q9
 
 Kalau executable path ditemukan, sebutkan tiga investigation Day 6 yang bisa dilakukan terhadap file.
 
-### Q10
+#### Q10
 
 Apakah satu Event 4625 cukup untuk mengatakan brute-force?
 
-### Q11
+#### Q11
 
 Mengapa `Source = 127.0.0.1` menarik untuk dicatat?
 
 Jangan langsung menyimpulkan malicious.
 
-### Q12
+#### Q12
 
 Buat investigation chain dari event tersebut:
 
@@ -1006,7 +1010,7 @@ sampai file investigation.
 
 ---
 
-# 24. MINI SOC CASE — END-TO-END 🔥
+## 24. MINI SOC CASE — END-TO-END 🔥
 
 Sekarang ini bagian yang paling sesuai dengan permintaanmu sebelumnya.
 
@@ -1116,11 +1120,11 @@ Kalau process-nya sudah tidak ada, kita tetap lanjut menggunakan **historical ev
 
 ---
 
-# 25. ATTACK METHOD — FAILED LOGON PATTERN
+## 25. ATTACK METHOD — FAILED LOGON PATTERN
 
 Konsep attack yang mulai kita kenal:
 
-### Brute Force
+#### Brute Force
 
 Secara sederhana:
 
@@ -1162,7 +1166,7 @@ Baru kita mulai mempunyai dasar untuk hypothesis.
 
 ---
 
-# 26. DEFENSE METHOD
+## 26. DEFENSE METHOD
 
 Defensive monitoring dapat menggunakan:
 
@@ -1194,105 +1198,7 @@ Jadi authentication event tidak berdiri sendiri.
 
 ---
 
-# 27. COMMANDS DAY 11
-
-### 1. Cari 4625
-
-```powershell
-Get-WinEvent -FilterHashtable @{
-    LogName='Security'
-    Id=4625
-} -MaxEvents 10 |
-Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
-```
-
-### 2. Konversi HEX PID → Decimal
-
-```powershell
-[Convert]::ToInt32("5f60",16)
-```
-
-Ganti `"5f60"` dengan hexadecimal PID yang kamu dapat.
-
-### 3. Cari Process + User
-
-```powershell
-Get-Process -Id <PID> -IncludeUserName |
-Select-Object ProcessName, Id, UserName
-```
-
-### 4. Cari Full Process Context
-
-```powershell
-Get-CimInstance Win32_Process -Filter "ProcessId = <PID>" |
-Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
-```
-
-### 5. Cari Parent Process
-
-```powershell
-Get-CimInstance Win32_Process -Filter "ProcessId = <PPID>" |
-Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
-```
-
-### 6. File Metadata
-
-```powershell
-Get-Item "<ExecutablePath>" |
-Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
-```
-
-### 7. Digital Signature
-
-```powershell
-Get-AuthenticodeSignature "<ExecutablePath>"
-```
-
-### 8. SHA-256
-
-```powershell
-Get-FileHash "<ExecutablePath>" -Algorithm SHA256
-```
-
----
-
-# 🧠 DAY 11 COMMAND MAP
-
-```text
-Get-WinEvent
-      ↓
-Find Authentication Event
-      ↓
-4625
-      ↓
-Caller Process ID
-      ↓
-HEX → DECIMAL
-      ↓
-Get-Process
-      ↓
-User
-      ↓
-Get-CimInstance Win32_Process
-      ↓
-PID / PPID / Path / CommandLine
-      ↓
-Get-Item
-      ↓
-Metadata
-      ↓
-Get-AuthenticodeSignature
-      ↓
-Signature
-      ↓
-Get-FileHash
-      ↓
-SHA-256
-```
-
----
-
-# 🎯 TARGET DAY 11
+## 🎯 TARGET DAY 11
 
 Hari ini targetmu **bukan menghafal semua Event ID**.
 
@@ -1330,7 +1236,7 @@ Ini sudah mulai menjadi **investigation chain** yang sebenarnya.
 
 ---
 
-## 📌 SATU HAL PENTING
+### 📌 SATU HAL PENTING
 
 Dari hasil Day 10 kamu, kita sebenarnya punya contoh nyata `4625`:
 

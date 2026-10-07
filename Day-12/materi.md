@@ -1,10 +1,14 @@
+# Day 12 — Materi
+
+**Sysmon & Endpoint Telemetry**
+
 Benar. **Tidak perlu diulang di hari yang sama.** Mulai sekarang kalau ada jawaban yang masih salah, aku tandai dan **dibawa ke Active Recall Day berikutnya**. Kalau diulang nanti masih salah, baru kita kejar sampai **2× benar**.
 
 Jawaban A–G-mu cukup untuk lanjut. Ada beberapa detail yang belum presisi, tapi masuk aturan **PASS**.
 
-# 🛡️ DAY 12 — SYSMON & ENDPOINT TELEMETRY
+## 🛡️ DAY 12 — SYSMON & ENDPOINT TELEMETRY
 
-### Process Creation • Parent Process • Command Line • User • File • Event Correlation
+#### Process Creation • Parent Process • Command Line • User • File • Event Correlation
 
 Sampai Day 11 kita banyak memakai:
 
@@ -40,7 +44,7 @@ Ini sangat penting karena nanti kita ingin bisa melihat aktivitas process secara
 
 ---
 
-# 1. KENAPA SYSMON?
+## 1. KENAPA SYSMON?
 
 Windows sudah punya Event Log.
 
@@ -93,7 +97,7 @@ Hash
 
 ---
 
-# 2. SYSMON BUKAN ANTIVIRUS
+## 2. SYSMON BUKAN ANTIVIRUS
 
 Ini penting.
 
@@ -127,7 +131,7 @@ Sysmon
 
 ---
 
-# 3. MENTAL MODEL DAY 12
+## 3. MENTAL MODEL DAY 12
 
 Mulai sekarang kita punya:
 
@@ -159,13 +163,13 @@ Ini persis alur investigation yang kamu minta.
 
 ---
 
-# 4. SYSMON EVENT YANG PALING PENTING UNTUK KITA
+## 4. SYSMON EVENT YANG PALING PENTING UNTUK KITA
 
 Hari ini kita belum menghafal banyak Event ID.
 
 Kita fokus dulu pada:
 
-### Event ID 1 — Process Creation
+#### Event ID 1 — Process Creation
 
 Ini sangat penting.
 
@@ -194,7 +198,7 @@ Ini jauh lebih dekat dengan investigation yang sedang kita latih.
 
 ---
 
-# 5. CHECK APAKAH SYSMON SUDAH ADA
+## 5. CHECK APAKAH SYSMON SUDAH ADA
 
 Jalankan PowerShell:
 
@@ -214,7 +218,7 @@ Tujuannya sederhana:
 
 ---
 
-# 6. KALAU SYSMON TERPASANG
+## 6. KALAU SYSMON TERPASANG
 
 Cari log Sysmon:
 
@@ -231,7 +235,7 @@ Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
 
 ---
 
-# 7. KALAU BELUM TERPASANG
+## 7. KALAU BELUM TERPASANG
 
 Jangan mengarang hasil.
 
@@ -249,7 +253,7 @@ Kita bisa menghasilkan event dari aktivitas normal.
 
 ---
 
-# 8. MENGAPA PROCESS CREATION SANGAT PENTING?
+## 8. MENGAPA PROCESS CREATION SANGAT PENTING?
 
 Misalnya ada:
 
@@ -286,11 +290,11 @@ Inilah solusi terhadap masalah yang kamu temui pada Day 11.
 
 ---
 
-# 9. CURRENT STATE VS TELEMETRY
+## 9. CURRENT STATE VS TELEMETRY
 
 Sekarang perbedaan kita semakin jelas.
 
-### Current State
+#### Current State
 
 ```powershell
 Get-Process
@@ -300,7 +304,7 @@ Menjawab:
 
 > **What is alive now?**
 
-### Historical Windows Event
+#### Historical Windows Event
 
 ```powershell
 Get-WinEvent
@@ -310,7 +314,7 @@ Menjawab:
 
 > **What was recorded?**
 
-### Sysmon
+#### Sysmon
 
 Memberikan:
 
@@ -334,7 +338,7 @@ Sysmon
 
 ---
 
-# 10. PRAKTIK 1 — CEK SYSMON
+## 10. PRAKTIK 1 — CEK SYSMON
 
 Jalankan:
 
@@ -352,7 +356,7 @@ Kirim hasilnya.
 
 ---
 
-# 11. PRAKTIK 2 — CARI SYSMON EVENT
+## 11. PRAKTIK 2 — CARI SYSMON EVENT
 
 Kalau Sysmon sudah tersedia:
 
@@ -369,7 +373,7 @@ Id : 1
 
 ---
 
-# 12. PRAKTIK 3 — FILTER EVENT ID 1
+## 12. PRAKTIK 3 — FILTER EVENT ID 1
 
 Gunakan:
 
@@ -385,47 +389,47 @@ Cari satu process creation event.
 
 ---
 
-# 13. JANGAN LANGSUNG MEMBACA SEMUA FIELD
+## 13. JANGAN LANGSUNG MEMBACA SEMUA FIELD
 
 Kalau menemukan event panjang, gunakan investigator mindset:
 
-### STEP 1 — WHEN
+#### STEP 1 — WHEN
 
 ```text
 TimeCreated
 ```
 
-### STEP 2 — WHAT
+#### STEP 2 — WHAT
 
 ```text
 Process
 ```
 
-### STEP 3 — WHO
+#### STEP 3 — WHO
 
 ```text
 User
 ```
 
-### STEP 4 — WHO STARTED IT
+#### STEP 4 — WHO STARTED IT
 
 ```text
 Parent Process
 ```
 
-### STEP 5 — HOW
+#### STEP 5 — HOW
 
 ```text
 CommandLine
 ```
 
-### STEP 6 — WHERE
+#### STEP 6 — WHERE
 
 ```text
 Image / Executable
 ```
 
-### STEP 7 — FINGERPRINT
+#### STEP 7 — FINGERPRINT
 
 ```text
 Hash
@@ -453,7 +457,7 @@ HASH
 
 ---
 
-# 14. PROCESS INVESTIGATION WORKFLOW
+## 14. PROCESS INVESTIGATION WORKFLOW
 
 Misalnya kamu menemukan:
 
@@ -492,7 +496,7 @@ Kita masih belum tahu:
 
 ---
 
-# 15. CONTOH
+## 15. CONTOH
 
 Misalnya:
 
@@ -537,7 +541,7 @@ correlation
 
 ---
 
-# 16. OBSERVATION → HYPOTHESIS
+## 16. OBSERVATION → HYPOTHESIS
 
 Contoh:
 
@@ -549,15 +553,15 @@ Temp path
 script execution
 ```
 
-### Observation
+#### Observation
 
 > PowerShell menjalankan script dari Temp.
 
-### Hypothesis
+#### Hypothesis
 
 > Aktivitas ini memerlukan investigation lebih lanjut.
 
-### Bukan langsung:
+#### Bukan langsung:
 
 > Ini malware.
 
@@ -565,7 +569,7 @@ Karena kita masih memerlukan evidence.
 
 ---
 
-# 17. PRAKTIK 4 — BUAT PROCESS NORMAL
+## 17. PRAKTIK 4 — BUAT PROCESS NORMAL
 
 Kita membutuhkan aktivitas yang mudah diamati.
 
@@ -607,7 +611,7 @@ PROCESS EXITS
 
 ---
 
-# 18. PRAKTIK 5 — HUBUNGKAN DENGAN USER
+## 18. PRAKTIK 5 — HUBUNGKAN DENGAN USER
 
 Saat Notepad masih berjalan:
 
@@ -629,7 +633,7 @@ User
 
 ---
 
-# 19. PRAKTIK 6 — FILE INVESTIGATION
+## 19. PRAKTIK 6 — FILE INVESTIGATION
 
 Ambil `ExecutablePath` Notepad.
 
@@ -680,7 +684,7 @@ HASH
 
 ---
 
-# 20. MINI INVESTIGATION DAY 12 🔥
+## 20. MINI INVESTIGATION DAY 12 🔥
 
 Kita buat latihan yang jauh lebih sesuai dengan cara belajar kamu.
 
@@ -688,7 +692,7 @@ Jangan langsung mencari kesimpulan.
 
 Ikuti urutan.
 
-## CASE
+### CASE
 
 Kita akan investigate:
 
@@ -696,7 +700,7 @@ Kita akan investigate:
 notepad.exe
 ```
 
-### STEP 1 — PROCESS
+#### STEP 1 — PROCESS
 
 Cari:
 
@@ -705,14 +709,14 @@ Get-CimInstance Win32_Process -Filter "Name = 'notepad.exe'" |
 Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 ```
 
-### STEP 2 — USER
+#### STEP 2 — USER
 
 ```powershell
 Get-Process -Name notepad -IncludeUserName |
 Select-Object ProcessName, Id, UserName
 ```
 
-### STEP 3 — PARENT
+#### STEP 3 — PARENT
 
 Ambil PPID.
 
@@ -723,7 +727,7 @@ Get-CimInstance Win32_Process -Filter "ProcessId = <PPID>" |
 Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 ```
 
-### STEP 4 — FILE
+#### STEP 4 — FILE
 
 Ambil executable path.
 
@@ -732,13 +736,13 @@ Get-Item "<ExecutablePath>" |
 Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
 ```
 
-### STEP 5 — SIGNATURE
+#### STEP 5 — SIGNATURE
 
 ```powershell
 Get-AuthenticodeSignature "<ExecutablePath>"
 ```
 
-### STEP 6 — HASH
+#### STEP 6 — HASH
 
 ```powershell
 Get-FileHash "<ExecutablePath>" -Algorithm SHA256
@@ -746,7 +750,7 @@ Get-FileHash "<ExecutablePath>" -Algorithm SHA256
 
 ---
 
-# 21. SEKARANG JANGAN LANGSUNG MENILAI
+## 21. SEKARANG JANGAN LANGSUNG MENILAI
 
 Buat evidence table:
 
@@ -809,7 +813,7 @@ ANALYSIS
 
 ---
 
-# 22. 🧠 INI YANG AKAN TERUS KITA LATIH
+## 22. 🧠 INI YANG AKAN TERUS KITA LATIH
 
 Kamu sebelumnya mengatakan ingin tahu:
 
@@ -872,11 +876,11 @@ dengan:
 
 ---
 
-# 23. ATTACK METHOD
+## 23. ATTACK METHOD
 
 Hari ini kita hanya mengenal konsepnya:
 
-### Process Injection / Suspicious Process Execution
+#### Process Injection / Suspicious Process Execution
 
 Attacker bisa menyalahgunakan legitimate process atau menjalankan tool legitimate untuk mencapai tujuan mereka.
 
@@ -905,7 +909,7 @@ Timeline
 
 ---
 
-# 24. DEFENSE METHOD
+## 24. DEFENSE METHOD
 
 Defensive strategy:
 
@@ -927,142 +931,27 @@ Sysmon membantu menyediakan telemetry yang lebih kaya untuk proses seperti ini.
 
 ---
 
-# 💻 DAY 12 — COMMANDS
-
-### Sysmon check
-
-```powershell
-Get-Command sysmon64 -ErrorAction SilentlyContinue
-```
-
-```powershell
-Get-Service Sysmon* -ErrorAction SilentlyContinue
-```
-
-### Sysmon events
-
-```powershell
-Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 10
-```
-
-### Sysmon fields
-
-```powershell
-Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 10 |
-Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
-```
-
-### Sysmon Process Creation
-
-```powershell
-Get-WinEvent -FilterHashtable @{
-    LogName='Microsoft-Windows-Sysmon/Operational'
-    Id=1
-} -MaxEvents 10 |
-Select-Object TimeCreated, Id, ProviderName, LevelDisplayName, Message
-```
-
-### Notepad process
-
-```powershell
-Get-CimInstance Win32_Process -Filter "Name = 'notepad.exe'" |
-Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
-```
-
-### Notepad + User
-
-```powershell
-Get-Process -Name notepad -IncludeUserName |
-Select-Object ProcessName, Id, UserName
-```
-
-### Parent Process
-
-```powershell
-Get-CimInstance Win32_Process -Filter "ProcessId = <PPID>" |
-Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
-```
-
-### File Metadata
-
-```powershell
-Get-Item "<ExecutablePath>" |
-Select-Object Name, Length, CreationTime, LastWriteTime, LastAccessTime
-```
-
-### Digital Signature
-
-```powershell
-Get-AuthenticodeSignature "<ExecutablePath>"
-```
-
-### SHA-256
-
-```powershell
-Get-FileHash "<ExecutablePath>" -Algorithm SHA256
-```
-
----
-
-# 🧠 DAY 12 COMMAND MAP
-
-```text
-SYSMON
- ↓
-Get-WinEvent
- ↓
-Process Creation Event
- ↓
-PROCESS
- ↓
-Get-CimInstance
- ↓
-PID / PPID / Path / CommandLine
- ↓
-Get-Process
- ↓
-USER
- ↓
-PARENT
- ↓
-FILE
- ↓
-Get-Item
- ↓
-Metadata
- ↓
-Get-AuthenticodeSignature
- ↓
-Signature
- ↓
-Get-FileHash
- ↓
-SHA-256
-```
-
----
-
-# 🔄 ACTIVE RECALL DAY 12
+## 🔄 ACTIVE RECALL DAY 12
 
 Sesuai aturan kita, aku **tidak bombardir semua materi lama**.
 
 Hari ini hanya ada **3 reminder yang masih perlu diperkuat**:
 
-### Q1
+#### Q1
 
 Apa perbedaan **Service dan Process**?
 
-### Q2
+#### Q2
 
 Apa itu **Security Context**?
 
-### Q3
+#### Q3
 
 Apa arti `TimeCreated` pada Event Log?
 
 ---
 
-# 🎯 TARGET DAY 12
+## 🎯 TARGET DAY 12
 
 Kali ini jangan cuma mengejar:
 

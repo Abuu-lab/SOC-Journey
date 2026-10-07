@@ -1,4 +1,6 @@
-## 🟢 EVALUASI DAY 10 — PASSED
+# Day 10 — Evaluasi
+
+### 🟢 EVALUASI DAY 10 — PASSED
 
 Sesuai aturan kita, **76–100% = PASS**. Jadi Day 10 tetap **lulus**.
 
@@ -10,7 +12,7 @@ Tapi aku menangkap hal yang sangat penting dari hasilmu:
 
 ---
 
-# 1. HASIL PRAKTIK DAY 10
+## 1. HASIL PRAKTIK DAY 10
 
 Kamu berhasil menjalankan:
 
@@ -40,7 +42,7 @@ Ini sebenarnya **sangat bagus untuk dijadikan investigation case end-to-end**.
 
 ---
 
-# 2. ⚠️ ADA KESALAHAN PENTING DI MINI PROJECT
+## 2. ⚠️ ADA KESALAHAN PENTING DI MINI PROJECT
 
 Kamu membuat:
 
@@ -71,7 +73,7 @@ di dalam window tersebut?
 
 ---
 
-# 3. ⚠️ OBSERVATION-MU TENTANG LOW BATTERY
+## 3. ⚠️ OBSERVATION-MU TENTANG LOW BATTERY
 
 Kamu menulis:
 
@@ -96,15 +98,15 @@ Itu menunjukkan **system returned from a low-power state**, tetapi dari event ya
 
 Jadi:
 
-### Observation:
+#### Observation:
 
 > Sistem kembali dari low-power state.
 
-### Inference:
+#### Inference:
 
 > Kemungkinan berkaitan dengan sleep/wake.
 
-### Belum boleh disimpulkan:
+#### Belum boleh disimpulkan:
 
 > Baterai sedang lowbat.
 
@@ -120,7 +122,7 @@ CONCLUSION
 
 ---
 
-# 4. ⚠️ SHA-256 / DIGITAL SIGNATURE TIDAK SELALU LANGSUNG DIPAKAI
+## 4. ⚠️ SHA-256 / DIGITAL SIGNATURE TIDAK SELALU LANGSUNG DIPAKAI
 
 Kamu pada mini project system event langsung menulis:
 
@@ -178,17 +180,17 @@ Jadi investigator tidak mengeluarkan semua tools sekaligus.
 
 ---
 
-# 5. ACTIVE RECALL — YANG SALAH SAJA
+## 5. ACTIVE RECALL — YANG SALAH SAJA
 
 Sesuai aturanmu, yang sudah sering benar **tidak aku ulang sekarang**.
 
-## ❌ Q1 — ExecutablePath vs CommandLine
+### ❌ Q1 — ExecutablePath vs CommandLine
 
 Jawabanmu sebelumnya sudah benar, jadi **tidak perlu diulang sekarang**.
 
 ---
 
-## ❌ Q2 — Service vs Process
+### ❌ Q2 — Service vs Process
 
 Kamu masih menjawab:
 
@@ -201,7 +203,7 @@ Sekarang jawab ulang:
 
 ---
 
-## ❌ Q3 — Digital Signature
+### ❌ Q3 — Digital Signature
 
 Kamu masih mendefinisikannya sebagai valid/tidaknya process.
 
@@ -211,7 +213,7 @@ Jawab ulang:
 
 ---
 
-## ❌ Q4 — Security Context
+### ❌ Q4 — Security Context
 
 Kamu menjawab:
 
@@ -223,7 +225,7 @@ Jawab ulang:
 
 ---
 
-## ❌ Q6 — TimeCreated
+### ❌ Q6 — TimeCreated
 
 Kamu menjawab:
 
@@ -235,7 +237,7 @@ Jawab ulang:
 
 ---
 
-## ❌ Q7 — Timeline
+### ❌ Q7 — Timeline
 
 Kamu mengatakan:
 
@@ -249,7 +251,7 @@ Jawab ulang dengan lengkap:
 
 ---
 
-## ❌ Q11 — Causality
+### ❌ Q11 — Causality
 
 Ini penting.
 
@@ -273,7 +275,7 @@ Jawab:
 
 ---
 
-# 6. 🔥 DAN INI YANG AKAN KITA UBAH
+## 6. 🔥 DAN INI YANG AKAN KITA UBAH
 
 Kamu bilang:
 
@@ -325,7 +327,7 @@ Dan kita **benar-benar akan menjalankannya di laptopmu**, bukan hanya teori.
 
 ---
 
-# 7. CONTOH CASE YANG SUDAH KAMU PUNYA
+## 7. CONTOH CASE YANG SUDAH KAMU PUNYA
 
 Sebenarnya dari Day 10 kamu sudah mendapatkan sebuah case yang bagus:
 
@@ -406,7 +408,7 @@ Final Assessment
 
 ---
 
-# 8. DAY 10 STATUS
+## 8. DAY 10 STATUS
 
 | Area                   | Status |
 | ---------------------- | ------ |
@@ -422,13 +424,13 @@ Final Assessment
 | Causality              | 🟡     |
 | Investigation workflow | 🟡     |
 
-### 🟢 **DAY 10 — PASSED**
+#### 🟢 **DAY 10 — PASSED**
 
 Jadi **tidak ada reset**.
 
 ---
 
-# 🧠 ATURAN BARU PROJECT KITA
+## 🧠 ATURAN BARU PROJECT KITA
 
 Mulai sekarang:
 

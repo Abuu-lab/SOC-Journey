@@ -1,0 +1,15 @@
+# Day 01 — Commands
+
+Commands practiced:
+
+1. hostname
+   Purpose: melihat nama komputer
+
+2. whoami
+   Purpose: melihat user yang sedang digunakan
+
+3. systeminfo
+   Purpose: melihat informasi sistem Windows
+
+4. tasklist
+   Purpose: melihat process yang sedang berjalan

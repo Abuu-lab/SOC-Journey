@@ -1,4 +1,6 @@
-# 🟢 EVALUASI DAY 12 — PASSED
+# Day 12 — Evaluasi
+
+## 🟢 EVALUASI DAY 12 — PASSED
 
 Aku sudah cek seluruh hasil Day 12. **PASS** sesuai aturan kita: 76–100% langsung lanjut.
 
@@ -6,7 +8,7 @@ Dan menurutku Day 12 ini **cukup penting**, karena untuk pertama kalinya kamu be
 
 ---
 
-# 1. PRAKTIK SYSMON ✅✅
+## 1. PRAKTIK SYSMON ✅✅
 
 Kamu menemukan:
 
@@ -28,7 +30,7 @@ Jadi Sysmon memang sudah terpasang dan aktif di laptopmu.
 
 ---
 
-# 2. SYSMON EVENT ID 1 ✅✅
+## 2. SYSMON EVENT ID 1 ✅✅
 
 Kamu mendapatkan:
 
@@ -84,7 +86,7 @@ Sekarang satu historical event bisa memberikan banyak informasi tersebut.
 
 ---
 
-# 3. HAL PENTING YANG HARUS KAMU SADARI
+## 3. HAL PENTING YANG HARUS KAMU SADARI
 
 Perhatikan Sysmon mencatat:
 
@@ -114,7 +116,7 @@ Sysmon memberi kita historical telemetry yang lebih kaya.
 
 ---
 
-# 4. PRAKTIK NOTEPAD ✅
+## 4. PRAKTIK NOTEPAD ✅
 
 Kamu menjalankan Notepad dan menemukan:
 
@@ -144,7 +146,7 @@ DESKTOP-C7BHMKL\Buya
 
 ---
 
-# 5. FILE INVESTIGATION ✅✅
+## 5. FILE INVESTIGATION ✅✅
 
 Kamu kemudian mengikuti alurnya:
 
@@ -193,7 +195,7 @@ SHA-256:
 
 ---
 
-# 6. MINI INVESTIGATION DISCORD 🔥
+## 6. MINI INVESTIGATION DISCORD 🔥
 
 Ini bagian yang paling aku suka.
 
@@ -244,7 +246,7 @@ DD3D7B9A55893153084BC75FC57436C792394705BB30CC7D5B80AC08CBE79B51
 
 ---
 
-# 7. ANALYSIS-MU 🟢
+## 7. ANALYSIS-MU 🟢
 
 Kamu menyimpulkan:
 
@@ -279,7 +281,7 @@ Bagus.
 
 ---
 
-# 8. COMMANDLINE DISCORD
+## 8. COMMANDLINE DISCORD
 
 CommandLine Discord-mu sangat panjang dan berisi:
 
@@ -320,9 +322,9 @@ Ini adalah perbedaan penting antara:
 
 ---
 
-# 9. ACTIVE RECALL DAY 12
+## 9. ACTIVE RECALL DAY 12
 
-### Q1 — Service vs Process ✅
+#### Q1 — Service vs Process ✅
 
 Jawabanmu:
 
@@ -334,7 +336,7 @@ Akhirnya ini sudah jauh lebih presisi.
 
 ---
 
-### Q2 — Security Context 🟡
+#### Q2 — Security Context 🟡
 
 Kamu:
 
@@ -360,7 +362,7 @@ Tidak masalah karena tetap PASS; nanti kita bawa reminder.
 
 ---
 
-### Q3 — TimeCreated ✅
+#### Q3 — TimeCreated ✅
 
 > waktu yang dibuat saat event terjadi
 
@@ -372,7 +374,7 @@ Lebih tepat:
 
 ---
 
-# 📊 DAY 12 SCORE
+## 📊 DAY 12 SCORE
 
 | Materi                     | Status |
 | -------------------------- | ------ |
@@ -390,7 +392,7 @@ Lebih tepat:
 | Investigation flow         | 🟢     |
 | Security Context           | 🟡     |
 
-# 🟢 **DAY 12 — PASSED**
+## 🟢 **DAY 12 — PASSED**
 
 Dan menurutku ada kemajuan nyata:
 
@@ -414,36 +416,7 @@ Itu **cara berpikir investigator** yang memang ingin kita bangun.
 
 ---
 
-# 📌 MILESTONE 1 TAHUN — DAY 12
-
-Catatan kecil yang akan kita simpan untuk milestone-mu:
-
-### DAY 12 — Sysmon & Endpoint Telemetry
-
-* Sysmon
-* Sysmon Service
-* Sysmon Event ID 1 — Process Creation
-* Historical Process Telemetry
-* ProcessGuid
-* ProcessId
-* Image
-* CommandLine
-* User
-* IntegrityLevel
-* ParentProcessId
-* ParentImage
-* ParentCommandLine
-* Sysmon Hash telemetry
-* Endpoint visibility
-* Historical process investigation
-* Correlation: Process → User → Parent → CommandLine → File → Hash
-* **Process yang sudah mati tidak selalu mengakhiri investigation**
-
-Data praktismu sendiri menunjukkan Sysmon Event ID 1 dapat menyediakan `ProcessId`, `Image`, `CommandLine`, `User`, hash, `ParentProcessId`, `ParentImage`, dan `ParentCommandLine` dalam satu event. 
-
----
-
-# 🧠 REMINDER UNTUK DAY 13
+## 🧠 REMINDER UNTUK DAY 13
 
 Hanya satu yang masih perlu diperkuat:
 

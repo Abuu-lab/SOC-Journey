@@ -1,8 +1,10 @@
+# Day 13 — Evaluasi
+
 **DAY 13: PASS ✅**
 
 Secara keseluruhan, kamu sudah menangkap alur investigasi Sysmon. Aku nilai sekitar **80–85%**, jadi sesuai rule kita: **PASS, lanjut ke Day 14**. Yang belum kuat tidak mengulang Day 13; kita bawa sebagai **active recall Day 14**.
 
-### 1. Kenapa `svchost.exe -k CameraMonitor`?
+#### 1. Kenapa `svchost.exe -k CameraMonitor`?
 
 Ini memang bagian yang perlu kita luruskan.
 
@@ -73,7 +75,7 @@ Jadi **jangan menebak arti `CameraMonitor` dari namanya**. Dalam SOC, kita cari 
 
 ---
 
-### 2. `ProcessGuid` yang tadi kamu lupa
+#### 2. `ProcessGuid` yang tadi kamu lupa
 
 Ini penting.
 
@@ -125,7 +127,7 @@ memberi kita konteks siapa parent dari process instance tersebut.
 
 ---
 
-### 3. `File Exists` itu apa?
+#### 3. `File Exists` itu apa?
 
 Ini sederhana tetapi penting.
 
@@ -173,7 +175,7 @@ Itu tidak otomatis malicious, tetapi menjadi **evidence gap** yang perlu kita pa
 
 ---
 
-### 4. Jawaban Challenge-mu yang perlu diperbaiki
+#### 4. Jawaban Challenge-mu yang perlu diperbaiki
 
 Beberapa sudah bagus.
 
@@ -286,7 +288,7 @@ Yang paling penting bukan sekadar hafal namanya, tetapi **kenapa SOC membutuhkan
 
 ---
 
-### 5. Bagian mini-project: ada satu koreksi penting
+#### 5. Bagian mini-project: ada satu koreksi penting
 
 Kamu menulis:
 
@@ -322,7 +324,7 @@ Ini justru contoh bagus kenapa **ketelitian sangat penting dalam SOC**. Satu fie
 
 ---
 
-### 6. Analysis mini-project-mu sebenarnya sudah mengarah benar
+#### 6. Analysis mini-project-mu sebenarnya sudah mengarah benar
 
 Kamu menulis:
 
@@ -375,7 +377,7 @@ Yang belum tersedia adalah:
 
 ---
 
-### 7. Ini command correlation yang tadi kamu tanyakan
+#### 7. Ini command correlation yang tadi kamu tanyakan
 
 Untuk **historical Sysmon evidence**, command yang kamu pakai adalah:
 
@@ -427,7 +429,7 @@ masih bisa ditemukan
 
 ---
 
-### 8. Jawaban Q15-mu bagus
+#### 8. Jawaban Q15-mu bagus
 
 Flow yang kamu tulis:
 
@@ -481,7 +483,7 @@ Itu yang saya ingin semakin kuat pada kamu.
 
 ---
 
-## Active Recall Day 14
+### Active Recall Day 14
 
 Aku sudah masukkan beberapa kelemahan Day 13 sebagai bahan recall berikutnya.
 
@@ -501,7 +503,7 @@ Yang akan muncul kembali terutama:
 11. Security Context terdiri dari apa saja?
 ```
 
-### DAY 13 MILESTONE
+#### DAY 13 MILESTONE
 
 * Sysmon Event ID 1 — Process Create
 * `ProcessGuid`
