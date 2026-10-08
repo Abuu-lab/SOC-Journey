@@ -1,14 +1,172 @@
 # Day 12 — Evaluasi
 
-## 🟢 EVALUASI DAY 12 — PASSED
+Catatan ini mempertahankan jawaban, koreksi, dan penilaian yang tercatat. Sebagian jawaban hanya tersedia sebagai ringkasan mentor; pertanyaan atau jawaban lengkap yang tidak tercatat tidak direkonstruksi. Skenario latihan tidak dianggap sebagai incident pada endpoint aktual.
+
+## Challenge
+
+Catatan terpisah untuk bagian ini belum tersedia dalam evaluasi hari ini. Soal dalam Materi merupakan latihan yang diberikan; penyelesaiannya tidak diasumsikan.
+
+## Mini-project / Investigasi
+
+### 6. MINI INVESTIGATION DISCORD 🔥
+
+Ini bagian yang paling aku suka.
+
+Kamu menemukan:
+
+```text
+Discord.exe
+PID 15896
+PPID 21128
+User Buya
+```
+
+
+
+Lalu kamu mencari parent:
+
+```text
+Discord.exe
+PID 21128
+PPID 13636
+```
+
+dengan CommandLine:
+
+```text
+Discord.exe --start-inactive
+```
+
+
+
+Kemudian kamu lanjut ke file:
+
+```text
+Metadata
+Signature
+Hash
+```
+
+dan mendapatkan signature `Valid` serta SHA-256:
+
+```text
+DD3D7B9A55893153084BC75FC57436C792394705BB30CC7D5B80AC08CBE79B51
+```
+
+
+
+🔥 Ini sudah sesuai alur investigation yang kita inginkan.
+
+---
+
+## Active Recall / Self-test
+
+### 9. ACTIVE RECALL DAY 12
+
+##### Q1 — Service vs Process ✅
+
+Jawabanmu:
+
+> service adalah background component yang dijalankan oleh Windows Service Manager, process adalah program yang berjalan
+
+🟢 **BENAR.**
+
+Akhirnya ini sudah jauh lebih presisi.
+
+---
+
+##### Q2 — Security Context 🟡
+
+Kamu:
+
+> user + group
+
+Benar sebagai bagian utama, tetapi masih kurang.
+
+Untuk level kita:
+
+```text
+Security Context
+=
+Identity/User
++
+Groups
++
+Privileges
+```
+
+Jadi kita **belum menganggap ini selesai sepenuhnya**.
+
+Tidak masalah karena tetap PASS; nanti kita bawa reminder.
+
+---
+
+##### Q3 — TimeCreated ✅
+
+> waktu yang dibuat saat event terjadi
+
+🟢 Maksudmu sudah benar.
+
+Lebih tepat:
+
+> **Timestamp yang menunjukkan kapan event terjadi/tercatat.**
+
+---
+### 🧠 REMINDER UNTUK DAY 13
+
+Hanya satu yang masih perlu diperkuat:
+
+> **Security Context = User + Groups + Privileges**
+
+Yang lainnya **tidak perlu aku ulang besok** kecuali memang muncul lagi secara natural dalam investigation.
+
+Dan mulai Day 13, kita akan semakin sering memakai pola:
+
+```text
+ALERT
+ ↓
+IDENTIFY
+ ↓
+WHAT HAPPENED?
+ ↓
+WHEN?
+ ↓
+WHO?
+ ↓
+PROCESS
+ ↓
+PARENT
+ ↓
+COMMANDLINE
+ ↓
+FILE
+ ↓
+HASH / SIGNATURE
+ ↓
+NETWORK
+ ↓
+CORRELATE
+ ↓
+EVIDENCE GAP
+ ↓
+ASSESSMENT
+ ↓
+CONCLUSION
+```
+
+Jadi teori tetap ada, tetapi **tanganmu akan semakin sering menjalankan investigation tersebut sendiri**.
+
+## Penilaian dan Hasil Praktik
+
+
+### 🟢 EVALUASI DAY 12 — PASSED
 
 Aku sudah cek seluruh hasil Day 12. **PASS** sesuai aturan kita: 76–100% langsung lanjut.
 
 Dan menurutku Day 12 ini **cukup penting**, karena untuk pertama kalinya kamu benar-benar mendapatkan telemetry yang jauh lebih kaya dari Sysmon, bukan cuma `Get-Process`.
 
 ---
-
-## 1. PRAKTIK SYSMON ✅✅
+### 1. PRAKTIK SYSMON ✅✅
 
 Kamu menemukan:
 
@@ -29,8 +187,7 @@ Jadi Sysmon memang sudah terpasang dan aktif di laptopmu.
 ✅ Bagus.
 
 ---
-
-## 2. SYSMON EVENT ID 1 ✅✅
+### 2. SYSMON EVENT ID 1 ✅✅
 
 Kamu mendapatkan:
 
@@ -85,8 +242,7 @@ Hash
 Sekarang satu historical event bisa memberikan banyak informasi tersebut.
 
 ---
-
-## 3. HAL PENTING YANG HARUS KAMU SADARI
+### 3. HAL PENTING YANG HARUS KAMU SADARI
 
 Perhatikan Sysmon mencatat:
 
@@ -115,8 +271,7 @@ Ini **persis masalah yang kita temui di Day 11** ketika PID `24416` sudah hilang
 Sysmon memberi kita historical telemetry yang lebih kaya.
 
 ---
-
-## 4. PRAKTIK NOTEPAD ✅
+### 4. PRAKTIK NOTEPAD ✅
 
 Kamu menjalankan Notepad dan menemukan:
 
@@ -145,8 +300,7 @@ DESKTOP-C7BHMKL\Buya
 ✅ Benar.
 
 ---
-
-## 5. FILE INVESTIGATION ✅✅
+### 5. FILE INVESTIGATION ✅✅
 
 Kamu kemudian mengikuti alurnya:
 
@@ -194,59 +348,7 @@ SHA-256:
 ✅ Kamu berhasil melakukan **full file investigation**.
 
 ---
-
-## 6. MINI INVESTIGATION DISCORD 🔥
-
-Ini bagian yang paling aku suka.
-
-Kamu menemukan:
-
-```text
-Discord.exe
-PID 15896
-PPID 21128
-User Buya
-```
-
-
-
-Lalu kamu mencari parent:
-
-```text
-Discord.exe
-PID 21128
-PPID 13636
-```
-
-dengan CommandLine:
-
-```text
-Discord.exe --start-inactive
-```
-
-
-
-Kemudian kamu lanjut ke file:
-
-```text
-Metadata
-Signature
-Hash
-```
-
-dan mendapatkan signature `Valid` serta SHA-256:
-
-```text
-DD3D7B9A55893153084BC75FC57436C792394705BB30CC7D5B80AC08CBE79B51
-```
-
-
-
-🔥 Ini sudah sesuai alur investigation yang kita inginkan.
-
----
-
-## 7. ANALYSIS-MU 🟢
+### 7. ANALYSIS-MU 🟢
 
 Kamu menyimpulkan:
 
@@ -280,8 +382,7 @@ Network
 Bagus. 
 
 ---
-
-## 8. COMMANDLINE DISCORD
+### 8. COMMANDLINE DISCORD
 
 CommandLine Discord-mu sangat panjang dan berisi:
 
@@ -321,60 +422,7 @@ Ini adalah perbedaan penting antara:
 **Observation** dan **Conclusion**.
 
 ---
-
-## 9. ACTIVE RECALL DAY 12
-
-#### Q1 — Service vs Process ✅
-
-Jawabanmu:
-
-> service adalah background component yang dijalankan oleh Windows Service Manager, process adalah program yang berjalan
-
-🟢 **BENAR.**
-
-Akhirnya ini sudah jauh lebih presisi.
-
----
-
-#### Q2 — Security Context 🟡
-
-Kamu:
-
-> user + group
-
-Benar sebagai bagian utama, tetapi masih kurang.
-
-Untuk level kita:
-
-```text
-Security Context
-=
-Identity/User
-+
-Groups
-+
-Privileges
-```
-
-Jadi kita **belum menganggap ini selesai sepenuhnya**.
-
-Tidak masalah karena tetap PASS; nanti kita bawa reminder.
-
----
-
-#### Q3 — TimeCreated ✅
-
-> waktu yang dibuat saat event terjadi
-
-🟢 Maksudmu sudah benar.
-
-Lebih tepat:
-
-> **Timestamp yang menunjukkan kapan event terjadi/tercatat.**
-
----
-
-## 📊 DAY 12 SCORE
+### 📊 DAY 12 SCORE
 
 | Materi                     | Status |
 | -------------------------- | ------ |
@@ -391,8 +439,7 @@ Lebih tepat:
 | Evidence correlation       | 🟢     |
 | Investigation flow         | 🟢     |
 | Security Context           | 🟡     |
-
-## 🟢 **DAY 12 — PASSED**
+### 🟢 **DAY 12 — PASSED**
 
 Dan menurutku ada kemajuan nyata:
 
@@ -416,46 +463,3 @@ Itu **cara berpikir investigator** yang memang ingin kita bangun.
 
 ---
 
-## 🧠 REMINDER UNTUK DAY 13
-
-Hanya satu yang masih perlu diperkuat:
-
-> **Security Context = User + Groups + Privileges**
-
-Yang lainnya **tidak perlu aku ulang besok** kecuali memang muncul lagi secara natural dalam investigation.
-
-Dan mulai Day 13, kita akan semakin sering memakai pola:
-
-```text
-ALERT
- ↓
-IDENTIFY
- ↓
-WHAT HAPPENED?
- ↓
-WHEN?
- ↓
-WHO?
- ↓
-PROCESS
- ↓
-PARENT
- ↓
-COMMANDLINE
- ↓
-FILE
- ↓
-HASH / SIGNATURE
- ↓
-NETWORK
- ↓
-CORRELATE
- ↓
-EVIDENCE GAP
- ↓
-ASSESSMENT
- ↓
-CONCLUSION
-```
-
-Jadi teori tetap ada, tetapi **tanganmu akan semakin sering menjalankan investigation tersebut sendiri**.

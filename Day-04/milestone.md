@@ -1,4 +1,4 @@
-# Day 04 — Milestone Hari Itu
+# Day 04 — 📌 Catatan Penting / Milestone Hari Ini
 
 - Mengambil metadata file: Name, Length, CreationTime, LastWriteTime, dan LastAccessTime.
 - Memeriksa digital signature executable.

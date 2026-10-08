@@ -1,9 +1,8 @@
-# Day 14 — Milestone Hari Ini
+# Day 14 — 📌 Catatan Penting / Milestone Hari Ini
 
 **Tema:** Security Context, IntegrityLevel & Svchost Investigation  
 **Status:** PASS — 78/100 (estimasi pembelajaran, bukan ujian standar)
 
-## 📌 Catatan Penting / Milestone Hari Ini
 - Menggunakan `Get-Process -IncludeUserName` untuk **current process + username**.
 - Menemukan Sysmon **Event ID 1** PowerShell historis dengan ProcessGuid, PID, User, IntegrityLevel, CommandLine dan Parent.
 - Mempraktikkan perbedaan **Current State vs Historical Evidence** ketika PID lama tidak tersedia.
@@ -18,7 +17,6 @@
 - Memahami pentingnya membedakan **PowerShell executable** dari **script `update.ps1`** yang dijalankan.
 - Mempelajari **risk-based triage**, evidence gap, dan *unusual ≠ malicious*.
 
-## Masih Lemah — untuk Active Recall Day 15
 - Mengingat ProcessGuid vs PID dan PID reuse tanpa melihat materi.
 - IntegrityLevel Medium/High/System vs User, Groups, Privileges.
 - Syntax `Win32_Service` dan proses-host-service relationship.

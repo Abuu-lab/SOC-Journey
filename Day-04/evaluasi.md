@@ -1,213 +1,10 @@
 # Day 04 — Evaluasi
 
-EVALUATION
+Catatan ini mempertahankan jawaban, koreksi, dan penilaian yang tercatat. Sebagian jawaban hanya tersedia sebagai ringkasan mentor; pertanyaan atau jawaban lengkap yang tidak tercatat tidak direkonstruksi. Skenario latihan tidak dianggap sebagai incident pada endpoint aktual.
 
-**Status: DEVELOPING ⚠️**
+## Challenge
 
-Hands-on kamu **PASS**, tetapi pemahaman konsep masih perlu beberapa koreksi sebelum saya nyatakan Day 4 PASS penuh.
-
----
-
-## 1. Hands-On ✅ PASS
-
-Kamu berhasil mendapatkan:
-
-```text
-Metadata
-Digital Signature
-SHA-256
-CMD hash
-PowerShell hash
-```
-
-Dan kamu menemukan bahwa hasil PowerShell dan CMD sama kecuali kapitalisasi huruf. Itu **benar**. Hash hexadecimal yang sama dapat ditulis uppercase atau lowercase tanpa mengubah nilainya. 
-
-Ini latihan yang bagus karena kamu sekarang sudah mengalami sendiri:
-
-```text
-PowerShell
-    ↓
-SHA-256
-    ↓
-CMD
-    ↓
-SHA-256
-    ↓
-same result
-```
-
----
-
-## 2. Metadata — ✅
-
-Pemahamanmu sudah cukup benar.
-
-Kamu memahami bahwa metadata bisa memberikan informasi seperti:
-
-* creation time
-* last write time
-* last access time
-* attributes
-
-Data nyata yang kamu dapat juga menunjukkan itu. 
-
----
-
-## 3. Digital Signature — ⚠️ KOREKSI PENTING
-
-Kamu mengatakan:
-
-> “seperti pengakuan digital, bersertifikat atau tidaknya sebuah aplikasi resmi atau tidaknya dan berbayar.”
-
-Bagian **“berbayar”** dan **“resmi/tidak resmi”** harus kita hilangkan.
-
-Digital Signature **bukan tanda bahwa aplikasi itu berbayar**.
-
-Lebih tepat:
-
-> **Digital Signature membantu memverifikasi identitas signer/publisher dan integritas file yang ditandatangani.**
-
-Jadi misalnya:
-
-```text
-Signer: Microsoft Corporation
-Status: Valid
-```
-
-kita memperoleh informasi bahwa signature tersebut dapat diverifikasi dan berkaitan dengan certificate signer tersebut.
-
-Tetapi:
-
-```text
-Valid Signature
-≠
-100% Safe
-```
-
-Dan:
-
-```text
-Unsigned
-≠
-Malware
-```
-
-Kamu sudah benar pada dua konsep terakhir itu. 
-
-#### Satu lagi:
-
-Pada hasilmu:
-
-```text
-SignerCertificate:
-DC91E564...
-```
-
-itu **bukan nama publisher**. Itu merupakan informasi/identifier certificate yang ditampilkan oleh PowerShell dalam output tersebut. Jadi ketika kamu mengatakan:
-
-> “gak ada tulisan siapa publishernya”
-
-✅ benar berdasarkan output yang kamu dapat.
-
-Kita belum belajar cara mengambil nama signer dari certificate tersebut.
-
----
-
-## 4. Hash — ⚠️ konsepnya sudah dekat
-
-Kamu mengatakan:
-
-> “kode hash unik”
-
-Lebih tepat:
-
-> **Hash adalah nilai yang dihasilkan dari isi file melalui hash function.**
-
-Analogi:
-
-```text
-File
- ↓
-SHA-256
- ↓
-Fingerprint-like value
-```
-
-Jadi SHA-256:
-
-```text
-87CA8213820A...
-```
-
-adalah **hash dari file tertentu pada kondisi tertentu**. 
-
-Kamu benar bahwa:
-
-> file dengan isi identik → hash yang sama.
-
-Dan perubahan pada data biasanya menghasilkan hash yang berbeda.
-
----
-
-## 5. Koreksi paling penting: Identifier vs Context ❌
-
-Pada Challenge kamu menulis:
-
-> identifier itu metadata dan digital signature
-> context itu SHA256
-
-Ini **terbalik**.
-
-Yang lebih tepat:
-
-#### Identifier
-
-```text
-SHA-256
-PID
-filename
-```
-
-Mereka membantu **mengidentifikasi sesuatu**.
-
-Contohnya:
-
-```text
-SHA-256 = 7B3F...A912
-```
-
-adalah identifier/fingerprint untuk file tersebut.
-
-#### Evidence / Context
-
-```text
-Creation Time
-Last Write Time
-Digital Signature
-Executable Path
-Command Line
-Parent Process
-Network Connection
-```
-
-Informasi tersebut membantu kita **memahami dan menilai context**.
-
-Jadi:
-
-```text
-SHA-256
-→ Identifier
-
-Digital Signature
-→ Evidence / Context
-
-Creation Time
-→ Evidence / Context
-```
-
----
-
-## 6. Challenge nomor 1 — ⚠️
+### 6. Challenge nomor 1 — ⚠️
 
 Kamu menulis:
 
@@ -232,8 +29,7 @@ Kemudian:
 Kamu sebenarnya sudah memahami ini di nomor 4 dan 5. Jadi masalahnya terutama pada penggunaan istilah.
 
 ---
-
-## 7. Challenge nomor 6 — ❌ belum terjawab
+### 7. Challenge nomor 6 — ❌ belum terjawab
 
 Kamu menulis:
 
@@ -272,194 +68,7 @@ Yang penting sekarang kamu mulai bisa mengatakan:
 Itu inti investigation.
 
 ---
-
-## 8. Hash sebagai IOC — ⚠️
-
-Kamu mengatakan:
-
-> “indicator pendeteksi yang cepat hanya dengan menggunakan hash, kita bisa mencari malware dengan nilai hash yang sama lalu mengeksekusinya.”
-
-Bagian **“mencari malware dengan nilai hash yang sama”** arahnya benar.
-
-Tetapi jangan mengatakan:
-
-> “lalu mengeksekusinya.”
-
-Dalam SOC, kita umumnya menggunakan hash untuk:
-
-```text
-File
- ↓
-SHA-256
- ↓
-IOC
- ↓
-Search / Match
- ↓
-Threat Intelligence / endpoint telemetry
-```
-
-Misalnya mencari apakah hash tersebut pernah terlihat pada endpoint lain atau dikenal sebagai malicious hash.
-
-**Kita tidak perlu menjalankan file tersebut untuk melakukan hash matching.**
-
-Dan benar bahwa attacker dapat mengubah file sehingga hash-nya berubah, tetapi itu berarti **hash matching bergantung pada file yang sama secara cryptographic identity**, bukan berarti hash “gampang dikelabui” secara universal.
-
----
-
-## 9. Q10 — sebenarnya ini jawaban penting
-
-Kamu belum tahu kenapa kita membandingkan:
-
-```powershell
-Get-FileHash ...
-```
-
-dengan:
-
-```cmd
-certutil -hashfile ...
-```
-
-Jawabannya sederhana:
-
-> **Untuk memastikan kita memahami bahwa dua tools/interface berbeda dapat menghasilkan identifier cryptographic yang sama untuk file dan algoritma yang sama.**
-
-Misalnya:
-
-```text
-PowerShell:
-87CA8213820A...
-
-CMD:
-87CA8213820A...
-```
-
-Maka kita tahu:
-
-```text
-Same file
-+
-Same algorithm
-=
-Same SHA-256
-```
-
-Ini juga melatih kamu supaya tidak bergantung pada satu tool saja.
-
----
-
-## 10. Ada satu hal bagus dari jawabanmu
-
-Saya suka bagian ini:
-
-> “mungkin evidence lain dan cara membaca commandline”
-
-Itu menunjukkan kamu mulai memahami bahwa investigation **belum selesai setelah menemukan hash**.
-
-Urutannya mulai menjadi:
-
-```text
-Process
- ↓
-Executable
- ↓
-Metadata
- ↓
-Signature
- ↓
-Hash
- ↓
-???
- ↓
-Further investigation
-```
-
-Bagus.
-
----
-
-## 11. Penilaian Day 4
-
-| Materi                         | Status |
-| ------------------------------ | ------ |
-| File path                      | ✅      |
-| File metadata                  | ✅      |
-| Digital Signature command      | ✅      |
-| SHA-256 command                | ✅      |
-| CMD `certutil`                 | ✅      |
-| Hash concept                   | ⚠️     |
-| Digital Signature concept      | ⚠️     |
-| Identifier vs evidence/context | ❌      |
-| Challenge investigation        | ⚠️     |
-| Evidence-based mindset         | ✅      |
-
-### Kesimpulan
-
-**Hands-on: PASS ✅**
-
-**Theory: DEVELOPING ⚠️**
-
-Jadi saya **belum memberikan Day 4 PASS penuh**.
-
-Bukan karena kamu belum bisa command. Justru command-mu sudah berjalan dengan baik. Yang perlu diperbaiki adalah **cara membaca hasilnya**.
-
----
-
-## CORRECTION DRILL DAY 4
-
-Jawab 5 pertanyaan ini saja:
-
-**1.** Apa perbedaan:
-
-```text
-SHA-256
-vs
-Digital Signature
-```
-
-**2.** Mana yang merupakan **identifier**, mana yang merupakan **context/evidence**?
-
-```text
-SHA-256
-Creation Time
-Digital Signature
-PID
-```
-
-**3.** Apakah:
-
-```text
-Digital Signature = Valid
-```
-
-berarti file pasti aman? Jelaskan.
-
-**4.** Apakah:
-
-```text
-Digital Signature = NotSigned
-```
-
-berarti file pasti malware? Jelaskan.
-
-**5.** Kasus:
-
-```text
-unknown.exe
-CPU 92%
-Temp
-Parent = Firefox
-NotSigned
-SHA-256 = 7B3F...A912
-```
-
-Sebutkan **5 evidence berikutnya** yang ingin kamu cari.
-
-Tidak perlu command dulu. Saya ingin memastikan **cara berpikirmu** benar sebelum kita lanjut.
-
-
-### Challenge dan jawaban
+#### Challenge dan jawaban
 
 CHALLENGE
 
@@ -525,15 +134,17 @@ tidak, ada beberapa aplikasi yg membutuhkan temp, untuk install untuk file semen
 6. Evidence apa yang ingin kamu cari berikutnya? 
 belum ada bayangan
 
-### Hasil file investigation
+## Mini-project / Investigasi
+
+#### Hasil file investigation
 
 File Investigation
 
-#### File
+##### File
 Name: notepad.exe
 Path: C:\Windows\...
 
-#### Metadata
+##### Metadata
 Name           : notepad.exe
 Length         : 356352
 CreationTime   : 9/9/2026 10:54:17 PM
@@ -541,20 +152,20 @@ LastWriteTime  : 9/9/2026 10:54:17 PM
 LastAccessTime : 9/18/2026 10:21:09 PM
 Attributes     : Archive
 
-#### Digital Signature
+##### Digital Signature
 Status: Valid
 Signer/Publisher: DC91E564D5BC1E3A8E02D6A8508682ABEA8A2443
 
-#### Hash
+##### Hash
 Algorithm: SHA-256
 SHA-256: 87CA8213820A0ECAC9CD131B5E6BE9268A56E4E121482A5816EE7BAEFC9CE042
 
-#### CMD vs PowerShell
+##### CMD vs PowerShell
 PowerShell SHA-256:
 CMD SHA-256:
 Match: YES
 
-#### Observation
+##### Observation
 
 Apa yang saya temukan?
 saya menemukan informasi dalam evidence metadata yang penting untuk mendukung investigasi seperti tgl dibuat tgl edit jam dan menit, saya menemukan kode hash juga kode ini bisa berubah total hanya karena 1 karakter yg berubah, digital signature bisa mengetahui bahwa ini resmi atau ngga
@@ -573,7 +184,7 @@ Apa perbedaan Hash dengan Digital Signature?
 Digital Signature memberitahu bahwa file tersebut resmi atau tidak, sudah terdaftar atau tidak
 kalau hash dia hanya kode unik yang mengatasnamakan file tersebut, kode hash bisa sama dengan file lainnya asalkan isinya sama persis 100% tapi kalua beda 1 karakter akan berubah total kode hash nya
 
-#### Investigation Thinking
+##### Investigation Thinking
 
 Apakah file ini otomatis aman hanya karena mempunyai
 Digital Signature? TIDAK. karena peretas bisa memanipulasi dengan mengambil sertifikat asli dari perusahaan aplikasi tersebut , mungkin yg dinamakan private key
@@ -586,3 +197,390 @@ tidak, file malware A bisa memiliki hash yg sama dengan malware A lainnya
 malware B memiliki kode hash yg berbeda dengan malware A karena isi kode virus didalamnya berbeda
 
 tapi didalam file tersebut peretas bisa menambahkan spasi untuk mengelabuhi antivirus, karena menambahkan spasi atau 1 huruf bisa merubah hash seluruhnya
+
+## Active Recall / Self-test
+
+### CORRECTION DRILL DAY 4
+
+Jawab 5 pertanyaan ini saja:
+
+**1.** Apa perbedaan:
+
+```text
+SHA-256
+vs
+Digital Signature
+```
+
+**2.** Mana yang merupakan **identifier**, mana yang merupakan **context/evidence**?
+
+```text
+SHA-256
+Creation Time
+Digital Signature
+PID
+```
+
+**3.** Apakah:
+
+```text
+Digital Signature = Valid
+```
+
+berarti file pasti aman? Jelaskan.
+
+**4.** Apakah:
+
+```text
+Digital Signature = NotSigned
+```
+
+berarti file pasti malware? Jelaskan.
+
+**5.** Kasus:
+
+```text
+unknown.exe
+CPU 92%
+Temp
+Parent = Firefox
+NotSigned
+SHA-256 = 7B3F...A912
+```
+
+Sebutkan **5 evidence berikutnya** yang ingin kamu cari.
+
+Tidak perlu command dulu. Saya ingin memastikan **cara berpikirmu** benar sebelum kita lanjut.
+
+## Penilaian dan Hasil Praktik
+
+EVALUATION
+
+**Status: DEVELOPING ⚠️**
+
+Hands-on kamu **PASS**, tetapi pemahaman konsep masih perlu beberapa koreksi sebelum saya nyatakan Day 4 PASS penuh.
+
+---
+### 1. Hands-On ✅ PASS
+
+Kamu berhasil mendapatkan:
+
+```text
+Metadata
+Digital Signature
+SHA-256
+CMD hash
+PowerShell hash
+```
+
+Dan kamu menemukan bahwa hasil PowerShell dan CMD sama kecuali kapitalisasi huruf. Itu **benar**. Hash hexadecimal yang sama dapat ditulis uppercase atau lowercase tanpa mengubah nilainya. 
+
+Ini latihan yang bagus karena kamu sekarang sudah mengalami sendiri:
+
+```text
+PowerShell
+    ↓
+SHA-256
+    ↓
+CMD
+    ↓
+SHA-256
+    ↓
+same result
+```
+
+---
+### 2. Metadata — ✅
+
+Pemahamanmu sudah cukup benar.
+
+Kamu memahami bahwa metadata bisa memberikan informasi seperti:
+
+* creation time
+* last write time
+* last access time
+* attributes
+
+Data nyata yang kamu dapat juga menunjukkan itu. 
+
+---
+### 3. Digital Signature — ⚠️ KOREKSI PENTING
+
+Kamu mengatakan:
+
+> “seperti pengakuan digital, bersertifikat atau tidaknya sebuah aplikasi resmi atau tidaknya dan berbayar.”
+
+Bagian **“berbayar”** dan **“resmi/tidak resmi”** harus kita hilangkan.
+
+Digital Signature **bukan tanda bahwa aplikasi itu berbayar**.
+
+Lebih tepat:
+
+> **Digital Signature membantu memverifikasi identitas signer/publisher dan integritas file yang ditandatangani.**
+
+Jadi misalnya:
+
+```text
+Signer: Microsoft Corporation
+Status: Valid
+```
+
+kita memperoleh informasi bahwa signature tersebut dapat diverifikasi dan berkaitan dengan certificate signer tersebut.
+
+Tetapi:
+
+```text
+Valid Signature
+≠
+100% Safe
+```
+
+Dan:
+
+```text
+Unsigned
+≠
+Malware
+```
+
+Kamu sudah benar pada dua konsep terakhir itu. 
+
+##### Satu lagi:
+
+Pada hasilmu:
+
+```text
+SignerCertificate:
+DC91E564...
+```
+
+itu **bukan nama publisher**. Itu merupakan informasi/identifier certificate yang ditampilkan oleh PowerShell dalam output tersebut. Jadi ketika kamu mengatakan:
+
+> “gak ada tulisan siapa publishernya”
+
+✅ benar berdasarkan output yang kamu dapat.
+
+Kita belum belajar cara mengambil nama signer dari certificate tersebut.
+
+---
+### 4. Hash — ⚠️ konsepnya sudah dekat
+
+Kamu mengatakan:
+
+> “kode hash unik”
+
+Lebih tepat:
+
+> **Hash adalah nilai yang dihasilkan dari isi file melalui hash function.**
+
+Analogi:
+
+```text
+File
+ ↓
+SHA-256
+ ↓
+Fingerprint-like value
+```
+
+Jadi SHA-256:
+
+```text
+87CA8213820A...
+```
+
+adalah **hash dari file tertentu pada kondisi tertentu**. 
+
+Kamu benar bahwa:
+
+> file dengan isi identik → hash yang sama.
+
+Dan perubahan pada data biasanya menghasilkan hash yang berbeda.
+
+---
+### 5. Koreksi paling penting: Identifier vs Context ❌
+
+Pada Challenge kamu menulis:
+
+> identifier itu metadata dan digital signature
+> context itu SHA256
+
+Ini **terbalik**.
+
+Yang lebih tepat:
+
+##### Identifier
+
+```text
+SHA-256
+PID
+filename
+```
+
+Mereka membantu **mengidentifikasi sesuatu**.
+
+Contohnya:
+
+```text
+SHA-256 = 7B3F...A912
+```
+
+adalah identifier/fingerprint untuk file tersebut.
+
+##### Evidence / Context
+
+```text
+Creation Time
+Last Write Time
+Digital Signature
+Executable Path
+Command Line
+Parent Process
+Network Connection
+```
+
+Informasi tersebut membantu kita **memahami dan menilai context**.
+
+Jadi:
+
+```text
+SHA-256
+→ Identifier
+
+Digital Signature
+→ Evidence / Context
+
+Creation Time
+→ Evidence / Context
+```
+
+---
+### 8. Hash sebagai IOC — ⚠️
+
+Kamu mengatakan:
+
+> “indicator pendeteksi yang cepat hanya dengan menggunakan hash, kita bisa mencari malware dengan nilai hash yang sama lalu mengeksekusinya.”
+
+Bagian **“mencari malware dengan nilai hash yang sama”** arahnya benar.
+
+Tetapi jangan mengatakan:
+
+> “lalu mengeksekusinya.”
+
+Dalam SOC, kita umumnya menggunakan hash untuk:
+
+```text
+File
+ ↓
+SHA-256
+ ↓
+IOC
+ ↓
+Search / Match
+ ↓
+Threat Intelligence / endpoint telemetry
+```
+
+Misalnya mencari apakah hash tersebut pernah terlihat pada endpoint lain atau dikenal sebagai malicious hash.
+
+**Kita tidak perlu menjalankan file tersebut untuk melakukan hash matching.**
+
+Dan benar bahwa attacker dapat mengubah file sehingga hash-nya berubah, tetapi itu berarti **hash matching bergantung pada file yang sama secara cryptographic identity**, bukan berarti hash “gampang dikelabui” secara universal.
+
+---
+### 9. Q10 — sebenarnya ini jawaban penting
+
+Kamu belum tahu kenapa kita membandingkan:
+
+```powershell
+Get-FileHash ...
+```
+
+dengan:
+
+```cmd
+certutil -hashfile ...
+```
+
+Jawabannya sederhana:
+
+> **Untuk memastikan kita memahami bahwa dua tools/interface berbeda dapat menghasilkan identifier cryptographic yang sama untuk file dan algoritma yang sama.**
+
+Misalnya:
+
+```text
+PowerShell:
+87CA8213820A...
+
+CMD:
+87CA8213820A...
+```
+
+Maka kita tahu:
+
+```text
+Same file
++
+Same algorithm
+=
+Same SHA-256
+```
+
+Ini juga melatih kamu supaya tidak bergantung pada satu tool saja.
+
+---
+### 10. Ada satu hal bagus dari jawabanmu
+
+Saya suka bagian ini:
+
+> “mungkin evidence lain dan cara membaca commandline”
+
+Itu menunjukkan kamu mulai memahami bahwa investigation **belum selesai setelah menemukan hash**.
+
+Urutannya mulai menjadi:
+
+```text
+Process
+ ↓
+Executable
+ ↓
+Metadata
+ ↓
+Signature
+ ↓
+Hash
+ ↓
+???
+ ↓
+Further investigation
+```
+
+Bagus.
+
+---
+### 11. Penilaian Day 4
+
+| Materi                         | Status |
+| ------------------------------ | ------ |
+| File path                      | ✅      |
+| File metadata                  | ✅      |
+| Digital Signature command      | ✅      |
+| SHA-256 command                | ✅      |
+| CMD `certutil`                 | ✅      |
+| Hash concept                   | ⚠️     |
+| Digital Signature concept      | ⚠️     |
+| Identifier vs evidence/context | ❌      |
+| Challenge investigation        | ⚠️     |
+| Evidence-based mindset         | ✅      |
+#### Kesimpulan
+
+**Hands-on: PASS ✅**
+
+**Theory: DEVELOPING ⚠️**
+
+Jadi saya **belum memberikan Day 4 PASS penuh**.
+
+Bukan karena kamu belum bisa command. Justru command-mu sudah berjalan dengan baik. Yang perlu diperbaiki adalah **cara membaca hasilnya**.
+
+---
+

@@ -1,48 +1,14 @@
 # Day 10 — Evaluasi
 
-### 🟢 EVALUASI DAY 10 — PASSED
+Catatan ini mempertahankan jawaban, koreksi, dan penilaian yang tercatat. Sebagian jawaban hanya tersedia sebagai ringkasan mentor; pertanyaan atau jawaban lengkap yang tidak tercatat tidak direkonstruksi. Skenario latihan tidak dianggap sebagai incident pada endpoint aktual.
 
-Sesuai aturan kita, **76–100% = PASS**. Jadi Day 10 tetap **lulus**.
+## Challenge
 
-Tapi aku menangkap hal yang sangat penting dari hasilmu:
+Catatan terpisah untuk bagian ini belum tersedia dalam evaluasi hari ini. Soal dalam Materi merupakan latihan yang diberikan; penyelesaiannya tidak diasumsikan.
 
-> Kamu bukan cuma ingin belajar membaca satu event. Kamu ingin **praktek investigation yang benar-benar berurutan dari alert → evidence → correlation → investigation → assessment/final determination.**
+## Mini-project / Investigasi
 
-**Kita ubah pola project mulai sekarang.** Materinya tetap bertahap, tetapi mini-project SOC-nya akan dibuat **end-to-end**.
-
----
-
-## 1. HASIL PRAKTIK DAY 10
-
-Kamu berhasil menjalankan:
-
-```text
-Get-WinEvent
-FilterHashtable
-StartTime / EndTime
-Multiple Event ID
-Sort-Object TimeCreated
-```
-
-Dan kamu sudah mendapatkan event nyata dari Windows.
-
-Contohnya kamu menemukan:
-
-```text
-4625
-Failed logon
-Account: Buya
-Caller Process:
-msedgewebview2.exe
-```
-
-Data itu ada di hasilmu. 
-
-Ini sebenarnya **sangat bagus untuk dijadikan investigation case end-to-end**.
-
----
-
-## 2. ⚠️ ADA KESALAHAN PENTING DI MINI PROJECT
+### 2. ⚠️ ADA KESALAHAN PENTING DI MINI PROJECT
 
 Kamu membuat:
 
@@ -73,7 +39,56 @@ di dalam window tersebut?
 
 ---
 
-## 3. ⚠️ OBSERVATION-MU TENTANG LOW BATTERY
+## Active Recall / Self-test
+
+### 5. ACTIVE RECALL — YANG SALAH SAJA
+
+Sesuai aturanmu, yang sudah sering benar **tidak aku ulang sekarang**.
+
+## Penilaian dan Hasil Praktik
+
+
+#### 🟢 EVALUASI DAY 10 — PASSED
+
+Sesuai aturan kita, **76–100% = PASS**. Jadi Day 10 tetap **lulus**.
+
+Tapi aku menangkap hal yang sangat penting dari hasilmu:
+
+> Kamu bukan cuma ingin belajar membaca satu event. Kamu ingin **praktek investigation yang benar-benar berurutan dari alert → evidence → correlation → investigation → assessment/final determination.**
+
+**Kita ubah pola project mulai sekarang.** Materinya tetap bertahap, tetapi mini-project SOC-nya akan dibuat **end-to-end**.
+
+---
+### 1. HASIL PRAKTIK DAY 10
+
+Kamu berhasil menjalankan:
+
+```text
+Get-WinEvent
+FilterHashtable
+StartTime / EndTime
+Multiple Event ID
+Sort-Object TimeCreated
+```
+
+Dan kamu sudah mendapatkan event nyata dari Windows.
+
+Contohnya kamu menemukan:
+
+```text
+4625
+Failed logon
+Account: Buya
+Caller Process:
+msedgewebview2.exe
+```
+
+Data itu ada di hasilmu. 
+
+Ini sebenarnya **sangat bagus untuk dijadikan investigation case end-to-end**.
+
+---
+### 3. ⚠️ OBSERVATION-MU TENTANG LOW BATTERY
 
 Kamu menulis:
 
@@ -98,15 +113,15 @@ Itu menunjukkan **system returned from a low-power state**, tetapi dari event ya
 
 Jadi:
 
-#### Observation:
+##### Observation:
 
 > Sistem kembali dari low-power state.
 
-#### Inference:
+##### Inference:
 
 > Kemungkinan berkaitan dengan sleep/wake.
 
-#### Belum boleh disimpulkan:
+##### Belum boleh disimpulkan:
 
 > Baterai sedang lowbat.
 
@@ -121,8 +136,7 @@ CONCLUSION
 ```
 
 ---
-
-## 4. ⚠️ SHA-256 / DIGITAL SIGNATURE TIDAK SELALU LANGSUNG DIPAKAI
+### 4. ⚠️ SHA-256 / DIGITAL SIGNATURE TIDAK SELALU LANGSUNG DIPAKAI
 
 Kamu pada mini project system event langsung menulis:
 
@@ -179,18 +193,12 @@ Jadi investigator tidak mengeluarkan semua tools sekaligus.
 > **Evidence harus sesuai dengan object yang sedang diselidiki.**
 
 ---
-
-## 5. ACTIVE RECALL — YANG SALAH SAJA
-
-Sesuai aturanmu, yang sudah sering benar **tidak aku ulang sekarang**.
-
-### ❌ Q1 — ExecutablePath vs CommandLine
+#### ❌ Q1 — ExecutablePath vs CommandLine
 
 Jawabanmu sebelumnya sudah benar, jadi **tidak perlu diulang sekarang**.
 
 ---
-
-### ❌ Q2 — Service vs Process
+#### ❌ Q2 — Service vs Process
 
 Kamu masih menjawab:
 
@@ -202,8 +210,7 @@ Sekarang jawab ulang:
 > **Apa perbedaan Service dan Process?**
 
 ---
-
-### ❌ Q3 — Digital Signature
+#### ❌ Q3 — Digital Signature
 
 Kamu masih mendefinisikannya sebagai valid/tidaknya process.
 
@@ -212,8 +219,7 @@ Jawab ulang:
 > **Digital Signature memeriksa apa?**
 
 ---
-
-### ❌ Q4 — Security Context
+#### ❌ Q4 — Security Context
 
 Kamu menjawab:
 
@@ -224,8 +230,7 @@ Jawab ulang:
 > **Apa itu Security Context?**
 
 ---
-
-### ❌ Q6 — TimeCreated
+#### ❌ Q6 — TimeCreated
 
 Kamu menjawab:
 
@@ -236,8 +241,7 @@ Jawab ulang:
 > **Apa arti `TimeCreated` pada sebuah event?**
 
 ---
-
-### ❌ Q7 — Timeline
+#### ❌ Q7 — Timeline
 
 Kamu mengatakan:
 
@@ -250,8 +254,7 @@ Jawab ulang dengan lengkap:
 > **Bagaimana cara membuat timeline dari beberapa event?**
 
 ---
-
-### ❌ Q11 — Causality
+#### ❌ Q11 — Causality
 
 Ini penting.
 
@@ -274,8 +277,7 @@ Jawab:
 > **Apakah dua event yang waktunya berdekatan otomatis berarti event pertama menyebabkan event kedua? Mengapa?**
 
 ---
-
-## 6. 🔥 DAN INI YANG AKAN KITA UBAH
+### 6. 🔥 DAN INI YANG AKAN KITA UBAH
 
 Kamu bilang:
 
@@ -326,8 +328,7 @@ ALERT
 Dan kita **benar-benar akan menjalankannya di laptopmu**, bukan hanya teori.
 
 ---
-
-## 7. CONTOH CASE YANG SUDAH KAMU PUNYA
+### 7. CONTOH CASE YANG SUDAH KAMU PUNYA
 
 Sebenarnya dari Day 10 kamu sudah mendapatkan sebuah case yang bagus:
 
@@ -407,8 +408,7 @@ Final Assessment
 **Ini baru investigation yang benar-benar kamu cari.**
 
 ---
-
-## 8. DAY 10 STATUS
+### 8. DAY 10 STATUS
 
 | Area                   | Status |
 | ---------------------- | ------ |
@@ -424,13 +424,12 @@ Final Assessment
 | Causality              | 🟡     |
 | Investigation workflow | 🟡     |
 
-#### 🟢 **DAY 10 — PASSED**
+##### 🟢 **DAY 10 — PASSED**
 
 Jadi **tidak ada reset**.
 
 ---
-
-## 🧠 ATURAN BARU PROJECT KITA
+### 🧠 ATURAN BARU PROJECT KITA
 
 Mulai sekarang:
 
@@ -449,3 +448,4 @@ Kita akan semakin sering membuat:
 Itu jauh lebih sesuai dengan target **Junior SOC Analyst** yang kamu kejar.
 
 Untuk sekarang, **jawab 7 retest di atas saja**. Yang salah akan kita ulang sampai **2× benar**, sementara yang sudah kamu kuasai tidak perlu diulang.
+

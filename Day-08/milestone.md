@@ -1,4 +1,4 @@
-# Day 08 — Milestone Hari Itu
+# Day 08 — 📌 Catatan Penting / Milestone Hari Ini
 
 - Mengambil current user dan group membership dengan whoami/whoami /groups.
 - Mengidentifikasi user yang menjalankan process dengan Get-Process -IncludeUserName.

@@ -1,18 +1,12 @@
 # Day 01 — Evaluasi
 
-### — Evaluasi
+Catatan ini mempertahankan jawaban, koreksi, dan penilaian yang tercatat. Sebagian jawaban hanya tersedia sebagai ringkasan mentor; pertanyaan atau jawaban lengkap yang tidak tercatat tidak direkonstruksi. Skenario latihan tidak dianggap sebagai incident pada endpoint aktual.
 
-**Status: DEVELOPING → READY dengan catatan kecil.**
+## Challenge
 
-Secara keseluruhan, untuk seseorang yang benar-benar mulai dari 0, hasilmu **sudah cukup baik untuk lanjut**, terutama karena kamu tidak asal menjawab. Kamu mulai menunjukkan pola berpikir investigasi: mencari kemungkinan lain sebelum menyimpulkan malware.
+#### 1. Review Challenge
 
-Ada beberapa konsep yang perlu saya luruskan sebelum Day 2.
-
----
-
-### 1. Review Challenge
-
-#### 1. Process mana yang diperiksa?
+##### 1. Process mana yang diperiksa?
 
 Jawabanmu:
 
@@ -50,7 +44,7 @@ Jadi CPU usage adalah **signal**, bukan verdict.
 
 ---
 
-#### 2. CPU tinggi = malware?
+##### 2. CPU tinggi = malware?
 
 Jawabanmu: **belum tentu.**
 
@@ -84,8 +78,130 @@ What network connection?
 Itulah pola pikir SOC.
 
 ---
+#### Challenge dan jawaban
 
-### 3. Evidence berikutnya
+1. Process mana yang pertama kali ingin kamu periksa ?
+saya akan memilih proses dengan CPU Usage tinggi, karena tidak masuk akal, biasanya rendah penggunaannya
+2. apakah CPU usage tinggi otomatis berarti malware?
+belum tentu mungkin bisa jadi spesifikasi perangkat kita yang tidak mumpuni untuk membuka aplikasi tersebut
+3. evidence apa yang ingin kamu cari berikutnnya
+penggunaan memory, yang terlalu besar. 
+4. apakah kamu langsung melakukan containment
+karena saya masih awam dan belum tau lebih dalam, saya akan melakukan penutupan aplikasi yang abnormal, seperti cpu usage yang besar lalu Ketika masih lag saya akan mulai menutup aplikasi dengan penggunaan memory yang besar
+5. informasi apa yang masih kurang?
+mungkin, informasi panasnya suhu. bisa menyebabkan lag
+
+## Mini-project / Investigasi
+
+#### Hasil mini-project
+
+MY COMPUTER SECURITY BASELINE
+
+1. Hardware
+CPU:AMD Ryzen 7 8845HS 
+RAM: 16GB
+Storage: 477GB
+GPU: Radeon 780M Graphics
+
+2. Operating System
+OS: Microsoft Windows 11 Pro
+Version: 10.0.28000 N/A Build 28000
+Architecture: x64 - based PC
+
+3. Current User
+Username: Buya
+
+4. Running Processes
+ Name: steam.exe
+   PID: 4324
+   Status: Running
+   CPU: 00
+   Memory : 18.436K
+
+2. Name: Cloudflare WARP.exe
+   PID: 11852
+   Status: Running
+   CPU: 00
+   Memory: 4968K 
+
+3. Name: firefox.exe
+   PID: 6804
+   Status:  Running
+   CPU: 00
+   Memory: 348.884K
+
+4. Name: Spotify.exe
+   PID: 8120
+   Status: Running
+   CPU: 01
+   Memory: 191.840K 
+
+5. Observations
+
+Apa yang saya pelajari:
+- Membuka program atau aplikasi yang masih running
+- melihat PID nomor proses disetiap aplikasi yg running
+- melihat cpu usage
+- melihat memory usage
+- melihat informasi PC atau laptop yg lebih komplit melalui CMD menggunakan command systeminfo
+bisa melihat OS name, OS version, manufaktur, architecture
+
+Hal yang belum saya pahami:
+- belum mengerti cara membedakan apakah cpu dengan usage tinggi terkena malware atau tidak
+- belum bisa membedakan apakah memory dengan usage tinggi terkena malware atau tidak
+- belum mengerti apa itu parent proses
+
+## Active Recall / Self-test
+
+### REVIEW SELF TEST
+#### Self-test dan jawaban
+
+SELF TEST
+
+1. apa fungsi CPU?
+dia seperti manusia memproses di meja (ram)
+
+2. apa perbedaan RAM dan Storage ?
+Ram itu seperti meja kerja dia mendapat data mentah dari storage lalu mengolahnya di meja yaitu RAM tapi yang mengolah adalah CPU (manusia)
+
+3. apa fungsi operating System
+dia membaca kerja aplikasi, atau sebagai perantara aplikasi dengan hardware seperti ram,cpu,storage. jadi aplikasi tidak perlu membaca kode yg begitu rumit dari hardware, cukup OS yang mengolahnya. 
+
+4. apa yang dimaksud aplikasi?
+aplikasi adalah sesuatu yang memudahkan pekerjaan pengguna atau punya maksud dan tujuan yang di inginkan pengguna. dia memproses data lalu menampilkan dalam bentuk grafis yang mudah dibaca pengguna. biasa kita liat seperti spotify ,FB, chrome dll
+
+5. apa yang dimaksud process?
+process adalah suatu data yang menampilkan beberapa aplikasi atau system yang sedang berjalan. tiap system yang berjalan akan diberi PID
+
+6. apa hubungan application dengan process?
+sangat berhubungan sekali, karena Ketika aplikasi sedang berjalan maka kita dapat melihat processnya, entah itu berjalan secara terlihat maupun dibelakang layer dan itu ada PID nya sendiri sendiri
+
+7. apa fungsi PID?
+PID adalah nomor yang diberikan khusus pada system yang berjalan atau aplikasi yang berjalan, biasanya digunakan untuk membedakan . karena kita kadang melihat process dari sebuah aplikasi yang begitu bnyak. contoh firefox saya melihat 10 firefox berjalan bersamaan tapi PID nya berbeda . itu juga berfungsi sebagai pendeteksi mana malware mana aplikasi asli
+
+8. seperti yang saya jelaskan di no 7. PID sangat penting karena akan menjadi senjata untuk melihat mana aplikasi palsu mana asli. dan process itu memperlihatkan banyak info yang bagus untuk analisis kerentanan. seperti cpu usage yang abnormal ataupun memory usage yang abnormal
+
+9.apa perbedaan melihat process melalui task manager dan tasklist dari CMD?
+perbedaannya task manage lebih ramah pemula karena ada GUI, kalua dari tasklist mungkin karena saya pemula jadi masih kurang memahami bagaimana cara proses membacanya agar lebih cepat
+
+10. jika sebuah process menggunakan CPU 90%, apakah itu bukti bahwa process tersebut malicious? jelaskan!
+bisa jadi tapi tidak selalu. bisa saja karena panasnya CPU membuat berat aplikasinya
+bisa jadi karena aplikasinya speknya terlalu tinggi untuk CPUnya jadi berat
+tapi bisa jadi iya, mungkin Ketika kita crosscheck lebih dalam ada aplikasi double yang abnormal, dan kita lihat PIDnya berbeda PID 1 dia rendah penggunaannya PID 2 dia tinggi penggunaannya. kemungkinan itu adalah aplikasi palsu/malware. kita harus melihat beberapa kemungkinan terlebih dahulu
+
+## Penilaian dan Hasil Praktik
+
+
+#### — Evaluasi
+
+**Status: DEVELOPING → READY dengan catatan kecil.**
+
+Secara keseluruhan, untuk seseorang yang benar-benar mulai dari 0, hasilmu **sudah cukup baik untuk lanjut**, terutama karena kamu tidak asal menjawab. Kamu mulai menunjukkan pola berpikir investigasi: mencari kemungkinan lain sebelum menyimpulkan malware.
+
+Ada beberapa konsep yang perlu saya luruskan sebelum Day 2.
+
+---
+#### 3. Evidence berikutnya
 
 Kamu memilih **memory usage**.
 
@@ -121,8 +237,7 @@ How long has it been running?
 Ini akan menjadi kebiasaan penting.
 
 ---
-
-## 4. Containment
+### 4. Containment
 
 Di sini ada **satu koreksi penting**.
 
@@ -166,8 +281,7 @@ bukan langsung:
 Nanti kita akan belajar kapan containment memang diperlukan.
 
 ---
-
-## 5. Informasi yang kurang
+### 5. Informasi yang kurang
 
 Kamu menjawab:
 
@@ -197,10 +311,7 @@ Kamu sendiri mengatakan:
 Itu justru menjadi salah satu materi yang akan kita pelajari.
 
 ---
-
-## REVIEW SELF TEST
-
-### 1. CPU
+#### 1. CPU
 
 Jawabanmu:
 
@@ -225,8 +336,7 @@ Lebih tepat:
 Ini terminology yang perlu kamu biasakan.
 
 ---
-
-### 2. RAM vs Storage
+#### 2. RAM vs Storage
 
 Jawabanmu:
 
@@ -245,8 +355,7 @@ CPU     = pekerja
 Ketika program berjalan, OS mengatur penggunaan RAM dan CPU.
 
 ---
-
-### 3. Operating System
+#### 3. Operating System
 
 Jawabanmu:
 
@@ -273,8 +382,7 @@ Users
 Ini akan sangat penting nanti.
 
 ---
-
-### 4. Application
+#### 4. Application
 
 Jawabanmu:
 
@@ -285,8 +393,7 @@ Jawabanmu:
 Contoh yang kamu berikan juga tepat.
 
 ---
-
-## 5. Process
+### 5. Process
 
 Di sini ada koreksi penting.
 
@@ -332,8 +439,7 @@ Process kemudian memiliki berbagai resources/context, misalnya:
 Ini alasan process sangat penting dalam SOC.
 
 ---
-
-## 6. Application → Process
+### 6. Application → Process
 
 Jawabanmu:
 
@@ -358,8 +464,7 @@ firefox.exe → PID 1002
 Nama executable bisa sama, tetapi masing-masing adalah **process berbeda**.
 
 ---
-
-## 7. PID
+### 7. PID
 
 Jawabanmu:
 
@@ -400,8 +505,7 @@ Jadi:
 PID membantu kita **mengidentifikasi dan melacak process**.
 
 ---
-
-## 8. Kenapa process penting untuk SOC?
+### 8. Kenapa process penting untuk SOC?
 
 Jawabanmu cukup bagus.
 
@@ -430,8 +534,7 @@ Logs
 ```
 
 ---
-
-## 9. Task Manager vs tasklist
+### 9. Task Manager vs tasklist
 
 Jawabanmu:
 
@@ -448,8 +551,7 @@ Tapi perbedaan pentingnya:
 SOC Analyst perlu command line karena nanti kita akan bekerja dengan server/Linux/remote systems yang mungkin **tidak memiliki GUI**.
 
 ---
-
-## 10. CPU 90% = malicious?
+### 10. CPU 90% = malicious?
 
 Jawabanmu:
 
@@ -464,8 +566,7 @@ Dan kamu sudah mulai berpikir seperti analyst ketika mengatakan:
 Pertahankan kebiasaan itu.
 
 ---
-
-## SATU HAL YANG SAYA INGIN KAMU HILANGKAN
+### SATU HAL YANG SAYA INGIN KAMU HILANGKAN
 
 Jangan terlalu cepat menggunakan pola:
 
@@ -524,8 +625,7 @@ Benign / Suspicious / Malicious
 **Ini salah satu fondasi terpenting untuk perjalanan SOC kamu.**
 
 ---
-
-## HASIL DAY 1
+### HASIL DAY 1
 
 | Skill                  | Status   |
 | ---------------------- | -------- |
@@ -542,15 +642,14 @@ Benign / Suspicious / Malicious
 | Parent Process         | 🔴 Belum |
 | Malware identification | 🔴 Belum |
 
-#### Overall
+##### Overall
 
 **DEVELOPING — READY FOR DAY 2**
 
 Saya **tidak akan menahanmu hanya karena parent process belum dipahami**, karena memang itu belum menjadi materi Day 1. Kita akan membahasnya ketika sudah relevan.
 
 ---
-
-## DAY 1 SUDAH SELESAI
+### DAY 1 SUDAH SELESAI
 
 Dan ada hal yang cukup bagus dari hasilmu:
 
@@ -563,8 +662,7 @@ Itu justru cara belajar yang bagus.
 Mulai sekarang saya akan lebih ketat.
 
 Kalau jawabanmu salah, saya akan bilang salah. Kalau benar sebagian, saya akan bilang sebagian. **Tidak akan saya naikkan level hanya supaya cepat selesai.**
-
-### Status akhir:
+#### Status akhir:
 
 **DAY 1 ✅ PASSED**
 
@@ -575,118 +673,11 @@ Saat siap, cukup kirim:
 **`Day 2`**
 
 dan saya akan memberikan materi yang merupakan **kelanjutan langsung dari Day 1**, bukan topik random.
-
-
-### Challenge dan jawaban
-
-1. Process mana yang pertama kali ingin kamu periksa ?
-saya akan memilih proses dengan CPU Usage tinggi, karena tidak masuk akal, biasanya rendah penggunaannya
-2. apakah CPU usage tinggi otomatis berarti malware?
-belum tentu mungkin bisa jadi spesifikasi perangkat kita yang tidak mumpuni untuk membuka aplikasi tersebut
-3. evidence apa yang ingin kamu cari berikutnnya
-penggunaan memory, yang terlalu besar. 
-4. apakah kamu langsung melakukan containment
-karena saya masih awam dan belum tau lebih dalam, saya akan melakukan penutupan aplikasi yang abnormal, seperti cpu usage yang besar lalu Ketika masih lag saya akan mulai menutup aplikasi dengan penggunaan memory yang besar
-5. informasi apa yang masih kurang?
-mungkin, informasi panasnya suhu. bisa menyebabkan lag
-
-### Hasil mini-project
-
-MY COMPUTER SECURITY BASELINE
-
-1. Hardware
-CPU:AMD Ryzen 7 8845HS 
-RAM: 16GB
-Storage: 477GB
-GPU: Radeon 780M Graphics
-
-2. Operating System
-OS: Microsoft Windows 11 Pro
-Version: 10.0.28000 N/A Build 28000
-Architecture: x64 - based PC
-
-3. Current User
-Username: Buya
-
-4. Running Processes
- Name: steam.exe
-   PID: 4324
-   Status: Running
-   CPU: 00
-   Memory : 18.436K
-
-2. Name: Cloudflare WARP.exe
-   PID: 11852
-   Status: Running
-   CPU: 00
-   Memory: 4968K 
-
-3. Name: firefox.exe
-   PID: 6804
-   Status:  Running
-   CPU: 00
-   Memory: 348.884K
-
-4. Name: Spotify.exe
-   PID: 8120
-   Status: Running
-   CPU: 01
-   Memory: 191.840K 
-
-5. Observations
-
-Apa yang saya pelajari:
-- Membuka program atau aplikasi yang masih running
-- melihat PID nomor proses disetiap aplikasi yg running
-- melihat cpu usage
-- melihat memory usage
-- melihat informasi PC atau laptop yg lebih komplit melalui CMD menggunakan command systeminfo
-bisa melihat OS name, OS version, manufaktur, architecture
-
-Hal yang belum saya pahami:
-- belum mengerti cara membedakan apakah cpu dengan usage tinggi terkena malware atau tidak
-- belum bisa membedakan apakah memory dengan usage tinggi terkena malware atau tidak
-- belum mengerti apa itu parent proses
-
-### Self-test dan jawaban
-
-SELF TEST
-
-1. apa fungsi CPU?
-dia seperti manusia memproses di meja (ram)
-
-2. apa perbedaan RAM dan Storage ?
-Ram itu seperti meja kerja dia mendapat data mentah dari storage lalu mengolahnya di meja yaitu RAM tapi yang mengolah adalah CPU (manusia)
-
-3. apa fungsi operating System
-dia membaca kerja aplikasi, atau sebagai perantara aplikasi dengan hardware seperti ram,cpu,storage. jadi aplikasi tidak perlu membaca kode yg begitu rumit dari hardware, cukup OS yang mengolahnya. 
-
-4. apa yang dimaksud aplikasi?
-aplikasi adalah sesuatu yang memudahkan pekerjaan pengguna atau punya maksud dan tujuan yang di inginkan pengguna. dia memproses data lalu menampilkan dalam bentuk grafis yang mudah dibaca pengguna. biasa kita liat seperti spotify ,FB, chrome dll
-
-5. apa yang dimaksud process?
-process adalah suatu data yang menampilkan beberapa aplikasi atau system yang sedang berjalan. tiap system yang berjalan akan diberi PID
-
-6. apa hubungan application dengan process?
-sangat berhubungan sekali, karena Ketika aplikasi sedang berjalan maka kita dapat melihat processnya, entah itu berjalan secara terlihat maupun dibelakang layer dan itu ada PID nya sendiri sendiri
-
-7. apa fungsi PID?
-PID adalah nomor yang diberikan khusus pada system yang berjalan atau aplikasi yang berjalan, biasanya digunakan untuk membedakan . karena kita kadang melihat process dari sebuah aplikasi yang begitu bnyak. contoh firefox saya melihat 10 firefox berjalan bersamaan tapi PID nya berbeda . itu juga berfungsi sebagai pendeteksi mana malware mana aplikasi asli
-
-8. seperti yang saya jelaskan di no 7. PID sangat penting karena akan menjadi senjata untuk melihat mana aplikasi palsu mana asli. dan process itu memperlihatkan banyak info yang bagus untuk analisis kerentanan. seperti cpu usage yang abnormal ataupun memory usage yang abnormal
-
-9.apa perbedaan melihat process melalui task manager dan tasklist dari CMD?
-perbedaannya task manage lebih ramah pemula karena ada GUI, kalua dari tasklist mungkin karena saya pemula jadi masih kurang memahami bagaimana cara proses membacanya agar lebih cepat
-
-10. jika sebuah process menggunakan CPU 90%, apakah itu bukti bahwa process tersebut malicious? jelaskan!
-bisa jadi tapi tidak selalu. bisa saja karena panasnya CPU membuat berat aplikasinya
-bisa jadi karena aplikasinya speknya terlalu tinggi untuk CPUnya jadi berat
-tapi bisa jadi iya, mungkin Ketika kita crosscheck lebih dalam ada aplikasi double yang abnormal, dan kita lihat PIDnya berbeda PID 1 dia rendah penggunaannya PID 2 dia tinggi penggunaannya. kemungkinan itu adalah aplikasi palsu/malware. kita harus melihat beberapa kemungkinan terlebih dahulu
-
-### Screenshot praktik
+#### Screenshot praktik
 
 ![Bukti praktik 1](../assets/Day-01/Screenshot%202026-09-16%20203920.png)
 
 ![Bukti praktik 2](../assets/Day-01/Screenshot%202026-09-16%20204028.png)
 
 ![Bukti praktik 3](../assets/Day-01/Screenshot%202026-09-16%20204046.png)
+

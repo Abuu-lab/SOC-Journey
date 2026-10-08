@@ -1,4 +1,4 @@
-# Day 01 — Milestone Hari Itu
+# Day 01 — 📌 Catatan Penting / Milestone Hari Ini
 
 - Membedakan CPU, RAM, storage, operating system, application, dan process.
 - Menggunakan hostname, whoami, systeminfo, dan tasklist untuk mencatat baseline komputer.

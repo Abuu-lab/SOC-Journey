@@ -1,4 +1,4 @@
-# Day 02 — Milestone Hari Itu
+# Day 02 — 📌 Catatan Penting / Milestone Hari Ini
 
 - Membandingkan penggunaan CPU, RAM, dan disk pada kondisi idle dan active.
 - Mencatat performance baseline Discord dan Spotify.

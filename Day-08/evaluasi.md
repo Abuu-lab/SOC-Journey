@@ -1,290 +1,14 @@
 # Day 08 — Evaluasi
 
-## 🟢 EVALUASI DAY 8 — PASSED
+Catatan ini mempertahankan jawaban, koreksi, dan penilaian yang tercatat. Sebagian jawaban hanya tersedia sebagai ringkasan mentor; pertanyaan atau jawaban lengkap yang tidak tercatat tidak direkonstruksi. Skenario latihan tidak dianggap sebagai incident pada endpoint aktual.
 
-Sesuai aturan kita:
+## Challenge
 
-> **76–100% = PASS**
+### 5. CHALLENGE
 
-Jawabanmu **PASS**. Kamu sudah memahami konsep utama Day 8 dan bisa menggabungkan **User + PID + PPID + ExecutablePath + CommandLine**.
+## Mini-project / Investigasi
 
-Ada beberapa kesalahan kecil dan beberapa istilah yang masih perlu diluruskan. Semuanya **akan kita bawa sebagai reminder ke Day 9**, bukan mengulang Day 8.
-
----
-
-## 1. PRAKTIK 1 ✅
-
-Kamu mendapatkan:
-
-```text
-desktop-c7bhmkl\buya
-```
-
-Artinya current security context yang sedang kamu gunakan adalah:
-
-```text
-DESKTOP-C7BHMKL\Buya
-```
-
-`whoami` ✅ benar.
-
-`whoami /groups` juga berhasil.
-
-Kamu melihat:
-
-```text
-Everyone
-```
-
-Hari ini belum perlu menghafal semua group yang muncul. Yang penting kamu mengerti bahwa:
-
-> `whoami /groups` menunjukkan group membership/security context dari account tersebut.
-
----
-
-## 2. PRAKTIK 2 ✅
-
-Kamu mendapatkan:
-
-```text
-AggregatorHost     6348   NT AUTHORITY\SYSTEM
-ApplicationFrameHost 22496 DESKTOP-C7BHMKL\Buya
-atieclxx           22220  NT AUTHORITY\SYSTEM
-atiesrxx            3388  NT AUTHORITY\SYSTEM
-```
-
-Bagus.
-
-Kamu sekarang sudah bisa menghubungkan:
-
-```text
-Process
-   +
-PID
-   +
-UserName
-```
-
-Ini memang tujuan Day 8.
-
----
-
-## 3. PRAKTIK 3 ✅
-
-```text
-AggregatorHost
-PID 6348
-UserName NT AUTHORITY\SYSTEM
-```
-
-Benar.
-
----
-
-## 4. PRAKTIK 4 ✅
-
-Kamu mendapatkan:
-
-```text
-Name            : AggregatorHost.exe
-ProcessId       : 6348
-ParentProcessId : 4664
-ExecutablePath  : C:\WINDOWS\System32\AggregatorHost.exe
-CommandLine     : AggregatorHost.exe
-```
-
-Bagus.
-
-Sekarang kamu punya:
-
-```text
-User
-Process
-PID
-PPID
-ExecutablePath
-CommandLine
-```
-
-Itu sudah menjadi **basic endpoint context**.
-
----
-
-## 5. CHALLENGE
-
-### Q1 User ✅
-
-> Buya
-
-Benar berdasarkan kasus yang diberikan.
-
----
-
-### Q2 Parent Process ✅
-
-> explorer.exe
-
-Benar.
-
----
-
-### Q3 PPID ✅
-
-> ID milik Parent Process yaitu explorer.exe
-
-✅ Benar.
-
-Lebih presisi:
-
-```text
-PPID = PID milik parent process
-```
-
----
-
-### Q4 ExecutablePath ✅
-
-> letak executable berada di System32 yang kelihatannya normal
-
-Bagus.
-
-Tapi hati-hati dengan kata:
-
-> "kelihatannya normal"
-
-Itu adalah **observation**, bukan verdict.
-
-Contoh:
-
-```text
-C:\Windows\System32\...
-```
-
-→ path terlihat expected/normal.
-
-Tetapi tetap bisa memerlukan verification.
-
----
-
-### Q5 User sebagai evidence ✅
-
-Jawabanmu bagus:
-
-> account yang digunakan untuk menjalankan process
-
-Betul.
-
-Sekarang pertanyaan investigation kita berkembang dari:
-
-> **What is running?**
-
-menjadi:
-
-> **Who is running it?**
-
----
-
-### Q6 User = Buya berarti benign? ✅
-
-> belum tentu
-
-Benar.
-
-```text
-User = Buya
-≠
-Benign
-```
-
----
-
-### Q7 PowerShell + Buya otomatis malicious? 🟢
-
-Kamu menjawab:
-
-> bisa jadi, tapi juga belum tentu
-
-Arah berpikirmu benar.
-
-Lebih tepat:
-
-> **Tidak otomatis malicious.**
-
-Kita harus melihat context dan evidence lain.
-
----
-
-### Q8 Kenapa perlu investigation? ✅
-
-Kamu fokus pada:
-
-```text
--ExecutionPolicy Bypass
-```
-
-Benar, itu adalah **suspicious indicator** yang layak diperiksa lebih lanjut.
-
-Tetapi tetap:
-
-```text
-Bypass
-≠
-Malware
-```
-
----
-
-### Q9 Evidence tambahan 🟡
-
-Kamu memberikan:
-
-```text
-SHA256
-DigitalSignature
-NetworkAnalysis
-Metadata
-```
-
-Itu **4**, padahal diminta minimal 5.
-
-Tetapi ini hanya kesalahan kecil.
-
-Evidence kelima bisa misalnya:
-
-```text
-User
-Process creation/log telemetry
-Parent process context
-Threat Intelligence
-```
-
-Karena dari kasus User, Parent, PID, PPID sebenarnya sudah diketahui, maka yang paling berguna sebagai tambahan mungkin:
-
-```text
-Threat Intelligence / file reputation
-Windows Event Logs
-Network connections
-```
-
----
-
-### Q10 Perbedaan User / Process / PID / PPID / Privilege ✅
-
-Jawabanmu secara konsep **bagus**.
-
-```text
-User      → account/security context
-Process   → instance program yang sedang berjalan
-PID       → ID current process
-PPID      → PID parent process
-Privilege → capabilities/permissions yang tersedia bagi security context
-```
-
-🟢 Paham.
-
----
-
-## 6. MINI SOC INVESTIGATION
+### 6. MINI SOC INVESTIGATION
 
 Kamu memilih:
 
@@ -295,7 +19,7 @@ PPID: 1424
 User: NT AUTHORITY\SYSTEM
 ```
 
-#### Q1 User Context 🟡
+##### Q1 User Context 🟡
 
 Kamu menjawab:
 
@@ -317,7 +41,7 @@ Ini penting karena `NT AUTHORITY` bukan nama account lengkap dalam output terseb
 
 ---
 
-#### Q2 Parent Process 🟡
+##### Q2 Parent Process 🟡
 
 Kamu menulis:
 
@@ -343,7 +67,7 @@ Aku bawa ini sebagai reminder Day 9.
 
 ---
 
-#### Q3 ExecutablePath ✅
+##### Q3 ExecutablePath ✅
 
 Benar:
 
@@ -353,7 +77,7 @@ C:\Program Files (x86)\Common Files\Steam\steamservice.exe
 
 ---
 
-#### Q4 Command Context 🟡
+##### Q4 Command Context 🟡
 
 Kamu bilang lupa.
 
@@ -387,7 +111,7 @@ Yang kamu tulis itu lebih seperti **process relationship**, bukan command contex
 
 ---
 
-#### Q5 Assessment ✅
+##### Q5 Assessment ✅
 
 Kamu memilih:
 
@@ -399,7 +123,7 @@ Kita belum punya cukup evidence untuk memberikan verdict.
 
 ---
 
-#### Q6 Evidence ✅
+##### Q6 Evidence ✅
 
 Sudah bagus:
 
@@ -424,9 +148,11 @@ Ini sudah menjadi evidence set yang cukup baik untuk level kita sekarang.
 
 ---
 
-## 7. ACTIVE RECALL DAY 1–7
+## Active Recall / Self-test
 
-#### Q1 Process ✅
+### 7. ACTIVE RECALL DAY 1–7
+
+##### Q1 Process ✅
 
 > program yang sedang berjalan
 
@@ -434,19 +160,19 @@ Benar untuk level dasar.
 
 ---
 
-#### Q2 PID ✅
+##### Q2 PID ✅
 
 Benar.
 
 ---
 
-#### Q3 PPID ✅
+##### Q3 PPID ✅
 
 Benar.
 
 ---
 
-#### Q4 ExecutablePath vs CommandLine 🟡
+##### Q4 ExecutablePath vs CommandLine 🟡
 
 Kamu:
 
@@ -469,13 +195,13 @@ CommandLine berisi informasi invocation/arguments; terkadang full path executabl
 
 ---
 
-#### Q5 StartName ✅
+##### Q5 StartName ✅
 
 Benar.
 
 ---
 
-#### Q6 Service vs Process 🟡
+##### Q6 Service vs Process 🟡
 
 Kamu masih menulis:
 
@@ -504,13 +230,13 @@ svchost.exe
 
 ---
 
-#### Q7 SHA-256 ✅
+##### Q7 SHA-256 ✅
 
 Benar.
 
 ---
 
-#### Q8 Digital Signature ✅/🟡
+##### Q8 Digital Signature ✅/🟡
 
 Kamu mengatakan:
 
@@ -524,7 +250,7 @@ Lebih tepat:
 
 ---
 
-#### Q9 Valid Signature 🟢
+##### Q9 Valid Signature 🟢
 
 Kamu memahami:
 
@@ -546,7 +272,7 @@ Program aman
 
 ---
 
-#### Q10 ✅/🟡
+##### Q10 ✅/🟡
 
 Contoh yang kamu berikan tentang signed driver lama yang punya vulnerability adalah contoh yang mungkin relevan, tetapi jangan membatasi konsep ke driver.
 
@@ -556,13 +282,13 @@ Prinsip umumnya:
 
 ---
 
-#### Q11 ✅
+##### Q11 ✅
 
 Benar: killing process dapat menghilangkan atau mengubah evidence.
 
 ---
 
-#### Q12 ✅
+##### Q12 ✅
 
 ```text
 1424
@@ -572,7 +298,7 @@ Benar.
 
 ---
 
-#### Q13 ✅
+##### Q13 ✅
 
 Bagus.
 
@@ -584,7 +310,7 @@ Ini insight penting:
 
 ---
 
-#### Q14 ✅
+##### Q14 ✅
 
 Perbedaan:
 
@@ -603,7 +329,7 @@ Sudah bagus.
 
 ---
 
-#### Q15 ✅
+##### Q15 ✅
 
 > untuk melihat dengan apa saya menggunakan account
 
@@ -614,32 +340,7 @@ Lebih tepat:
 > `whoami` menunjukkan **current user/security context**.
 
 ---
-
-## 📊 DAY 8 SCORE
-
-| Materi                | Status |
-| --------------------- | ------ |
-| `whoami`              | 🟢     |
-| User context          | 🟢     |
-| Process + User        | 🟢     |
-| PID / PPID            | 🟢     |
-| ExecutablePath        | 🟢     |
-| CommandLine           | 🟢     |
-| Privilege concept     | 🟢     |
-| Process investigation | 🟢     |
-| Service vs Process    | 🟡     |
-| Valid Signature       | 🟡     |
-| Evidence mindset      | 🟢     |
-| Hands-on              | 🟢     |
-| SOC report            | 🟢     |
-
-## 🟢 DAY 8 — PASSED
-
-Kamu sudah melewati standar **76%** dengan cukup jelas.
-
----
-
-## 🧠 REMINDER UNTUK DAY 9
+### 🧠 REMINDER UNTUK DAY 9
 
 Kesalahan kecil yang akan sengaja aku masukkan lagi:
 
@@ -665,3 +366,297 @@ Kesalahan kecil yang akan sengaja aku masukkan lagi:
 Ini justru akan membantu **ketelitianmu**, karena beberapa kesalahanmu bukan karena tidak mengerti konsep, tetapi karena **terminologi kurang presisi**.
 
 ---
+
+## Penilaian dan Hasil Praktik
+
+
+### 🟢 EVALUASI DAY 8 — PASSED
+
+Sesuai aturan kita:
+
+> **76–100% = PASS**
+
+Jawabanmu **PASS**. Kamu sudah memahami konsep utama Day 8 dan bisa menggabungkan **User + PID + PPID + ExecutablePath + CommandLine**.
+
+Ada beberapa kesalahan kecil dan beberapa istilah yang masih perlu diluruskan. Semuanya **akan kita bawa sebagai reminder ke Day 9**, bukan mengulang Day 8.
+
+---
+### 1. PRAKTIK 1 ✅
+
+Kamu mendapatkan:
+
+```text
+desktop-c7bhmkl\buya
+```
+
+Artinya current security context yang sedang kamu gunakan adalah:
+
+```text
+DESKTOP-C7BHMKL\Buya
+```
+
+`whoami` ✅ benar.
+
+`whoami /groups` juga berhasil.
+
+Kamu melihat:
+
+```text
+Everyone
+```
+
+Hari ini belum perlu menghafal semua group yang muncul. Yang penting kamu mengerti bahwa:
+
+> `whoami /groups` menunjukkan group membership/security context dari account tersebut.
+
+---
+### 2. PRAKTIK 2 ✅
+
+Kamu mendapatkan:
+
+```text
+AggregatorHost     6348   NT AUTHORITY\SYSTEM
+ApplicationFrameHost 22496 DESKTOP-C7BHMKL\Buya
+atieclxx           22220  NT AUTHORITY\SYSTEM
+atiesrxx            3388  NT AUTHORITY\SYSTEM
+```
+
+Bagus.
+
+Kamu sekarang sudah bisa menghubungkan:
+
+```text
+Process
+   +
+PID
+   +
+UserName
+```
+
+Ini memang tujuan Day 8.
+
+---
+### 3. PRAKTIK 3 ✅
+
+```text
+AggregatorHost
+PID 6348
+UserName NT AUTHORITY\SYSTEM
+```
+
+Benar.
+
+---
+### 4. PRAKTIK 4 ✅
+
+Kamu mendapatkan:
+
+```text
+Name            : AggregatorHost.exe
+ProcessId       : 6348
+ParentProcessId : 4664
+ExecutablePath  : C:\WINDOWS\System32\AggregatorHost.exe
+CommandLine     : AggregatorHost.exe
+```
+
+Bagus.
+
+Sekarang kamu punya:
+
+```text
+User
+Process
+PID
+PPID
+ExecutablePath
+CommandLine
+```
+
+Itu sudah menjadi **basic endpoint context**.
+
+---
+#### Q1 User ✅
+
+> Buya
+
+Benar berdasarkan kasus yang diberikan.
+
+---
+#### Q2 Parent Process ✅
+
+> explorer.exe
+
+Benar.
+
+---
+#### Q3 PPID ✅
+
+> ID milik Parent Process yaitu explorer.exe
+
+✅ Benar.
+
+Lebih presisi:
+
+```text
+PPID = PID milik parent process
+```
+
+---
+#### Q4 ExecutablePath ✅
+
+> letak executable berada di System32 yang kelihatannya normal
+
+Bagus.
+
+Tapi hati-hati dengan kata:
+
+> "kelihatannya normal"
+
+Itu adalah **observation**, bukan verdict.
+
+Contoh:
+
+```text
+C:\Windows\System32\...
+```
+
+→ path terlihat expected/normal.
+
+Tetapi tetap bisa memerlukan verification.
+
+---
+#### Q5 User sebagai evidence ✅
+
+Jawabanmu bagus:
+
+> account yang digunakan untuk menjalankan process
+
+Betul.
+
+Sekarang pertanyaan investigation kita berkembang dari:
+
+> **What is running?**
+
+menjadi:
+
+> **Who is running it?**
+
+---
+#### Q6 User = Buya berarti benign? ✅
+
+> belum tentu
+
+Benar.
+
+```text
+User = Buya
+≠
+Benign
+```
+
+---
+#### Q7 PowerShell + Buya otomatis malicious? 🟢
+
+Kamu menjawab:
+
+> bisa jadi, tapi juga belum tentu
+
+Arah berpikirmu benar.
+
+Lebih tepat:
+
+> **Tidak otomatis malicious.**
+
+Kita harus melihat context dan evidence lain.
+
+---
+#### Q8 Kenapa perlu investigation? ✅
+
+Kamu fokus pada:
+
+```text
+-ExecutionPolicy Bypass
+```
+
+Benar, itu adalah **suspicious indicator** yang layak diperiksa lebih lanjut.
+
+Tetapi tetap:
+
+```text
+Bypass
+≠
+Malware
+```
+
+---
+#### Q9 Evidence tambahan 🟡
+
+Kamu memberikan:
+
+```text
+SHA256
+DigitalSignature
+NetworkAnalysis
+Metadata
+```
+
+Itu **4**, padahal diminta minimal 5.
+
+Tetapi ini hanya kesalahan kecil.
+
+Evidence kelima bisa misalnya:
+
+```text
+User
+Process creation/log telemetry
+Parent process context
+Threat Intelligence
+```
+
+Karena dari kasus User, Parent, PID, PPID sebenarnya sudah diketahui, maka yang paling berguna sebagai tambahan mungkin:
+
+```text
+Threat Intelligence / file reputation
+Windows Event Logs
+Network connections
+```
+
+---
+#### Q10 Perbedaan User / Process / PID / PPID / Privilege ✅
+
+Jawabanmu secara konsep **bagus**.
+
+```text
+User      → account/security context
+Process   → instance program yang sedang berjalan
+PID       → ID current process
+PPID      → PID parent process
+Privilege → capabilities/permissions yang tersedia bagi security context
+```
+
+🟢 Paham.
+
+---
+### 📊 DAY 8 SCORE
+
+| Materi                | Status |
+| --------------------- | ------ |
+| `whoami`              | 🟢     |
+| User context          | 🟢     |
+| Process + User        | 🟢     |
+| PID / PPID            | 🟢     |
+| ExecutablePath        | 🟢     |
+| CommandLine           | 🟢     |
+| Privilege concept     | 🟢     |
+| Process investigation | 🟢     |
+| Service vs Process    | 🟡     |
+| Valid Signature       | 🟡     |
+| Evidence mindset      | 🟢     |
+| Hands-on              | 🟢     |
+| SOC report            | 🟢     |
+### 🟢 DAY 8 — PASSED
+
+Kamu sudah melewati standar **76%** dengan cukup jelas.
+
+---
+

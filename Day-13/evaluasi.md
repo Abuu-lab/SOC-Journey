@@ -1,10 +1,71 @@
 # Day 13 — Evaluasi
 
+Catatan ini mempertahankan jawaban, koreksi, dan penilaian yang tercatat. Sebagian jawaban hanya tersedia sebagai ringkasan mentor; pertanyaan atau jawaban lengkap yang tidak tercatat tidak direkonstruksi. Skenario latihan tidak dianggap sebagai incident pada endpoint aktual.
+
+## Challenge
+
+Catatan terpisah untuk bagian ini belum tersedia dalam evaluasi hari ini. Soal dalam Materi merupakan latihan yang diberikan; penyelesaiannya tidak diasumsikan.
+
+## Mini-project / Investigasi
+
+Catatan terpisah untuk bagian ini belum tersedia dalam evaluasi hari ini. Soal dalam Materi merupakan latihan yang diberikan; penyelesaiannya tidak diasumsikan.
+
+## Active Recall / Self-test
+
+#### Active Recall Day 14
+
+Aku sudah masukkan beberapa kelemahan Day 13 sebagai bahan recall berikutnya.
+
+Yang akan muncul kembali terutama:
+
+```text
+1. Apa fungsi ProcessGuid?
+2. Apa beda PID dan ProcessGuid?
+3. Apa itu IntegrityLevel?
+4. Apa beda User dan IntegrityLevel?
+5. Apa arti svchost.exe -k <group>?
+6. Apa hubungan services.exe → svchost.exe → Service?
+7. Apa itu File Exists?
+8. Mana historical evidence dan mana current state?
+9. Command apa untuk historical Sysmon?
+10. Command apa untuk current process?
+11. Security Context terdiri dari apa saja?
+```
+
+##### DAY 13 MILESTONE
+
+* Sysmon Event ID 1 — Process Create
+* `ProcessGuid`
+* `ProcessId`
+* `ParentProcessGuid`
+* `ParentProcessId`
+* `ParentImage`
+* `ParentCommandLine`
+* `ParentUser`
+* `IntegrityLevel`
+* Historical Process Telemetry
+* Current State vs Historical Evidence
+* Process correlation
+* `services.exe → svchost.exe`
+* `svchost.exe -k <service group>`
+* File metadata
+* Digital Signature
+* SHA-256
+* Evidence gap
+* Investigation workflow
+* Observation → Hypothesis → Evidence/Test → Assessment → Conclusion
+* **PID dapat digunakan kembali; ProcessGuid membantu correlation**
+* **Process mati ≠ investigation selesai**
+
+**Kesimpulan Day 13:** kamu **PASS**. Bukan karena semua jawaban sempurna, tetapi karena kamu sudah bisa melakukan investigation flow dan tahu kapan evidence belum cukup untuk mengambil kesimpulan.
+
+## Penilaian dan Hasil Praktik
+
 **DAY 13: PASS ✅**
 
 Secara keseluruhan, kamu sudah menangkap alur investigasi Sysmon. Aku nilai sekitar **80–85%**, jadi sesuai rule kita: **PASS, lanjut ke Day 14**. Yang belum kuat tidak mengulang Day 13; kita bawa sebagai **active recall Day 14**.
 
-#### 1. Kenapa `svchost.exe -k CameraMonitor`?
+##### 1. Kenapa `svchost.exe -k CameraMonitor`?
 
 Ini memang bagian yang perlu kita luruskan.
 
@@ -75,7 +136,7 @@ Jadi **jangan menebak arti `CameraMonitor` dari namanya**. Dalam SOC, kita cari 
 
 ---
 
-#### 2. `ProcessGuid` yang tadi kamu lupa
+##### 2. `ProcessGuid` yang tadi kamu lupa
 
 Ini penting.
 
@@ -127,7 +188,7 @@ memberi kita konteks siapa parent dari process instance tersebut.
 
 ---
 
-#### 3. `File Exists` itu apa?
+##### 3. `File Exists` itu apa?
 
 Ini sederhana tetapi penting.
 
@@ -175,7 +236,7 @@ Itu tidak otomatis malicious, tetapi menjadi **evidence gap** yang perlu kita pa
 
 ---
 
-#### 4. Jawaban Challenge-mu yang perlu diperbaiki
+##### 4. Jawaban Challenge-mu yang perlu diperbaiki
 
 Beberapa sudah bagus.
 
@@ -288,7 +349,7 @@ Yang paling penting bukan sekadar hafal namanya, tetapi **kenapa SOC membutuhkan
 
 ---
 
-#### 5. Bagian mini-project: ada satu koreksi penting
+##### 5. Bagian mini-project: ada satu koreksi penting
 
 Kamu menulis:
 
@@ -324,7 +385,7 @@ Ini justru contoh bagus kenapa **ketelitian sangat penting dalam SOC**. Satu fie
 
 ---
 
-#### 6. Analysis mini-project-mu sebenarnya sudah mengarah benar
+##### 6. Analysis mini-project-mu sebenarnya sudah mengarah benar
 
 Kamu menulis:
 
@@ -377,7 +438,7 @@ Yang belum tersedia adalah:
 
 ---
 
-#### 7. Ini command correlation yang tadi kamu tanyakan
+##### 7. Ini command correlation yang tadi kamu tanyakan
 
 Untuk **historical Sysmon evidence**, command yang kamu pakai adalah:
 
@@ -429,7 +490,7 @@ masih bisa ditemukan
 
 ---
 
-#### 8. Jawaban Q15-mu bagus
+##### 8. Jawaban Q15-mu bagus
 
 Flow yang kamu tulis:
 
@@ -483,49 +544,3 @@ Itu yang saya ingin semakin kuat pada kamu.
 
 ---
 
-### Active Recall Day 14
-
-Aku sudah masukkan beberapa kelemahan Day 13 sebagai bahan recall berikutnya.
-
-Yang akan muncul kembali terutama:
-
-```text
-1. Apa fungsi ProcessGuid?
-2. Apa beda PID dan ProcessGuid?
-3. Apa itu IntegrityLevel?
-4. Apa beda User dan IntegrityLevel?
-5. Apa arti svchost.exe -k <group>?
-6. Apa hubungan services.exe → svchost.exe → Service?
-7. Apa itu File Exists?
-8. Mana historical evidence dan mana current state?
-9. Command apa untuk historical Sysmon?
-10. Command apa untuk current process?
-11. Security Context terdiri dari apa saja?
-```
-
-#### DAY 13 MILESTONE
-
-* Sysmon Event ID 1 — Process Create
-* `ProcessGuid`
-* `ProcessId`
-* `ParentProcessGuid`
-* `ParentProcessId`
-* `ParentImage`
-* `ParentCommandLine`
-* `ParentUser`
-* `IntegrityLevel`
-* Historical Process Telemetry
-* Current State vs Historical Evidence
-* Process correlation
-* `services.exe → svchost.exe`
-* `svchost.exe -k <service group>`
-* File metadata
-* Digital Signature
-* SHA-256
-* Evidence gap
-* Investigation workflow
-* Observation → Hypothesis → Evidence/Test → Assessment → Conclusion
-* **PID dapat digunakan kembali; ProcessGuid membantu correlation**
-* **Process mati ≠ investigation selesai**
-
-**Kesimpulan Day 13:** kamu **PASS**. Bukan karena semua jawaban sempurna, tetapi karena kamu sudah bisa melakukan investigation flow dan tahu kapan evidence belum cukup untuk mengambil kesimpulan.

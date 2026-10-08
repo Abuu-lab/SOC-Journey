@@ -1,4 +1,4 @@
-# Day 09 — Milestone Hari Itu
+# Day 09 — 📌 Catatan Penting / Milestone Hari Ini
 
 - Membaca System, Application, dan Security logs menggunakan Get-WinEvent.
 - Mengenali field TimeCreated, Id, ProviderName, dan Message.

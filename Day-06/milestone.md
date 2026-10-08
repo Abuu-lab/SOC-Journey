@@ -1,4 +1,4 @@
-# Day 06 — Milestone Hari Itu
+# Day 06 — 📌 Catatan Penting / Milestone Hari Ini
 
 - Mengambil metadata, digital signature, dan SHA-256 svchost.exe.
 - Membedakan fungsi PID, PPID, metadata, signature, dan hash.

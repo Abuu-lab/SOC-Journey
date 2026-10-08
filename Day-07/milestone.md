@@ -1,4 +1,4 @@
-# Day 07 — Milestone Hari Itu
+# Day 07 — 📌 Catatan Penting / Milestone Hari Ini
 
 - Menelusuri process tree dari PID/PPID.
 - Membaca executable path dan command line dalam context parent-child.

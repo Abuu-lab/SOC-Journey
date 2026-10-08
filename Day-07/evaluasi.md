@@ -1,303 +1,12 @@
 # Day 07 — Evaluasi
 
-## 🟢 EVALUASI DAY 7 — PASSED
+Catatan ini mempertahankan jawaban, koreksi, dan penilaian yang tercatat. Sebagian jawaban hanya tersedia sebagai ringkasan mentor; pertanyaan atau jawaban lengkap yang tidak tercatat tidak direkonstruksi. Skenario latihan tidak dianggap sebagai incident pada endpoint aktual.
 
-Dengan aturan kita:
+## Challenge
 
-> **76–100% = PASS**
+### 5. CHALLENGE DAY 7
 
-Jawabanmu **lulus**. Kamu sudah mulai benar-benar melihat **relationship antar-process dan context**, bukan sekadar nama process.
-
-Ada beberapa konsep yang perlu aku luruskan karena penting untuk SOC, tetapi **tidak menghambat kelulusan**.
-
----
-
-### 1. PRAKTIK 1 ✅
-
-```text
-firefox.exe
-PID 20516
-PPID 22804
-```
-
-Kamu sudah berhasil mengambil relationship process.
-
-Artinya:
-
-```text
-firefox.exe
-PID 20516
-PPID 22804
-       ↓
-cari PID 22804
-       ↓
-itulah parent process
-```
-
----
-
-## 2. PRAKTIK 2 ✅
-
-Output seperti:
-
-```text
-svchost.exe
-PID 1600
-PPID 1424
-CommandLine:
-C:\WINDOWS\system32\svchost.exe -k DcomLaunch -p
-```
-
-sudah tepat.
-
-Kamu sekarang bisa membaca:
-
-```text
-Name
-PID
-PPID
-CommandLine
-```
-
-Ini adalah dasar process investigation.
-
----
-
-## 3. PRAKTIK 3 ✅
-
-Kamu menemukan:
-
-```text
-dllhost.exe
-PID 9524
-PPID 1600
-
-ExecutablePath:
-C:\WINDOWS\system32\DllHost.exe
-
-CommandLine:
-"C:\WINDOWS\system32\DllHost.exe" /Processid:{...}
-```
-
-Lalu kamu berkata:
-
-> executablepath sepertinya gak penting, soalnya di CommandLine sudah termasuk ada ExecutablePath
-
-🟡 **Ini pemahaman yang perlu diluruskan.**
-
-Memang dalam contoh ini CommandLine **kebetulan memuat path executable**, tetapi `ExecutablePath` tetap berguna.
-
-Kita punya dua data berbeda:
-
-```text
-ExecutablePath
-→ properti lokasi executable
-
-CommandLine
-→ bagaimana process dijalankan + arguments
-```
-
-Misalnya:
-
-```text
-ExecutablePath:
-C:\Windows\System32\powershell.exe
-```
-
-CommandLine:
-
-```text
-powershell.exe -ExecutionPolicy Bypass -File C:\Temp\a.ps1
-```
-
-CommandLine bisa memberi informasi lebih banyak tentang **invocation**, sementara `ExecutablePath` memberi kita lokasi executable secara langsung.
-
-Jadi jangan buang `ExecutablePath`.
-
----
-
-## 4. ACTIVE RECALL
-
-#### Q1 PID / PPID ✅
-
-Benar.
-
-```text
-PID  → current process
-PPID → PID milik parent process
-```
-
----
-
-#### Q2 Firefox ✅
-
-Benar:
-
-```text
-firefox.exe
-PID 5500
-      ↓
-unknown.exe
-PID 4216
-PPID 5500
-```
-
-Parent = `firefox.exe`.
-
----
-
-#### Q3 ExecutablePath ✅
-
-> mengetahui letak executable programnya
-
-Benar.
-
-Lebih tepat:
-
-> **location of the executable file associated with the process.**
-
----
-
-#### Q4 CommandLine 🟡
-
-Kamu menjawab:
-
-> berfungsi untuk melihat executablepath dan argument
-
-Perbaikan:
-
-> **CommandLine menunjukkan bagaimana process dijalankan, termasuk executable invocation dan arguments/parameters-nya.**
-
-Jadi yang paling penting di kepala:
-
-```text
-ExecutablePath
-→ WHERE?
-
-CommandLine
-→ HOW?
-```
-
-Ini mnemonic bagus untukmu.
-
----
-
-#### Q5 StartName ✅
-
-Benar:
-
-> account yang digunakan menjalankan service.
-
----
-
-#### Q6 Service vs Process 🔴 kecil tapi penting
-
-Kamu masih menulis:
-
-> service menghasilkan process
-
-Nah, ini **masih kesalahan Day 5 yang muncul lagi**, jadi aku akan bawa ke Active Recall Day 8.
-
-Jangan gunakan:
-
-```text
-Service → menghasilkan → Process
-```
-
-Gunakan:
-
-```text
-Service
-↕
-associated with
-Process
-```
-
-atau contoh:
-
-```text
-Dhcp Service
-     ↓
-ProcessId 2300
-     ↓
-svchost.exe
-```
-
-Service memiliki informasi `ProcessId` yang menunjuk kepada process yang terkait saat service berjalan.
-
-**Service ≠ Process.**
-
----
-
-#### Q7 SHA-256 ✅
-
-Benar.
-
-> untuk melihat nilai hash pada file.
-
----
-
-#### Q8 Digital Signature 🟢
-
-Jawabanmu secara konsep benar.
-
-Signature membantu memeriksa status signature dan informasi certificate/signer.
-
----
-
-#### Q9 Valid Signature 🟡
-
-Kamu memahami poin utamanya:
-
-> valid tidak otomatis berarti aman.
-
-Bagus.
-
-Tetapi bagian:
-
-> penyerang memiliki credential yang valid
-
-kurang presisi.
-
-Lebih tepat:
-
-> malicious software dapat tetap memiliki valid digital signature, misalnya karena menggunakan certificate yang sah atau certificate sah yang disalahgunakan.
-
-Kita tidak akan memakai istilah "meniru signature" sebagai penjelasan utama.
-
----
-
-#### Q10 Kill Process ✅
-
-Benar.
-
-Kita tidak otomatis melakukan:
-
-```text
-Suspicious
-↓
-Kill
-```
-
-karena tindakan respons dapat mengubah/menghilangkan sebagian evidence.
-
-Mindset:
-
-```text
-Observe
-↓
-Collect
-↓
-Analyze
-↓
-Respond
-```
-
----
-
-## 5. CHALLENGE DAY 7
-
-#### Q1 Process tree ✅
+##### Q1 Process tree ✅
 
 Kamu memahami:
 
@@ -319,7 +28,7 @@ Bagus.
 
 ---
 
-#### Q2 PID / PPID ✅
+##### Q2 PID / PPID ✅
 
 Benar.
 
@@ -338,7 +47,7 @@ yaitu `explorer.exe`.
 
 ---
 
-#### Q3 ExecutablePath 🟡
+##### Q3 ExecutablePath 🟡
 
 Kamu mengatakan relationship `explorer → powershell` mencurigakan karena jarang kamu lihat.
 
@@ -366,7 +75,7 @@ Ini bagus untuk reminder:
 
 ---
 
-#### Q4 `-ExecutionPolicy Bypass` ✅/🟡
+##### Q4 `-ExecutionPolicy Bypass` ✅/🟡
 
 Kamu mengatakan:
 
@@ -398,7 +107,7 @@ kita punya alasan yang lebih kuat untuk mencari evidence tambahan.
 
 ---
 
-#### Q5 Belum cukup ✅
+##### Q5 Belum cukup ✅
 
 Jawabanmu bagus:
 
@@ -410,7 +119,7 @@ Ini salah satu jawaban terbaikmu di Day 7 karena kamu tidak buru-buru membuat ve
 
 ---
 
-#### Q6 Evidence tambahan ✅
+##### Q6 Evidence tambahan ✅
 
 Kamu memilih:
 
@@ -447,7 +156,7 @@ Ini juga masuk reminder.
 
 ---
 
-#### Q7 File investigation ✅
+##### Q7 File investigation ✅
 
 Kamu memberikan:
 
@@ -466,7 +175,7 @@ PID/PPID sebenarnya evidence **process**, bukan metadata file, tetapi tetap rele
 
 ---
 
-#### Q8 Valid signature ✅
+##### Q8 Valid signature ✅
 
 Jawabanmu kembali konsisten:
 
@@ -476,66 +185,9 @@ Benar.
 
 ---
 
-## 6. HANDS-ON — 🟢 BAGUS, TAPI ANALYSIS MASIH PERLU DIPERDALAM
+## Mini-project / Investigasi
 
-Kamu mendapatkan:
-
-#### PowerShell
-
-```text
-powershell.exe
-PID 18636
-PPID 7476
-
-ExecutablePath:
-C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
-
-CommandLine:
-"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
-```
-
-#### svchost
-
-```text
-svchost.exe
-PID 21908
-PPID 1424
-
-ExecutablePath:
-C:\WINDOWS\System32\svchost.exe
-
-CommandLine:
-C:\WINDOWS\System32\svchost.exe -k LocalServiceNetworkRestricted -p -s lmhosts
-```
-
-#### ShellHost
-
-```text
-ShellHost.exe
-PID 5264
-PPID 14904
-
-ExecutablePath:
-C:\Windows\System32\ShellHost.exe
-```
-
-Kamu menyadari executable paths tersebut terlihat normal dan masih ingin melakukan verification.
-
-🟢 Itu bagus.
-
-Tapi di tahap berikutnya kita perlu belajar **bagaimana membedakan “looks normal” dari “supported by evidence.”**
-
-Contohnya:
-
-```text
-"C:\Windows\System32\..."
-```
-
-adalah indicator yang baik untuk context, tetapi bukan bukti absolut.
-
----
-
-## 7. MINI SOC REPORT
+### 7. MINI SOC REPORT
 
 Kamu menemukan:
 
@@ -593,32 +245,187 @@ Ini sama dengan prinsip yang sudah kita pelajari sebelumnya.
 
 ---
 
-## 8. DAY 7 SCORE
+## Active Recall / Self-test
 
-| Area                    | Hasil |
-| ----------------------- | ----- |
-| PID / PPID              | 🟢    |
-| Process Tree            | 🟢    |
-| ExecutablePath          | 🟢    |
-| CommandLine             | 🟢    |
-| Service vs Process      | 🟡    |
-| Digital Signature       | 🟢    |
-| SHA-256                 | 🟢    |
-| Metadata                | 🟢    |
-| Evidence mindset        | 🟢    |
-| Avoid premature verdict | 🟢    |
-| Hands-on                | 🟢    |
-| Mini report             | 🟢    |
+### 4. ACTIVE RECALL
 
-#### 🟢 FINAL: **PASSED**
+##### Q1 PID / PPID ✅
 
-Perkiraan penguasaan: **sekitar 85%**.
+Benar.
 
-Jadi sesuai aturanmu: **lanjut**.
+```text
+PID  → current process
+PPID → PID milik parent process
+```
 
 ---
 
-## 🧠 REMINDER YANG DIBAWA KE DAY 8
+##### Q2 Firefox ✅
+
+Benar:
+
+```text
+firefox.exe
+PID 5500
+      ↓
+unknown.exe
+PID 4216
+PPID 5500
+```
+
+Parent = `firefox.exe`.
+
+---
+
+##### Q3 ExecutablePath ✅
+
+> mengetahui letak executable programnya
+
+Benar.
+
+Lebih tepat:
+
+> **location of the executable file associated with the process.**
+
+---
+
+##### Q4 CommandLine 🟡
+
+Kamu menjawab:
+
+> berfungsi untuk melihat executablepath dan argument
+
+Perbaikan:
+
+> **CommandLine menunjukkan bagaimana process dijalankan, termasuk executable invocation dan arguments/parameters-nya.**
+
+Jadi yang paling penting di kepala:
+
+```text
+ExecutablePath
+→ WHERE?
+
+CommandLine
+→ HOW?
+```
+
+Ini mnemonic bagus untukmu.
+
+---
+
+##### Q5 StartName ✅
+
+Benar:
+
+> account yang digunakan menjalankan service.
+
+---
+
+##### Q6 Service vs Process 🔴 kecil tapi penting
+
+Kamu masih menulis:
+
+> service menghasilkan process
+
+Nah, ini **masih kesalahan Day 5 yang muncul lagi**, jadi aku akan bawa ke Active Recall Day 8.
+
+Jangan gunakan:
+
+```text
+Service → menghasilkan → Process
+```
+
+Gunakan:
+
+```text
+Service
+↕
+associated with
+Process
+```
+
+atau contoh:
+
+```text
+Dhcp Service
+     ↓
+ProcessId 2300
+     ↓
+svchost.exe
+```
+
+Service memiliki informasi `ProcessId` yang menunjuk kepada process yang terkait saat service berjalan.
+
+**Service ≠ Process.**
+
+---
+
+##### Q7 SHA-256 ✅
+
+Benar.
+
+> untuk melihat nilai hash pada file.
+
+---
+
+##### Q8 Digital Signature 🟢
+
+Jawabanmu secara konsep benar.
+
+Signature membantu memeriksa status signature dan informasi certificate/signer.
+
+---
+
+##### Q9 Valid Signature 🟡
+
+Kamu memahami poin utamanya:
+
+> valid tidak otomatis berarti aman.
+
+Bagus.
+
+Tetapi bagian:
+
+> penyerang memiliki credential yang valid
+
+kurang presisi.
+
+Lebih tepat:
+
+> malicious software dapat tetap memiliki valid digital signature, misalnya karena menggunakan certificate yang sah atau certificate sah yang disalahgunakan.
+
+Kita tidak akan memakai istilah "meniru signature" sebagai penjelasan utama.
+
+---
+
+##### Q10 Kill Process ✅
+
+Benar.
+
+Kita tidak otomatis melakukan:
+
+```text
+Suspicious
+↓
+Kill
+```
+
+karena tindakan respons dapat mengubah/menghilangkan sebagian evidence.
+
+Mindset:
+
+```text
+Observe
+↓
+Collect
+↓
+Analyze
+↓
+Respond
+```
+
+---
+### 🧠 REMINDER YANG DIBAWA KE DAY 8
 
 Aku catat empat kesalahan/pola yang akan sengaja muncul kembali di Active Recall berikutnya:
 
@@ -636,3 +443,202 @@ Dan satu mindset:
 Ini justru bagus untuk latihan **ketelitian** yang kamu minta sebelumnya. Kita akan terus memaksa otakmu membedakan **observasi, inference, dan conclusion**.
 
 **Day 7 selesai.**
+
+## Penilaian dan Hasil Praktik
+
+
+### 🟢 EVALUASI DAY 7 — PASSED
+
+Dengan aturan kita:
+
+> **76–100% = PASS**
+
+Jawabanmu **lulus**. Kamu sudah mulai benar-benar melihat **relationship antar-process dan context**, bukan sekadar nama process.
+
+Ada beberapa konsep yang perlu aku luruskan karena penting untuk SOC, tetapi **tidak menghambat kelulusan**.
+
+---
+#### 1. PRAKTIK 1 ✅
+
+```text
+firefox.exe
+PID 20516
+PPID 22804
+```
+
+Kamu sudah berhasil mengambil relationship process.
+
+Artinya:
+
+```text
+firefox.exe
+PID 20516
+PPID 22804
+       ↓
+cari PID 22804
+       ↓
+itulah parent process
+```
+
+---
+### 2. PRAKTIK 2 ✅
+
+Output seperti:
+
+```text
+svchost.exe
+PID 1600
+PPID 1424
+CommandLine:
+C:\WINDOWS\system32\svchost.exe -k DcomLaunch -p
+```
+
+sudah tepat.
+
+Kamu sekarang bisa membaca:
+
+```text
+Name
+PID
+PPID
+CommandLine
+```
+
+Ini adalah dasar process investigation.
+
+---
+### 3. PRAKTIK 3 ✅
+
+Kamu menemukan:
+
+```text
+dllhost.exe
+PID 9524
+PPID 1600
+
+ExecutablePath:
+C:\WINDOWS\system32\DllHost.exe
+
+CommandLine:
+"C:\WINDOWS\system32\DllHost.exe" /Processid:{...}
+```
+
+Lalu kamu berkata:
+
+> executablepath sepertinya gak penting, soalnya di CommandLine sudah termasuk ada ExecutablePath
+
+🟡 **Ini pemahaman yang perlu diluruskan.**
+
+Memang dalam contoh ini CommandLine **kebetulan memuat path executable**, tetapi `ExecutablePath` tetap berguna.
+
+Kita punya dua data berbeda:
+
+```text
+ExecutablePath
+→ properti lokasi executable
+
+CommandLine
+→ bagaimana process dijalankan + arguments
+```
+
+Misalnya:
+
+```text
+ExecutablePath:
+C:\Windows\System32\powershell.exe
+```
+
+CommandLine:
+
+```text
+powershell.exe -ExecutionPolicy Bypass -File C:\Temp\a.ps1
+```
+
+CommandLine bisa memberi informasi lebih banyak tentang **invocation**, sementara `ExecutablePath` memberi kita lokasi executable secara langsung.
+
+Jadi jangan buang `ExecutablePath`.
+
+---
+### 6. HANDS-ON — 🟢 BAGUS, TAPI ANALYSIS MASIH PERLU DIPERDALAM
+
+Kamu mendapatkan:
+
+##### PowerShell
+
+```text
+powershell.exe
+PID 18636
+PPID 7476
+
+ExecutablePath:
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+
+CommandLine:
+"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
+```
+
+##### svchost
+
+```text
+svchost.exe
+PID 21908
+PPID 1424
+
+ExecutablePath:
+C:\WINDOWS\System32\svchost.exe
+
+CommandLine:
+C:\WINDOWS\System32\svchost.exe -k LocalServiceNetworkRestricted -p -s lmhosts
+```
+
+##### ShellHost
+
+```text
+ShellHost.exe
+PID 5264
+PPID 14904
+
+ExecutablePath:
+C:\Windows\System32\ShellHost.exe
+```
+
+Kamu menyadari executable paths tersebut terlihat normal dan masih ingin melakukan verification.
+
+🟢 Itu bagus.
+
+Tapi di tahap berikutnya kita perlu belajar **bagaimana membedakan “looks normal” dari “supported by evidence.”**
+
+Contohnya:
+
+```text
+"C:\Windows\System32\..."
+```
+
+adalah indicator yang baik untuk context, tetapi bukan bukti absolut.
+
+---
+### 8. DAY 7 SCORE
+
+| Area                    | Hasil |
+| ----------------------- | ----- |
+| PID / PPID              | 🟢    |
+| Process Tree            | 🟢    |
+| ExecutablePath          | 🟢    |
+| CommandLine             | 🟢    |
+| Service vs Process      | 🟡    |
+| Digital Signature       | 🟢    |
+| SHA-256                 | 🟢    |
+| Metadata                | 🟢    |
+| Evidence mindset        | 🟢    |
+| Avoid premature verdict | 🟢    |
+| Hands-on                | 🟢    |
+| Mini report             | 🟢    |
+
+##### 🟢 FINAL: **PASSED**
+
+Perkiraan penguasaan: **sekitar 85%**.
+
+Jadi sesuai aturanmu: **lanjut**.
+
+---
+

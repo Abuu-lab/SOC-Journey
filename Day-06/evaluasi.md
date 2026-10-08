@@ -1,14 +1,111 @@
 # Day 06 — Evaluasi
 
-Bagus. Aku sudah cek **semua Day 6**, bukan hanya command-nya. Secara keseluruhan kamu **sudah menangkap konsep utamanya**, tapi ada **2–3 konsep yang perlu diluruskan** supaya tidak terbawa ke Day berikutnya.
+Catatan ini mempertahankan jawaban, koreksi, dan penilaian yang tercatat. Sebagian jawaban hanya tersedia sebagai ringkasan mentor; pertanyaan atau jawaban lengkap yang tidak tercatat tidak direkonstruksi. Skenario latihan tidak dianggap sebagai incident pada endpoint aktual.
 
-### 🟢 HASIL DAY 6: PASSED — dengan beberapa koreksi
+## Challenge
+
+### 4. CHALLENGE
+
+##### 1. Apakah sudah cukup untuk menyatakan malicious?
+
+Jawabanmu:
+
+> "Belum cukup masih banyak evidence yang belum dicari."
+
+✅ **BENAR.**
+
+Ini mindset SOC yang benar.
+
+---
+
+##### 2. Minimal 5 evidence tambahan
+
+Kamu memberikan:
+
+* Metadata
+* ExecutablePath
+* CommandLine
+* Digital Signature
+* SHA-256
+* Network
+
+✅ **Lebih dari cukup.**
+
+Tapi ada satu koreksi kecil:
+
+Dalam skenario yang diberikan, kita **sudah memiliki**:
+
+```text
+Executable Path
+CommandLine
+```
+
+Jadi kalau pertanyaannya benar-benar:
+
+> "Evidence tambahan apa yang belum kita punya?"
+
+lebih bagus kamu mencari misalnya:
+
+```text
+Metadata
+Digital Signature
+SHA-256
+Network connections
+File reputation / Threat Intelligence
+User/account
+File creation/modification context
+```
+
+Kamu sebenarnya sudah tahu sebagian besar ini. 👍
+
+---
+
+## Mini-project / Investigasi
+
+### 15. MINI PROJECT
+
+Bagian metadata:
+
+🟢 **BENAR**
+
+Kamu memahami bahwa metadata memberikan informasi tentang file.
+
+##### Digital Signature
+
+Kamu menulis:
+
+> "melihat kode digital signature, mungkin kode itu bisa kita process dan melihat siapa signernya"
+
+🟡 Ini perlu diperbaiki.
+
+Jangan pikir kita harus "memproses kode signature" sendiri.
+
+PowerShell sudah memberikan informasi signature:
+
+```text
+Status
+SignerCertificate
+```
+
+Jadi:
+
+> Digital Signature digunakan untuk memeriksa status signature dan certificate/signer information.
+
+---
+
+## Active Recall / Self-test
+
+### 10. ACTIVE RECALL
+
+## Penilaian dan Hasil Praktik
+
+Bagus. Aku sudah cek **semua Day 6**, bukan hanya command-nya. Secara keseluruhan kamu **sudah menangkap konsep utamanya**, tapi ada **2–3 konsep yang perlu diluruskan** supaya tidak terbawa ke Day berikutnya.
+#### 🟢 HASIL DAY 6: PASSED — dengan beberapa koreksi
 
 Kamu **belum perlu mengulang seluruh Day 6**. Kita hanya perbaiki bagian yang masih kurang tepat.
 
 ---
-
-## 1. TASK 1 — Metadata ✅
+### 1. TASK 1 — Metadata ✅
 
 Hasilmu:
 
@@ -43,8 +140,7 @@ kapan file terakhir diakses menurut timestamp filesystem
 Dan benar bahwa metadata memberikan **context**, bukan langsung menentukan malware/benign.
 
 ---
-
-## 2. TASK 2 — Digital Signature ✅
+### 2. TASK 2 — Digital Signature ✅
 
 Hasil:
 
@@ -87,8 +183,7 @@ Valid ≠ pasti aman
 ```
 
 ---
-
-## 3. TASK 3 — SHA-256 ✅
+### 3. TASK 3 — SHA-256 ✅
 
 Hash kamu:
 
@@ -117,64 +212,7 @@ SHA-256 algorithm
 Hash ini kemudian bisa digunakan sebagai **file identifier/fingerprint** untuk dibandingkan dengan threat intelligence pada tahap berikutnya.
 
 ---
-
-## 4. CHALLENGE
-
-#### 1. Apakah sudah cukup untuk menyatakan malicious?
-
-Jawabanmu:
-
-> "Belum cukup masih banyak evidence yang belum dicari."
-
-✅ **BENAR.**
-
-Ini mindset SOC yang benar.
-
----
-
-#### 2. Minimal 5 evidence tambahan
-
-Kamu memberikan:
-
-* Metadata
-* ExecutablePath
-* CommandLine
-* Digital Signature
-* SHA-256
-* Network
-
-✅ **Lebih dari cukup.**
-
-Tapi ada satu koreksi kecil:
-
-Dalam skenario yang diberikan, kita **sudah memiliki**:
-
-```text
-Executable Path
-CommandLine
-```
-
-Jadi kalau pertanyaannya benar-benar:
-
-> "Evidence tambahan apa yang belum kita punya?"
-
-lebih bagus kamu mencari misalnya:
-
-```text
-Metadata
-Digital Signature
-SHA-256
-Network connections
-File reputation / Threat Intelligence
-User/account
-File creation/modification context
-```
-
-Kamu sebenarnya sudah tahu sebagian besar ini. 👍
-
----
-
-## 5. Fingerprint file
+### 5. Fingerprint file
 
 Jawaban:
 
@@ -189,8 +227,7 @@ SHA-256 = fingerprint file
 ```
 
 ---
-
-## 6. Signature
+### 6. Signature
 
 Jawaban:
 
@@ -208,8 +245,7 @@ Digital Signature
 ```
 
 ---
-
-## 7. Kapan file dibuat/diubah?
+### 7. Kapan file dibuat/diubah?
 
 Jawaban:
 
@@ -228,14 +264,13 @@ LastAccessTime
 ```
 
 ---
-
-## 8. PID vs PPID vs SHA-256 vs Signature vs Metadata
+### 8. PID vs PPID vs SHA-256 vs Signature vs Metadata
 
 Jawabanmu sudah cukup bagus.
 
 Tapi aku ingin kamu mengubah cara mengingatnya menjadi seperti ini:
 
-#### PID
+##### PID
 
 > **ID untuk process saat ini.**
 
@@ -246,7 +281,7 @@ firefox.exe
 PID 5500
 ```
 
-#### PPID
+##### PPID
 
 > **PID milik parent process.**
 
@@ -270,15 +305,15 @@ cari PID 5500
 firefox.exe
 ```
 
-#### SHA-256
+##### SHA-256
 
 > **Fingerprint berdasarkan content file.**
 
-#### Digital Signature
+##### Digital Signature
 
 > **Informasi signature/certificate yang membantu memvalidasi publisher/signing identity dan integritas signature.**
 
-#### Metadata
+##### Metadata
 
 > **Informasi tentang file.**
 
@@ -293,8 +328,7 @@ LastAccessTime
 ```
 
 ---
-
-## 9. ⚠️ KOREKSI PENTING: VALID SIGNATURE
+### 9. ⚠️ KOREKSI PENTING: VALID SIGNATURE
 
 Kamu menjawab:
 
@@ -325,10 +359,7 @@ File pasti aman
 Ini penting sekali untuk SOC.
 
 ---
-
-## 10. ACTIVE RECALL
-
-### A. Process
+#### A. Process
 
 Jawaban:
 
@@ -341,8 +372,7 @@ Lebih tepat:
 > A **process** is an instance of a program currently running under the operating system.
 
 ---
-
-### B. PID
+#### B. PID
 
 Jawabanmu:
 
@@ -351,16 +381,14 @@ Jawabanmu:
 🟢 **BENAR.**
 
 ---
-
-### C. PPID
+#### C. PPID
 
 > ID milik parent process
 
 🟢 **BENAR.**
 
 ---
-
-### D. Service vs Process
+#### D. Service vs Process
 
 Jawabanmu:
 
@@ -392,8 +420,7 @@ Service ≠ Process
 Mereka **berhubungan**, tetapi bukan hal yang sama.
 
 ---
-
-## 11. StartName
+### 11. StartName
 
 Jawaban:
 
@@ -411,8 +438,7 @@ NT Authority\LocalService
 Itu **service account**, bukan nama service.
 
 ---
-
-## 12. ExecutablePath vs PathName
+### 12. ExecutablePath vs PathName
 
 Jawabanmu:
 
@@ -423,7 +449,7 @@ Jawabanmu:
 
 Koreksi:
 
-#### ExecutablePath
+##### ExecutablePath
 
 Lokasi **executable file**.
 
@@ -431,7 +457,7 @@ Lokasi **executable file**.
 C:\Windows\System32\svchost.exe
 ```
 
-#### PathName
+##### PathName
 
 Bisa berisi:
 
@@ -454,8 +480,7 @@ Lebih tepat:
 > **ExecutablePath = lokasi file executable yang dijalankan oleh process.**
 
 ---
-
-## 13. PPID svchost.exe
+### 13. PPID svchost.exe
 
 Jawaban:
 
@@ -480,8 +505,7 @@ PPID = 1424
 ```
 
 ---
-
-## 14. Apakah langsung kill suspicious process?
+### 14. Apakah langsung kill suspicious process?
 
 Jawabanmu:
 
@@ -518,39 +542,7 @@ KILL!!!
 😄
 
 ---
-
-## 15. MINI PROJECT
-
-Bagian metadata:
-
-🟢 **BENAR**
-
-Kamu memahami bahwa metadata memberikan informasi tentang file.
-
-#### Digital Signature
-
-Kamu menulis:
-
-> "melihat kode digital signature, mungkin kode itu bisa kita process dan melihat siapa signernya"
-
-🟡 Ini perlu diperbaiki.
-
-Jangan pikir kita harus "memproses kode signature" sendiri.
-
-PowerShell sudah memberikan informasi signature:
-
-```text
-Status
-SignerCertificate
-```
-
-Jadi:
-
-> Digital Signature digunakan untuk memeriksa status signature dan certificate/signer information.
-
----
-
-## 16. SHA-256
+### 16. SHA-256
 
 Jawabanmu:
 
@@ -561,8 +553,7 @@ Jawabanmu:
 Ini sudah cukup kuat.
 
 ---
-
-## 17. FINAL ASSESSMENT
+### 17. FINAL ASSESSMENT
 
 Jawaban:
 
@@ -587,8 +578,7 @@ Kamu memahami:
 Itulah dasar SOC thinking.
 
 ---
-
-## 🧠 DAY 6 SCORE
+### 🧠 DAY 6 SCORE
 
 | Materi                       | Status             |
 | ---------------------------- | ------------------ |
@@ -603,8 +593,7 @@ Itulah dasar SOC thinking.
 | PathName                     | 🟢 Paham           |
 | Evidence-based investigation | 🟢 Paham           |
 | Valid ≠ Safe                 | 🟢 Paham           |
-
-### 🟢 DAY 6: PASSED
+#### 🟢 DAY 6: PASSED
 
 Tapi ada **3 kalimat yang ingin kamu hafalkan**, bukan sekadar dibaca:
 
@@ -619,9 +608,7 @@ Dan satu lagi dari Day 3–6:
 > **Evidence first → conclusion later.**
 
 ---
-
-
-### Lembar jawaban
+#### Lembar jawaban
 
 GPT
 Task 1
@@ -792,3 +779,4 @@ Apakah evidence yang tersedia sudah cukup
 untuk menentukan malicious atau benign?
 Jelaskan. belum. masih banyak evidence lain
 seperti commandline,pathname,network data dan lebih bnyak lagi cuman saya belum tau
+
