@@ -33,8 +33,42 @@ Milestone mencatat pembelajaran, bukan klaim bahwa semua konsep sudah dikuasai. 
 | [Day 12](Day-12/materi.md) | Sysmon & Endpoint Telemetry | [Commands](Day-12/commands.md) · [Materi](Day-12/materi.md) · [Evaluasi](Day-12/evaluasi.md) · [Milestone](Day-12/milestone.md) | PASS (catatan asli) |
 | [Day 13](Day-13/materi.md) | Sysmon Process Investigation | [Commands](Day-13/commands.md) · [Materi](Day-13/materi.md) · [Evaluasi](Day-13/evaluasi.md) · [Milestone](Day-13/milestone.md) | PASS (catatan asli) |
 | [Day 14](Day-14/materi.md) | Security Context, Integrity Level & Svchost | [Commands](Day-14/commands.md) · [Materi](Day-14/materi.md) · [Evaluasi](Day-14/evaluasi.md) · [Milestone](Day-14/milestone.md) | PASS (catatan asli) |
+| [Day 15](Day-15/materi.md) | Process-to-Network Investigation | [Commands](Day-15/commands.md) · [Materi](Day-15/materi.md) · [Evaluasi](Day-15/evaluasi.md) · [Milestone](Day-15/milestone.md) | **Belum PASS** (69/100, catatan evaluasi) |
+| [Day 16](Day-16/materi.md) | Sysmon Telemetry Troubleshooting & Evidence Validation | [Commands](Day-16/commands.md) · [Materi](Day-16/materi.md) · [Evaluasi](Day-16/evaluasi.md) · [Milestone](Day-16/milestone.md) | **PASS** (77/100, formatif) |
+| [Day 17](Day-17/evaluasi.md) | Sysmon DNS Query & ProcessGuid Correlation | [Commands](Day-17/commands.md) · Materi belum tersimpan · [Evaluasi](Day-17/evaluasi.md) · [Milestone](Day-17/milestone.md) | **PASS** (80/100, formatif; perlu penguatan scripting) |
+| [Day 18](Day-18/materi.md) | Sysmon Network Investigation & Extended Hands-on Lab | [Commands](Day-18/commands.md) · [Materi](Day-18/materi.md) · [Evaluasi](Day-18/evaluasi.md) · [Milestone](Day-18/milestone.md) | **PASS** (90/100 latihan inti; extended lab dengan koreksi) |
 
 Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day 01.
+
+
+
+## Progres saat ini (Day 01–18)
+
+- **Tahap yang sudah dilatih:** computer/process fundamentals, Windows services, parent-child process, metadata/digital signature/SHA-256, Windows Event Logs, Security Context, Sysmon, DNS Query, UDP/TCP network evidence, timeline dan preliminary SOC assessment.
+- **Day 15:** 69/100, belum PASS sesuai evaluasi historis; materi tetap dipakai untuk remediasi.
+- **Day 16:** 77/100, PASS (formative).
+- **Day 17:** 80/100, PASS (formative), DNS Event ID 22 dan ProcessGuid; lab scripting panjang belum dikuasai secara mandiri. `Day-17/materi.md` belum tersedia (upaya penyimpanan terdahulu gagal); evaluasi/commands/milestone ada.
+- **Day 18:** 90/100 pada latihan inti, PASS (formative); Extended Hands-on Lab mencakup multi-event Sysmon, current vs historical PID, UDP endpoint, file metadata, signature dan SHA-256. Ada koreksi report dan konsep yang dibawa ke Day 19.
+- **Day 19:** **Sedang berlangsung**; belum ada penilaian, tidak otomatis dianggap PASS.
+
+## Metode belajar dan kualitas evidensi
+
+1. Teori cukup mendalam, tetap dibagi menjadi langkah kecil.
+2. **Hands-on** berulang dengan Windows PowerShell read-only: setiap command dijelaskan sebelum menginterpretasikan output.
+3. Latihan investigasi: **Observation → Evidence Available → Evidence Gap → Hypothesis → Test → Actual Result → Assessment → Next Action**.
+4. Evaluasi mempertahankan **jawaban asli → jawaban ideal → alasan/koreksi**; ambang PASS **76/100** dalam sistem latihan internal (bukan sertifikasi).
+5. **📌 Milestone Hari Ini** hanya berisi praktik dan konsep yang benar-benar telah muncul; jangan menganggap command yang disalin otomatis telah dikuasai.
+6. Bedakan hasil endpoint aktual dari **simulated challenges**, serta data **current** dari **historical evidence**.
+7. **Privasi:** hostname, username lokal, lokasi profil personal, alamat IP privat lokal dan ProcessGuid yang mengikat endpoint harus disamarkan sebelum dipublikasikan. Hindari memublikasikan secret, token, password, atau raw logs yang mengungkap identitas.
+
+## Materi yang perlu dikuatkan berikutnya
+
+- **SHA-256 adalah fingerprint, bukan antivirus scan.**
+- **False positive** berarti alert/detection yang tidak terkonfirmasi setelah verifikasi, bukan otomatis karena suatu PID historis sudah hilang.
+- **Event ID 1 (Process Create), 2 (File Creation Time Changed), 3 (Network Connection), 22 (DNS Query)** harus dibedakan.
+- **DNS resolution ≠ network connection ≠ data exfiltration**; UDP port 443 bukan bukti HTTPS melalui TCP atau tindakan malicious.
+- Ketelitian terhadap timestamp, ProcessGuid, PID, source/destination, cakupan query dan konsistensi laporan.
+- Fokus penguatan PowerShell: `Get-WinEvent`, `Select-Object`, `Format-List`, `Get-CimInstance` dan filter sederhana sebelum parsing XML/`foreach` tingkat lanjut.
 
 
 ## Membaca bukti pembelajaran
