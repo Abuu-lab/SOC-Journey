@@ -1,6 +1,6 @@
-# Day 19 — Evaluasi, Jawaban Pengguna, Koreksi (Interim)
+# Day 19 — Evaluasi, Jawaban Pengguna & Koreksi
 
-**Status:** IN PROGRESS. Active Recall + Hands-on 1–5 submitted. Hands-on 6 reasoning answered without separate correlated event evidence. Simulated Challenge questions C1–C9 answered (C10 unanswered). Mini SOC Project **not yet submitted**: learner asked to be reminded of the commands. Do not fabricate final grade/PASS.
+**Final status: PASS — 80/100 (mentor formative).** Initial snapshot at the beginning of Day19: Active Recall + Hands-on 1–5 submitted. Hands-on 6 reasoning answered without separate correlated event evidence. Simulated Challenge questions C1–C9 answered (C10 unanswered). Mini SOC Project **not yet submitted**: learner asked to be reminded of the commands. Do not fabricate final grade/PASS.
 
 **Data protection:** Raw host/user/profile paths, local device IP and unique ProcessGuid suppressed. Simulated evidence clearly separated from real endpoint results.
 
@@ -83,3 +83,51 @@ Suggested grounded real case for next step: one Spotify.exe ID3 process instance
 Strengths: many real read-only PowerShell commands executed, current vs historical understanding, no port=malware inference, use of file metadata/signature/hash, basic Sysmon field reading and evidence caution.
 
 Active recall next: all PID unique vs same PPID; parent name vs PPID; false positive vs inconclusive; SHA256 vs virus scan; UDP vs HTTPS/TCP; actual timeline and differing ProcessGuids; hypothesis benign vs malicious; exact values and source separation. Day 19 final grade only after mini report and correction of missing steps.
+
+## Penutupan Day 19 — Penilaian Akhir (menggantikan status sementara di atas)
+
+**Status final: PASS, 80/100 — estimasi formatif mentor.** Ambang PASS 76/100. Nilai bukan hasil tes kompetensi standar dan bukan klaim pengguna telah menulis mini report mandiri.
+
+### Bukti baru setelah evaluasi sementara
+
+- User mengeksekusi query current PID **6680** → hasil kosong.
+- User mencari Sysmon ID 1 dalam **200 terbaru** berdasarkan teks PID 6680 → kosong; pencarian terbatas tidak membuktikan event tidak pernah ada.
+- User memperluas pencarian dengan time window pada 15 Oktober 2026 → menemukan **5 historical Sysmon ID 1**, semuanya child Spotify.exe dengan ParentProcessId 6680.
+- Lima record tersebut mempunyai ParentProcessGuid **sama**, dan GUID tersebut **cocok dengan ProcessGuid Spotify UDP Sysmon ID 3** milik PID 6680 yang diamati lebih awal.
+- Masing-masing child memiliki ProcessGuid yang berbeda. Ini menunjukkan keterkaitan parent–child dan network activity pada satu **parent process instance**.
+- Tidak menemukan Event ID 1 yang secara langsung mendokumentasikan **penciptaan parent PID 6680** dalam lima output itu.
+- C10 belum dijawab mandiri; berikut contoh jawaban dari mentor, bukan jawaban pengguna.
+
+### C10 — Contoh jawaban mentor, bukan jawaban pengguna
+
+Urutan: (1) Periksa konteks Sysmon ID 1 termasuk parent, user, command line. (2) Verifikasi file executable, metadata, digital signature, dan hash. (3) Korelasikan network/DNS events yang benar-benar ada berdasarkan ProcessGuid dan waktu.
+
+### Mini SOC Investigation Report — Disusun mentor dari data pengguna
+
+**CASE:** Historical Spotify Parent-Child and UDP Activity
+
+**SOURCE:** Microsoft-Windows-Sysmon/Operational
+
+**OBSERVATION:** Pada 15 Oktober 2026, lima child Spotify.exe dicatat dibuat pukul 15:12:20–15:14:19 waktu lokal. Child PIDs: 7160, 6308, 7208, 18628, 13636. Semuanya mempunyai ParentProcessId 6680 dan ParentProcessGuid sama. Dua Sysmon Event ID 3 pada 17:24:24 dan 17:24:25 mencatat aktivitas UDP milik Spotify.exe PID 6680 dengan ProcessGuid yang cocok; ada aktivitas ke/dari alamat multicast 239.255.255.250 pada port 1900.
+
+**PROCESS INVESTIGATION:** PID 6680 tidak ditemukan ketika current process list diperiksa. Parent dari PID 6680 sendiri belum diketahui dari output yang ada. Pencarian hanya 200 ID1 terbaru menghasilkan no match, lalu pencarian time window mengungkap lima child ID1; keduanya konsisten dengan batasan masing-masing query.
+
+**FILE INVESTIGATION:** Metadata, signature dan SHA-256 **file Spotify** belum diuji pada kasus ini. Signature Valid dan hash yang diuji di bagian lain pada Day 19 adalah **file Discord**, bukan Spotify.
+
+**EVIDENCE AVAILABLE:** Child ID1 with same ParentProcessGuid, two matching parent UDP ID3 records, historical timestamps, roles of child process. Spotify TCP record pada PID 22300 mempunyai ProcessGuid lain dan **tidak digabungkan** sebagai satu process instance.
+
+**EVIDENCE GAP:** Process Create Event ID 1 milik PID 6680 sendiri, parent process/commandline awalnya, signature/hash Spotify, purpose/application-layer detail, relevant DNS events (not verified).
+
+**BENIGN HYPOTHESIS:** Spotify mungkin melakukan aktivitas local-device discovery lewat SSDP/multicast sebagai fungsi normal aplikasi.
+
+**POTENTIALLY MALICIOUS HYPOTHESIS:** Penyalahgunaan proses atau aktivitas jaringan yang menyimpang belum dapat dikesampingkan; UDP sendiri **bukan** indikator malicious.
+
+**ASSESSMENT:** **Insufficient Evidence / Needs Investigation.** Bukti menunjukkan parent/child relationship dan network activity; belum ada cukup indikator untuk confirmed malware, namun belum ada verifikasi lengkap untuk menyatakan false positive.
+
+**NEXT ACTION:** Jika dilanjutkan, cari Event ID 1 parent PID 6680 berdasarkan identity/time; periksa file Spotify yang tepat; korelasikan jaringan/DNS pada ProcessGuid yang sama.
+
+### Alasan nilai 80/100
+
+Kredit: hands-on read-only, historical/current differentiation, pengamatan field Sysmon, file checks terhadap Discord, keberhasilan menemukan **cross-event parent ProcessGuid correlation** pada Spotify, dan berhati-hati menghindari verdict dini. Koreksi: PID vs PPID, false positive vs inconclusive, SHA256, timeline, hypothesis, dan laporan final masih disusun dengan bantuan mentor.
+
+**PASS:** kelemahan dibawa ke Active Recall Day 20, bukan menahan progres. Aturan remedial: nilai 76–100 PASS; nilai di bawah 76 → materi singkat + 2–5 soal/praktik yang fokus sampai memenuhi ambang.
