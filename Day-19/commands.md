@@ -76,3 +76,17 @@ No assumption that historical PID 6680 is still in use. Neither command above ha
 
 ## Privacy
 All local user names, raw hostname, unique Sysmon GUIDs, user-profile identifying paths and private IP addresses are redacted from this portfolio.
+
+
+## Final follow-up: historical Spotify parent correlation
+
+Additional commands actually executed after the initial notes:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = 6680" | Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+Result: no current matching process.
+
+A search of the latest 200 Sysmon ID 1 messages returned no matching candidate within that bounded sample. A later Sysmon ID 1 time-window search on October 15, 2026 returned five Spotify child creation records (child PIDs 7160, 6308, 7208, 18628, 13636), each with ParentProcessId 6680. Their ParentProcessGuid matches the Spotify UDP event ProcessGuid for historical PID 6680. The parent process's own creation record was not among these five results.
+
+**Final Day 19 status: PASS 80/100**, formative. The complete case summary is mentor-assisted in evaluasi.md; sensitive local identifying fields omitted.
