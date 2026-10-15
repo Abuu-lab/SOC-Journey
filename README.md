@@ -37,19 +37,20 @@ Milestone mencatat pembelajaran, bukan klaim bahwa semua konsep sudah dikuasai. 
 | [Day 16](Day-16/materi.md) | Sysmon Telemetry Troubleshooting & Evidence Validation | [Commands](Day-16/commands.md) · [Materi](Day-16/materi.md) · [Evaluasi](Day-16/evaluasi.md) · [Milestone](Day-16/milestone.md) | **PASS** (77/100, formatif) |
 | [Day 17](Day-17/evaluasi.md) | Sysmon DNS Query & ProcessGuid Correlation | [Commands](Day-17/commands.md) · Materi belum tersimpan · [Evaluasi](Day-17/evaluasi.md) · [Milestone](Day-17/milestone.md) | **PASS** (80/100, formatif; perlu penguatan scripting) |
 | [Day 18](Day-18/materi.md) | Sysmon Network Investigation & Extended Hands-on Lab | [Commands](Day-18/commands.md) · [Materi](Day-18/materi.md) · [Evaluasi](Day-18/evaluasi.md) · [Milestone](Day-18/milestone.md) | **PASS** (90/100 latihan inti; extended lab dengan koreksi) |
+| [Day 19](Day-19/materi.md) | Process Verification & False Positive Investigation | [Commands](Day-19/commands.md) · [Materi](Day-19/materi.md) · [Evaluasi](Day-19/evaluasi.md) · [Milestone](Day-19/milestone.md) | **IN PROGRESS** (hands-on completed; challenge C10 & mini-project pending) |
 
 Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day 01.
 
 
 
-## Progres saat ini (Day 01–18)
+## Progres saat ini (Day 01–19)
 
 - **Tahap yang sudah dilatih:** computer/process fundamentals, Windows services, parent-child process, metadata/digital signature/SHA-256, Windows Event Logs, Security Context, Sysmon, DNS Query, UDP/TCP network evidence, timeline dan preliminary SOC assessment.
 - **Day 15:** 69/100, belum PASS sesuai evaluasi historis; materi tetap dipakai untuk remediasi.
 - **Day 16:** 77/100, PASS (formative).
 - **Day 17:** 80/100, PASS (formative), DNS Event ID 22 dan ProcessGuid; lab scripting panjang belum dikuasai secara mandiri. `Day-17/materi.md` belum tersedia (upaya penyimpanan terdahulu gagal); evaluasi/commands/milestone ada.
 - **Day 18:** 90/100 pada latihan inti, PASS (formative); Extended Hands-on Lab mencakup multi-event Sysmon, current vs historical PID, UDP endpoint, file metadata, signature dan SHA-256. Ada koreksi report dan konsep yang dibawa ke Day 19.
-- **Day 19:** **Sedang berlangsung**; belum ada penilaian, tidak otomatis dianggap PASS.
+- **Day 19:** **IN PROGRESS**. Active recall, current Discord process investigation, Office Sysmon ID 1, Discord file checks and three Spotify ID 3 records completed. C10 and the real mini-project remain pending. No final grade yet. See [Day 19 evaluation](Day-19/evaluasi.md).
 
 ## Metode belajar dan kualitas evidensi
 
