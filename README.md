@@ -21,23 +21,23 @@ Milestone mencatat pembelajaran, bukan klaim bahwa semua konsep sudah dikuasai. 
 | --- | --- | --- | --- |
 | [Day 01](Day-01/materi.md) | Computer & Process Fundamentals | [Commands](Day-01/commands.md) · [Materi](Day-01/materi.md) · [Evaluasi](Day-01/evaluasi.md) · [Milestone](Day-01/milestone.md) | PASS (catatan asli) |
 | [Day 02](Day-02/materi.md) | Performance Baseline | [Commands](Day-02/commands.md) · [Materi](Day-02/materi.md) · [Evaluasi](Day-02/evaluasi.md) · [Milestone](Day-02/milestone.md) | PASS (catatan asli) |
-| [Day 03](Day-03/materi.md) | Process Investigation | [Commands](Day-03/commands.md) · [Materi](Day-03/materi.md) · [Evaluasi](Day-03/evaluasi.md) · [Milestone](Day-03/milestone.md) | Developing |
-| [Day 04](Day-04/materi.md) | File Investigation | [Commands](Day-04/commands.md) · [Materi](Day-04/materi.md) · [Evaluasi](Day-04/evaluasi.md) · [Milestone](Day-04/milestone.md) | Developing |
-| [Day 05](Day-05/materi.md) | Windows Services & Process Context | [Commands](Day-05/commands.md) · [Materi](Day-05/materi.md) · [Evaluasi](Day-05/evaluasi.md) · [Milestone](Day-05/milestone.md) | Belum tersedia |
-| [Day 06](Day-06/materi.md) | File Investigation: Metadata, Signature & Hash | [Commands](Day-06/commands.md) · [Materi](Day-06/materi.md) · [Evaluasi](Day-06/evaluasi.md) · [Milestone](Day-06/milestone.md) | PASS (catatan asli) |
-| [Day 07](Day-07/materi.md) | Process Tree & Command Line | [Commands](Day-07/commands.md) · [Materi](Day-07/materi.md) · [Evaluasi](Day-07/evaluasi.md) · [Milestone](Day-07/milestone.md) | PASS (catatan asli) |
-| [Day 08](Day-08/materi.md) | Windows User Context & Privileges | [Commands](Day-08/commands.md) · [Materi](Day-08/materi.md) · [Evaluasi](Day-08/evaluasi.md) · [Milestone](Day-08/milestone.md) | PASS (catatan asli) |
-| [Day 09](Day-09/materi.md) | Windows Event Logs | [Commands](Day-09/commands.md) · [Materi](Day-09/materi.md) · [Evaluasi](Day-09/evaluasi.md) · [Milestone](Day-09/milestone.md) | PASS (catatan asli) |
-| [Day 10](Day-10/materi.md) | Event Timeline & Correlation | [Commands](Day-10/commands.md) · [Materi](Day-10/materi.md) · [Evaluasi](Day-10/evaluasi.md) · [Milestone](Day-10/milestone.md) | PASS (catatan asli) |
-| [Day 11](Day-11/materi.md) | Windows Authentication Investigation | [Commands](Day-11/commands.md) · [Materi](Day-11/materi.md) · [Evaluasi](Day-11/evaluasi.md) · [Milestone](Day-11/milestone.md) | Belum tersedia |
-| [Day 12](Day-12/materi.md) | Sysmon & Endpoint Telemetry | [Commands](Day-12/commands.md) · [Materi](Day-12/materi.md) · [Evaluasi](Day-12/evaluasi.md) · [Milestone](Day-12/milestone.md) | PASS (catatan asli) |
-| [Day 13](Day-13/materi.md) | Sysmon Process Investigation | [Commands](Day-13/commands.md) · [Materi](Day-13/materi.md) · [Evaluasi](Day-13/evaluasi.md) · [Milestone](Day-13/milestone.md) | PASS (catatan asli) |
-| [Day 14](Day-14/materi.md) | Security Context, Integrity Level & Svchost | [Commands](Day-14/commands.md) · [Materi](Day-14/materi.md) · [Evaluasi](Day-14/evaluasi.md) · [Milestone](Day-14/milestone.md) | PASS (catatan asli) |
-| [Day 15](Day-15/materi.md) | Process-to-Network Investigation | [Commands](Day-15/commands.md) · [Materi](Day-15/materi.md) · [Evaluasi](Day-15/evaluasi.md) · [Milestone](Day-15/milestone.md) | **Belum PASS** (69/100, catatan evaluasi) |
-| [Day 16](Day-16/materi.md) | Sysmon Telemetry Troubleshooting & Evidence Validation | [Commands](Day-16/commands.md) · [Materi](Day-16/materi.md) · [Evaluasi](Day-16/evaluasi.md) · [Milestone](Day-16/milestone.md) | **PASS** (77/100, formatif) |
-| [Day 17](Day-17/evaluasi.md) | Sysmon DNS Query & ProcessGuid Correlation | [Commands](Day-17/commands.md) · Materi belum tersimpan · [Evaluasi](Day-17/evaluasi.md) · [Milestone](Day-17/milestone.md) | **PASS** (80/100, formatif; perlu penguatan scripting) |
-| [Day 18](Day-18/materi.md) | Sysmon Network Investigation & Extended Hands-on Lab | [Commands](Day-18/commands.md) · [Materi](Day-18/materi.md) · [Evaluasi](Day-18/evaluasi.md) · [Milestone](Day-18/milestone.md) | **PASS** (90/100 latihan inti; extended lab dengan koreksi) |
-| [Day 19](Day-19/materi.md) | Process Verification & False Positive Investigation | [Commands](Day-19/commands.md) · [Materi](Day-19/materi.md) · [Evaluasi](Day-19/evaluasi.md) · [Milestone](Day-19/milestone.md) | **PASS** (80/100, formative; mentor-assisted final report) |
+| [Day 03](Day-03/materi.md) | Investigasi Process | [Commands](Day-03/commands.md) · [Materi](Day-03/materi.md) · [Evaluasi](Day-03/evaluasi.md) · [Milestone](Day-03/milestone.md) | Developing |
+| [Day 04](Day-04/materi.md) | Investigasi File | [Commands](Day-04/commands.md) · [Materi](Day-04/materi.md) · [Evaluasi](Day-04/evaluasi.md) · [Milestone](Day-04/milestone.md) | Developing |
+| [Day 05](Day-05/materi.md) | Layanan Windows dan Konteks Process | [Commands](Day-05/commands.md) · [Materi](Day-05/materi.md) · [Evaluasi](Day-05/evaluasi.md) · [Milestone](Day-05/milestone.md) | Belum tersedia |
+| [Day 06](Day-06/materi.md) | Investigasi File: Metadata, Signature, dan Hash | [Commands](Day-06/commands.md) · [Materi](Day-06/materi.md) · [Evaluasi](Day-06/evaluasi.md) · [Milestone](Day-06/milestone.md) | PASS (catatan asli) |
+| [Day 07](Day-07/materi.md) | Pohon Process dan Command Line | [Commands](Day-07/commands.md) · [Materi](Day-07/materi.md) · [Evaluasi](Day-07/evaluasi.md) · [Milestone](Day-07/milestone.md) | PASS (catatan asli) |
+| [Day 08](Day-08/materi.md) | Konteks User dan Hak Akses Windows | [Commands](Day-08/commands.md) · [Materi](Day-08/materi.md) · [Evaluasi](Day-08/evaluasi.md) · [Milestone](Day-08/milestone.md) | PASS (catatan asli) |
+| [Day 09](Day-09/materi.md) | Log Event Windows | [Commands](Day-09/commands.md) · [Materi](Day-09/materi.md) · [Evaluasi](Day-09/evaluasi.md) · [Milestone](Day-09/milestone.md) | PASS (catatan asli) |
+| [Day 10](Day-10/materi.md) | Linimasa dan Korelasi Event | [Commands](Day-10/commands.md) · [Materi](Day-10/materi.md) · [Evaluasi](Day-10/evaluasi.md) · [Milestone](Day-10/milestone.md) | PASS (catatan asli) |
+| [Day 11](Day-11/materi.md) | Investigasi Autentikasi Windows | [Commands](Day-11/commands.md) · [Materi](Day-11/materi.md) · [Evaluasi](Day-11/evaluasi.md) · [Milestone](Day-11/milestone.md) | Belum tersedia |
+| [Day 12](Day-12/materi.md) | Sysmon dan Telemetry Endpoint | [Commands](Day-12/commands.md) · [Materi](Day-12/materi.md) · [Evaluasi](Day-12/evaluasi.md) · [Milestone](Day-12/milestone.md) | PASS (catatan asli) |
+| [Day 13](Day-13/materi.md) | Investigasi Process dengan Sysmon | [Commands](Day-13/commands.md) · [Materi](Day-13/materi.md) · [Evaluasi](Day-13/evaluasi.md) · [Milestone](Day-13/milestone.md) | PASS (catatan asli) |
+| [Day 14](Day-14/materi.md) | Security Context, Integrity Level, dan Svchost | [Commands](Day-14/commands.md) · [Materi](Day-14/materi.md) · [Evaluasi](Day-14/evaluasi.md) · [Milestone](Day-14/milestone.md) | PASS (catatan asli) |
+| [Day 15](Day-15/materi.md) | Investigasi Process ke Jaringan | [Commands](Day-15/commands.md) · [Materi](Day-15/materi.md) · [Evaluasi](Day-15/evaluasi.md) · [Milestone](Day-15/milestone.md) | **Belum PASS** (69/100, catatan evaluasi) |
+| [Day 16](Day-16/materi.md) | Pemeriksaan Telemetry Sysmon dan Validasi Bukti | [Commands](Day-16/commands.md) · [Materi](Day-16/materi.md) · [Evaluasi](Day-16/evaluasi.md) · [Milestone](Day-16/milestone.md) | **PASS** (77/100, formatif) |
+| [Day 17](Day-17/evaluasi.md) | DNS Query Sysmon dan Korelasi ProcessGuid | [Commands](Day-17/commands.md) · Materi belum tersimpan · [Evaluasi](Day-17/evaluasi.md) · [Milestone](Day-17/milestone.md) | **PASS** (80/100, formatif; perlu penguatan scripting) |
+| [Day 18](Day-18/materi.md) | Investigasi Jaringan Sysmon dan Praktik Tambahan | [Commands](Day-18/commands.md) · [Materi](Day-18/materi.md) · [Evaluasi](Day-18/evaluasi.md) · [Milestone](Day-18/milestone.md) | **PASS** (90/100 latihan inti; extended lab dengan koreksi) |
+| [Day 19](Day-19/materi.md) | Verifikasi Process dan Investigasi False Positive | [Commands](Day-19/commands.md) · [Materi](Day-19/materi.md) · [Evaluasi](Day-19/evaluasi.md) · [Milestone](Day-19/milestone.md) | **PASS** (80/100, formative; mentor-assisted final report) |
 
 Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day 01.
 
@@ -50,13 +50,13 @@ Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day
 - **Day 16:** 77/100, PASS (formative).
 - **Day 17:** 80/100, PASS (formative), DNS Event ID 22 dan ProcessGuid; lab scripting panjang belum dikuasai secara mandiri. `Day-17/materi.md` belum tersedia (upaya penyimpanan terdahulu gagal); evaluasi/commands/milestone ada.
 - **Day 18:** 90/100 pada latihan inti, PASS (formative); Extended Hands-on Lab mencakup multi-event Sysmon, current vs historical PID, UDP endpoint, file metadata, signature dan SHA-256. Ada koreksi report dan konsep yang dibawa ke Day 19.
-- **Day 19:** **PASS 80/100** (formative). Completed multiple hands-on tasks and matched five Spotify child creation records to a historical parent network event using process-instance correlation. The final report and simulated challenge C10 answer were mentor-assisted, not independently completed. Some evidence gaps remain for Day 20 recall. See [Day 19 evaluation](Day-19/evaluasi.md).
+- **Day 19:** **PASS 80/100** (formatif). Menyelesaikan beberapa praktik langsung dan mencocokkan lima catatan pembuatan process anak Spotify dengan event jaringan historis milik parent melalui korelasi instance process. Laporan akhir dan jawaban tantangan simulasi C10 disusun dengan bantuan mentor, bukan secara mandiri. Masih ada kesenjangan bukti untuk diulang pada Day 20. Lihat [evaluasi Day 19](Day-19/evaluasi.md).
 
 ## Metode belajar dan kualitas evidensi
 
 1. Teori cukup mendalam, tetap dibagi menjadi langkah kecil.
 2. **Hands-on** berulang dengan Windows PowerShell read-only: setiap command dijelaskan sebelum menginterpretasikan output.
-3. Latihan investigasi: **Observation → Evidence Available → Evidence Gap → Hypothesis → Test → Actual Result → Assessment → Next Action**.
+3. Latihan investigasi: **Observasi → Bukti yang Tersedia → Kesenjangan Bukti → Hipotesis → Pengujian → Hasil Aktual → Penilaian → Tindakan Berikutnya**.
 4. Evaluasi mempertahankan **jawaban asli → jawaban ideal → alasan/koreksi**; ambang PASS **76/100** dalam sistem latihan internal (bukan sertifikasi).
 5. **📌 Milestone Hari Ini** hanya berisi praktik dan konsep yang benar-benar telah muncul; jangan menganggap command yang disalin otomatis telah dikuasai.
 6. Bedakan hasil endpoint aktual dari **simulated challenges**, serta data **current** dari **historical evidence**.

@@ -399,7 +399,7 @@ Kita belum boleh mengatakan:
 
 Kita hanya mengatakan:
 
-> **The process has suspicious characteristics and requires further investigation.**
+> **Process ini memiliki ciri yang mencurigakan dan perlu diperiksa lebih lanjut.**
 
 Evidence yang sudah ada:
 
@@ -600,7 +600,7 @@ Kenapa?
 
 ---
 
-## 13. DAY 7 HANDS-ON MINI INVESTIGATION
+## 13. INVESTIGASI MINI DAY 7
 
 Sekarang lakukan investigation terhadap process yang benar-benar ada di laptopmu.
 
@@ -734,7 +734,7 @@ SOC dapat memonitor:
 
 Jadi prinsipnya:
 
-> **Living-off-the-land / legitimate tools can be abused, so context matters.**
+> **Tools bawaan yang sah juga dapat disalahgunakan; karena itu, konteks tetap penting.**
 
 Kita belum perlu masuk terlalu dalam ke PowerShell attack technique sekarang. Hari ini fokusnya tetap **process investigation**.
 

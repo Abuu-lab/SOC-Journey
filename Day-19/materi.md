@@ -1,11 +1,11 @@
-# Day 19 — Process Verification
+# Day 19 — Verifikasi Process
 
-**Completed: PASS 80/100 (mentor formative).** Final report was mentor-assisted.
+**Hasil: PASS 80/100 (penilaian formatif mentor).** Laporan akhir disusun dengan bantuan mentor.
 
-Topics practiced: current processes versus historical Sysmon events; PID and parent PID; process-instance identity; file metadata, Authenticode signature and SHA-256; Windows event timelines and incident assessment.
+Materi yang dilatih: process saat ini dibandingkan event Sysmon historis; PID dan parent PID; identitas instance process; metadata file, signature Authenticode dan SHA-256; linimasa event Windows dan penilaian insiden.
 
-Actual exercise: six current Discord.exe processes were observed. A separate Office process creation event was examined. Three Spotify network events were inspected: two UDP records for historical PID 6680 and a TCP record from another process instance. A later time-scoped search showed five Spotify child process creation events with parent PID 6680. Their shared parent instance identifier matched the historical UDP records.
+Praktik aktual: enam process Discord.exe yang sedang berjalan diamati. Satu event pembuatan process Office yang terpisah juga diperiksa. Tiga event jaringan Spotify diperiksa: dua catatan UDP untuk PID historis 6680 dan satu catatan TCP dari instance process lain. Pencarian berdasarkan rentang waktu kemudian menemukan lima event pembuatan process anak Spotify dengan parent PID 6680. Pengenal instance parent yang sama cocok dengan catatan UDP historis tersebut.
 
-Limitations: the parent's own creation event was not located in the five child records. Spotify file validation and correlated DNS records were not verified. No malicious or false-positive verdict was established.
+Keterbatasan: event yang mencatat pembuatan process parent itu sendiri tidak ditemukan di antara lima catatan process anak. File Spotify dan catatan DNS yang berkaitan belum diverifikasi. Belum ada kesimpulan bahwa aktivitas tersebut malicious ataupun false positive.
 
-Review for Day 20: PID versus PPID, child versus parent instance identifiers, SHA-256 fingerprint, false positive versus inconclusive, and accurate time-based correlation.
+Ulangi pada Day 20: perbedaan PID dan PPID; pengenal instance child dan parent; sidik jari SHA-256; false positive dibandingkan hasil yang belum dapat dipastikan; serta korelasi berdasarkan waktu yang akurat.

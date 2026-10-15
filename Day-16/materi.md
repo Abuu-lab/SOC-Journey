@@ -1,54 +1,54 @@
 # Day 16 — Materi
 ## Sysmon Telemetry Troubleshooting & Evidence Validation
 
-**Objective:** Determine whether Sysmon logging exists, what event types are available, distinguish current vs historical evidence, and document observation, hypothesis, test, result, evidence gap, and assessment.
+**Tujuan:** Memastikan apakah pencatatan Sysmon tersedia, jenis event apa yang ada, membedakan bukti saat ini dan historis, serta mencatat observasi, hipotesis, pengujian, hasil, kesenjangan bukti, dan penilaian.
 
-## Terminology and mental model
+## Istilah dan model berpikir
 
-- Sysmon is a Windows system service and event provider. Service Running does **not** prove every Sysmon Event ID is logged.
-- Event ID 1: Process Create; records Image, ProcessId, ProcessGuid, parent information, command line, user context, hash (depending on configuration).
-- Event ID 3: Network Connection; records process-associated TCP/UDP networking when enabled and matched by rules.
-- Event ID 22: DNS Query; a useful complement to network connection evidence.
-- Event ID 2: File Creation Time Change; 4: Sysmon Service State Change; 5: Process Terminate; 11: File Create; 13: Registry Value Set; 16: Sysmon Configuration Change.
-- ProcessId (PID) can be reused by Windows after a process terminates.
-- ProcessGuid refers to a Sysmon process instance and helps correlate Event ID 1 and other event types; it is **not** simply the PID plus network information.
-- Event ID 1 = historical process creation; Event ID 3 = historical network connection; Get-NetTCPConnection = current TCP connection view; Get-CimInstance Win32_Process = current process information.
-- Both ::1 endpoints mean IPv6 loopback on the same host, not an external internet destination.
-- RemotePort 443 does not by itself prove HTTPS, nor that activity is legitimate.
-- IntegrityLevel High is an elevated integrity level, but does not grant all Windows privileges.
-- services.exe is the Service Control Manager process; svchost.exe is a host for relevant Windows services; -k CameraMonitor names a service host group, not evidence of camera recording.
+- Sysmon adalah layanan sistem Windows dan penyedia event. Status layanan `Running` **tidak** membuktikan bahwa setiap Event ID Sysmon dicatat.
+- Event ID 1: `Process Create`; mencatat `Image`, `ProcessId`, `ProcessGuid`, informasi parent, command line, user context, dan hash (bergantung pada konfigurasi).
+- Event ID 3: `Network Connection`; mencatat aktivitas jaringan TCP/UDP yang terkait dengan process jika fitur ini aktif dan sesuai dengan aturan.
+- Event ID 22: `DNS Query`; dapat melengkapi bukti koneksi jaringan.
+- Event ID 2: `File Creation Time Change`; 4: `Sysmon Service State Change`; 5: `Process Terminate`; 11: `File Create`; 13: `Registry Value Set`; 16: `Sysmon Configuration Change`.
+- Windows dapat menggunakan kembali `ProcessId` (PID) setelah suatu process berhenti.
+- `ProcessGuid` mengidentifikasi satu instance process dalam Sysmon dan membantu mengorelasikan Event ID 1 dengan jenis event lain; nilainya **bukan** sekadar PID yang ditambah informasi jaringan.
+- Event ID 1 = catatan historis pembuatan process; Event ID 3 = catatan historis koneksi jaringan; `Get-NetTCPConnection` = tampilan koneksi TCP saat ini; `Get-CimInstance Win32_Process` = informasi process saat ini.
+- Jika kedua endpoint bernilai `::1`, koneksinya adalah IPv6 loopback di host yang sama, bukan tujuan di internet.
+- `RemotePort 443` saja tidak membuktikan bahwa koneksinya menggunakan HTTPS atau bahwa aktivitasnya sah.
+- `IntegrityLevel High` menunjukkan tingkat integritas yang lebih tinggi, tetapi tidak otomatis memberikan semua hak istimewa Windows.
+- `services.exe` adalah process Service Control Manager; `svchost.exe` menampung layanan Windows terkait; `-k CameraMonitor` menunjukkan nama grup service host, bukan bukti bahwa kamera sedang merekam.
 
-## Three telemetry states
+## Tiga kondisi telemetry
 
-1. Log channel unavailable: the requested channel cannot be located by the tool on the queried system. Check host, service, registered channel; do not automatically reinstall.
-2. Channel available, requested Event ID absent: event might not have happened, logging may be disabled/filtered, events may have rolled over.
-3. Event ID present: evidence exists that records of the type were collected, though specific behavior and full coverage need additional verification.
+1. Log channel tidak tersedia: tool tidak menemukan channel yang diminta pada sistem yang diperiksa. Periksa host, layanan, dan channel yang terdaftar; jangan langsung memasang ulang.
+2. Channel tersedia, tetapi Event ID yang diminta tidak ditemukan: event mungkin memang belum terjadi, pencatatan mungkin dinonaktifkan atau tersaring, atau catatan lama mungkin sudah tertimpa.
+3. Event ID ditemukan: ada bukti bahwa catatan dengan jenis tersebut dikumpulkan, tetapi perilaku tertentu dan cakupan pencatatan masih perlu diverifikasi.
 
-## Confirmed outputs from Day 16
+## Hasil Day 16 yang sudah dikonfirmasi
 
-**Actual practice**: Sysmon service Running/Auto, operational channel used successfully; 108 Event ID 3 and 352 Event ID 22 records. Latest Event ID 1 sample: EpicGamesUpdater.exe executed with queryinstallation, parent EpicGamesLauncher.exe. Process path appears consistent with Epic Games installation, but signature, behavior, and full reputation were not verified. Do not assert 100% benign.
+**Praktik aktual:** layanan Sysmon berstatus `Running/Auto` dan channel operasional berhasil digunakan; ditemukan 108 catatan Event ID 3 dan 352 catatan Event ID 22. Contoh Event ID 1 terbaru menunjukkan `EpicGamesUpdater.exe` dijalankan dengan argumen `queryinstallation`, dengan parent `EpicGamesLauncher.exe`. Jalur process tampak sesuai dengan instalasi Epic Games, tetapi signature, perilaku, dan reputasi lengkapnya belum diverifikasi. Jangan menyatakan bahwa process ini pasti aman.
 
-**Important distinction**: earlier example with 43 records was *total record count at an earlier check*, NOT '43 Event ID 1'. Day 16 snapshot has 71 Event ID 1 and 108 Event ID 3. The mini SOC case was hypothetical and assumed Event ID 3 was absent; do not confuse it with the actual host data.
+**Perbedaan penting:** contoh sebelumnya yang menyebut 43 catatan adalah *jumlah seluruh catatan pada pemeriksaan saat itu*, bukan “43 Event ID 1”. Cuplikan Day 16 memiliki 71 catatan Event ID 1 dan 108 catatan Event ID 3. Mini SOC case merupakan skenario hipotesis yang menganggap Event ID 3 tidak ditemukan; jangan mencampurkannya dengan data host aktual.
 
-## Investigation report template
+## Templat laporan investigasi
 
 ~~~text
-Observation: Which events/fields were actually observed?
-Hypothesis 1 / 2: Alternative possible explanations.
-Test: Commands or validations planned/performed.
-Expected Result: What would a chosen test clarify?
-Actual Result: Only if the test was performed.
-Evidence Available: Sources already seen (no inventions).
-Evidence Gap: What's missing or unavailable?
-Assessment: Evidence-grounded judgment.
-Next Action: Best next step.
+Observasi: Event atau field apa yang benar-benar diamati?
+Hipotesis 1 / 2: Kemungkinan penjelasan lain.
+Pengujian: Perintah atau pemeriksaan yang direncanakan/dilakukan.
+Hasil yang Diharapkan: Hal apa yang akan diperjelas oleh pengujian tersebut?
+Hasil Aktual: Diisi hanya jika pengujian benar-benar dilakukan.
+Bukti yang Tersedia: Sumber yang sudah diperiksa (jangan mengarang).
+Kesenjangan Bukti: Apa yang belum tersedia atau belum diperiksa?
+Penilaian: Kesimpulan sementara yang didasarkan pada bukti.
+Tindakan Berikutnya: Langkah lanjutan yang paling tepat.
 ~~~
 
-A blank Get-CimInstance for a past PID does not prove false positive. If ProcessId same but ProcessGuid differs, test whether they are different process instances / PID reuse. A current established connection does not require a corresponding Event ID 3 to be present, since logging may be disabled, filtered, or incomplete.
+Hasil kosong dari `Get-CimInstance` untuk PID historis tidak membuktikan bahwa deteksi tersebut false positive. Jika `ProcessId` sama tetapi `ProcessGuid` berbeda, periksa apakah keduanya merupakan instance process yang berbeda atau terjadi penggunaan ulang PID. Koneksi yang sedang aktif juga belum tentu memiliki Event ID 3 yang cocok karena pencatatan bisa dinonaktifkan, tersaring, atau tidak lengkap.
 
 ## Technical reference (outside lesson)
 - Microsoft Sysmon: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon
 - Sysmon events: https://learn.microsoft.com/en-us/windows/security/operating-system-security/sysmon/sysmon-events
 
-## Documentation privacy
-Log excerpts and machine-specific account/host identifiers have been anonymized. Do not commit raw username, hostname, or personal profile paths.
+## Privasi dokumentasi
+Cuplikan log dan pengenal akun/host yang spesifik pada perangkat telah disamarkan. Jangan menyimpan username, hostname, atau jalur profil pribadi dalam repo.

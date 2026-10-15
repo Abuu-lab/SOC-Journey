@@ -285,7 +285,7 @@ Benar.
 
 Lebih tepat:
 
-> **location of the executable file associated with the process.**
+> **lokasi file executable yang terkait dengan process.**
 
 ---
 

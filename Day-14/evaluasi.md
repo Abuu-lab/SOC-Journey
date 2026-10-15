@@ -69,7 +69,7 @@
 | 8 | Ingin cek hash, signature, metadata, network, intel bila cukup waktu | **Perlu prioritas risk-based.** Tidak harus semua check untuk setiap proses; fokus bukti yang menjawab hipotesis dan risiko. |
 | 9 | Assessment mengarah normal namun belum confirmed, evidence list + gap | **Sebagian benar.** Perlu menyebut perbedaan User Sysmon dan StartName. Jangan klaim timestamp belum ada karena UtcTime diberikan. |
 
-**Assessment mentor:** **Likely Legitimate (low-to-moderate confidence, based on case data only).**  
+**Penilaian mentor:** **Kemungkinan Sah (tingkat keyakinan rendah–sedang, hanya berdasarkan data kasus).**  
 **Reason:** Path, parent, svchost service association dan status service mengarah ke Windows service normal.  
 **Evidence gap:** Perbedaan Process User `SYSTEM` dan service StartName `NETWORK SERVICE` perlu pemeriksaan/konteks; signature/hash dan aktivitas terkait belum dicek. Ini contoh skenario pembelajaran, bukan verifikasi endpoint aktual.  
 

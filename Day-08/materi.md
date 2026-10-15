@@ -51,14 +51,14 @@ Sehingga:
 ```text
 Process
  ↓
-Who launched / owns the process?
+Siapa yang memulai/memiliki process ini?
  ↓
-What account?
+Akun apa yang digunakan?
  ↓
-What privilege context?
+Dalam konteks hak akses apa process berjalan?
 ```
 
-Ini penting karena **the same executable can have different security implications depending on the user context.**
+Ini penting karena **executable yang sama dapat memiliki implikasi keamanan berbeda, bergantung pada konteks user yang menjalankannya.**
 
 ---
 
@@ -224,7 +224,7 @@ Kita belum mengatakan salah satu pasti malicious.
 
 Kita mengatakan:
 
-> **The security context is different, therefore the investigation context is different.**
+> **Security context-nya berbeda, sehingga konteks investigasinya juga berbeda.**
 
 ---
 
@@ -269,7 +269,7 @@ Jangan langsung menganggap semua group berarti unrestricted access.
 
 Hari ini cukup pahami:
 
-> **Groups help determine what permissions/privileges a security context may have.**
+> **Keanggotaan group membantu menentukan permission/privilege yang mungkin dimiliki suatu security context.**
 
 ---
 
@@ -328,7 +328,7 @@ PPID 7476
 
 Sekarang kita ingin mengetahui:
 
-> **Who is running PID 18636?**
+> **Siapa yang menjalankan PID 18636?**
 
 Kamu bisa menggunakan:
 
@@ -361,15 +361,15 @@ User: Buya
 
 Kita bisa bertanya:
 
-> Who launched it?
+> Siapa yang memulainya?
 
-> What is the parent?
+> Apa parent process-nya?
 
-> Which account owns/runs it?
+> Akun apa yang memiliki/menjalankannya?
 
-> What command was used?
+> Perintah apa yang digunakan?
 
-> What executable was used?
+> File executable apa yang digunakan?
 
 Itulah **context correlation**.
 
@@ -712,7 +712,7 @@ powershell.exe
 
 Jadi:
 
-> **Context is more valuable than process name alone.**
+> **Konteks lebih berguna daripada hanya mengetahui nama process.**
 
 ---
 

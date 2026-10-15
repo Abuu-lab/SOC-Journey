@@ -342,7 +342,7 @@ Tetapi jangan menghafal bahwa attacker **"meniru signature"**.
 
 Lebih tepat:
 
-> A malicious file can still have a valid digital signature, misalnya software malicious memang ditandatangani dengan certificate yang sah atau certificate yang sah disalahgunakan/dicuri.
+> File malicious tetap dapat memiliki tanda tangan digital yang valid, misalnya jika perangkat lunak berbahaya ditandatangani menggunakan sertifikat sah atau jika sertifikat sah disalahgunakan/dicuri.
 
 Jadi:
 
@@ -369,7 +369,7 @@ Jawaban:
 
 Lebih tepat:
 
-> A **process** is an instance of a program currently running under the operating system.
+> **Process** adalah satu instance program yang sedang berjalan di dalam sistem operasi.
 
 ---
 #### B. PID
@@ -599,7 +599,7 @@ Tapi ada **3 kalimat yang ingin kamu hafalkan**, bukan sekadar dibaca:
 
 > **Service ≠ Process.**
 
-> **Valid Digital Signature ≠ Automatically Safe.**
+> **Tanda Tangan Digital Valid ≠ Otomatis Aman.**
 
 > **One Indicator ≠ Verdict.**
 

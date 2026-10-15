@@ -24,7 +24,7 @@ Yang bisa kita katakan:
 
 Kemudian:
 
-> **This is an observation, not a malware verdict.**
+> **Ini adalah observasi, bukan kesimpulan bahwa file tersebut malware.**
 
 Kamu sebenarnya sudah memahami ini di nomor 4 dan 5. Jadi masalahnya terutama pada penggunaan istilah.
 

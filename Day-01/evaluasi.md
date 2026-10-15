@@ -22,7 +22,7 @@ Namun SOC Analyst tidak berpikir:
 
 Kita berpikir:
 
-> **Why is this process consuming 78% CPU?**
+> **Mengapa process ini menggunakan 78% CPU?**
 
 Misalnya:
 
@@ -66,13 +66,13 @@ CPU: 90%
 Pertanyaan berikutnya:
 
 ```text
-What website?
-What process?
-What parent process?
-What command line?
-Which user?
-How long?
-What network connection?
+Website apa yang dibuka?
+Process apa yang berjalan?
+Apa parent process-nya?
+Apa command line-nya?
+User siapa yang menjalankannya?
+Berapa lama process ini berjalan?
+Koneksi jaringan apa yang dibuat?
 ```
 
 Itulah pola pikir SOC.
@@ -224,14 +224,14 @@ jangan hanya:
 Tanyakan:
 
 ```text
-Is this normal for this application?
-What is the process name?
-Where is the executable located?
-Who started it?
-What is its parent process?
-What command line was used?
-Does it make network connections?
-How long has it been running?
+Apakah hal ini normal untuk aplikasi ini?
+Apa nama process-nya?
+Di mana lokasi file executable-nya?
+Siapa yang menjalankannya?
+Apa parent process-nya?
+Command line apa yang digunakan?
+Apakah process ini membuat koneksi jaringan?
+Sudah berapa lama process ini berjalan?
 ```
 
 Ini akan menjadi kebiasaan penting.
@@ -644,7 +644,7 @@ Benign / Suspicious / Malicious
 
 ##### Overall
 
-**DEVELOPING — READY FOR DAY 2**
+**SEDANG BERKEMBANG — SIAP LANJUT KE DAY 2**
 
 Saya **tidak akan menahanmu hanya karena parent process belum dipahami**, karena memang itu belum menjadi materi Day 1. Kita akan membahasnya ketika sudah relevan.
 

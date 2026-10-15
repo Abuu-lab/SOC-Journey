@@ -18,7 +18,7 @@
 
 ## Belum dikuasai / Active Recall Day 17
 - **PID vs ProcessGuid**: ProcessGuid = instance correlation identifier, bukan gabungan PID + koneksi.
-- **Network Event ID 3**: Running Sysmon tidak memastikan logging semua Event ID. Histories can be filtered, incomplete or absent.
+- **Network Event ID 3**: Status `Running` pada Sysmon tidak memastikan semua Event ID dicatat. Catatan historis dapat tersaring, tidak lengkap, atau tidak tersedia.
 - **Image → Process Name**: basename Image adalah executable name, mis. EpicGamesUpdater.exe.
 - **Evidence Available vs Evidence Gap**: event yang sudah diberikan tidak boleh dicatat sebagai missing evidence.
 - **Historical vs Live Evidence**: perbedaan cakupan dan keterbatasan.

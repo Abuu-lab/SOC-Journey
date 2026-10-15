@@ -163,7 +163,7 @@ Pertanyaan:
 
 ---
 
-#### STEP 5 — WHO STARTED IT?
+#### LANGKAH 5 — SIAPA YANG MEMULAINYA?
 
 ```text
 ParentImage
@@ -526,7 +526,7 @@ notepad.exe
 
 Kemudian jawab:
 
-> **Why was notepad.exe started?**
+> **Mengapa notepad.exe dijalankan?**
 
 Jawab berdasarkan evidence, bukan tebakan.
 
@@ -634,12 +634,12 @@ Jangan berhenti di hash.
 Tanyakan:
 
 ```text
-Is the path expected?
-Is the signature valid?
-Is the hash known?
-Does the command line make sense?
-Is the parent expected?
-Is the user expected?
+Apakah jalurnya sesuai?
+Apakah signature-nya valid?
+Apakah hash-nya sudah dikenal?
+Apakah command line-nya masuk akal?
+Apakah parent process-nya sesuai?
+Apakah user yang menjalankannya sesuai?
 ```
 
 ---

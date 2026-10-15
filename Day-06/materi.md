@@ -160,7 +160,7 @@ Itu bisa menjadi **additional evidence**.
 
 Tetapi:
 
-> **Metadata ≠ proof of malware**
+> **Metadata ≠ bukti malware**
 
 Metadata membantu investigation, bukan memberikan verdict sendirian.
 
@@ -249,7 +249,7 @@ Artinya signature dapat divalidasi berdasarkan mekanisme trust Windows.
 
 Tetapi:
 
-> **Valid signature ≠ pasti aman.**
+> **Signature Valid ≠ pasti aman.**
 
 Ini sangat penting untuk SOC.
 
@@ -436,7 +436,7 @@ SOC Analyst bekerja dengan **evidence**, bukan tebakan.
 
 ---
 
-## 10. HANDS-ON LAB DAY 6
+## 10. PRAKTIK LANGSUNG DAY 6
 
 Sekarang giliran kamu.
 

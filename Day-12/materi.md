@@ -302,7 +302,7 @@ Get-Process
 
 Menjawab:
 
-> **What is alive now?**
+> **Apa yang sedang berjalan sekarang?**
 
 #### Historical Windows Event
 
@@ -312,13 +312,13 @@ Get-WinEvent
 
 Menjawab:
 
-> **What was recorded?**
+> **Apa yang tercatat sebelumnya?**
 
 #### Sysmon
 
 Memberikan:
 
-> **Richer endpoint telemetry about what happened.**
+> **Telemetry endpoint yang lebih rinci tentang kejadian sebelumnya.**
 
 Mental model:
 
@@ -411,7 +411,7 @@ Process
 User
 ```
 
-#### STEP 4 — WHO STARTED IT
+#### LANGKAH 4 — SIAPA YANG MEMULAINYA
 
 ```text
 Parent Process

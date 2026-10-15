@@ -32,8 +32,8 @@ PPID
 
 ExecutablePath
         ↓
-WHERE is the executable?
+DI MANA lokasi executable-nya?
 
 CommandLine
         ↓
-HOW was it executed?
+BAGAIMANA process tersebut dijalankan?

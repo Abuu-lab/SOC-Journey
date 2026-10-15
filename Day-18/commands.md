@@ -1,8 +1,8 @@
 # Day 18 — Commands (Extended Hands-on Lab)
 
-## Actually executed, with outputs
+## Perintah yang benar-benar dijalankan beserta hasilnya
 
-### 1. Read five historical Sysmon network events
+### 1. Membaca lima event jaringan Sysmon historis
 
 ```powershell
 Get-WinEvent -FilterHashtable @{
@@ -11,9 +11,9 @@ Get-WinEvent -FilterHashtable @{
 } -MaxEvents 5 | Select-Object TimeCreated, Id
 ```
 
-Learner typed `-MaxEvent 5`; PowerShell accepted this parameter abbreviation. Prefer complete `-MaxEvents` for readability. Five event records were shown on 2026-10-14 around 20:23 local.
+Kamu mengetik `-MaxEvent 5`; PowerShell menerima bentuk singkat parameter tersebut. Sebaiknya gunakan bentuk lengkap `-MaxEvents` agar lebih mudah dibaca. Lima catatan event ditampilkan pada 2026-10-14 sekitar pukul 20:23 waktu lokal.
 
-### 2. Inspect three historical network events
+### 2. Memeriksa tiga event jaringan historis
 
 ```powershell
 Get-WinEvent -FilterHashtable @{
@@ -22,85 +22,85 @@ Get-WinEvent -FilterHashtable @{
 } -MaxEvents 3 | Format-List TimeCreated, Message
 ```
 
-Three shown events: all Spotify.exe, all UDP. One historical PID 21148 was marked Initiated false and had source ending .255 (LAN broadcast address) with local destination [REDACTED_PRIVATE_IP], destination port 57621. Two event records involved historical PID 21452, ProcessGuid [REDACTED_PROCESSGUID], destination 35.186.224.24:443, Initiated true. Same PID and ProcessGuid means same process instance for those two, not proof of the cause of repeated logging.
+Tiga event yang ditampilkan semuanya milik Spotify.exe dan menggunakan UDP. Satu event dengan PID historis 21148 memiliki `Initiated false` dan alamat sumber yang berakhiran .255 (alamat broadcast LAN), dengan tujuan lokal [REDACTED_PRIVATE_IP] dan port tujuan 57621. Dua catatan event menggunakan PID historis 21452, ProcessGuid [REDACTED_PROCESSGUID], tujuan 35.186.224.24:443, dan `Initiated true`. PID dan ProcessGuid yang sama menunjukkan bahwa kedua event berasal dari instance process yang sama, tetapi tidak menjelaskan penyebab pencatatan berulang.
 
-`Format-List TimeCreated, Message` shows these two selected top-level properties in list layout; it does NOT automatically show every property. `Message` itself contains many Sysmon fields. `Format-List *` can display all object properties.
+`Format-List TimeCreated, Message` menampilkan dua properti tingkat atas yang dipilih dalam bentuk daftar; perintah ini tidak otomatis menampilkan semua properti. Properti `Message` sendiri memuat banyak field Sysmon. `Format-List *` dapat menampilkan semua properti objek.
 
-### 3. Check historical Discord PID against current process list
+### 3. Membandingkan PID historis Discord dengan daftar process saat ini
 
 ```powershell
 Get-CimInstance Win32_Process -Filter "ProcessId = 8808" |
 Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 ```
 
-User reports no result for the past PID 8808. This does not invalidate historical Sysmon ID 3.
+Kamu melaporkan tidak ada hasil untuk PID historis 8808. Hal ini tidak membatalkan catatan historis Sysmon ID 3.
 
-### 4. Enumerate current Discord.exe process instances
+### 4. Mencatat instance Discord.exe yang sedang berjalan
 
 ```powershell
 Get-CimInstance Win32_Process -Filter "Name = 'Discord.exe'" |
 Select-Object Name, ProcessId, ParentProcessId, ExecutablePath
 ```
 
-Six current Discord.exe processes, PIDs 16220, 17708, 19312, 9144, 20744, 21412. ParentProcessId for five was 16220; the 16220 process had parent PID 15444. Historical PID 8808 is distinct from all six. Current parent process does NOT establish the historical parent of PID 8808.
+Ditemukan enam process Discord.exe yang sedang berjalan, dengan PID 16220, 17708, 19312, 9144, 20744, dan 21412. Lima di antaranya memiliki `ParentProcessId` 16220; process dengan PID 16220 memiliki parent PID 15444. PID historis 8808 berbeda dari keenam PID tersebut. Parent process yang ada sekarang **tidak** membuktikan siapa parent historis PID 8808.
 
-### 5. List ten live UDP endpoint records
+### 5. Menampilkan sepuluh catatan endpoint UDP saat ini
 
 ```powershell
 Get-NetUDPEndpoint |
 Select-Object -First 10 LocalAddress, LocalPort, OwningProcess
 ```
 
-Endpoint snapshot was obtained. `OwningProcess` stores current process PID. Actual local IP addresses are not reproduced.
+Cuplikan endpoint berhasil diperoleh. `OwningProcess` berisi PID process saat ini. Alamat IP lokal yang sebenarnya tidak dicantumkan.
 
-### 6. Check whether historical PID 8808 currently owns UDP endpoints
+### 6. Memeriksa apakah PID historis 8808 memiliki endpoint UDP saat ini
 
 ```powershell
 Get-NetUDPEndpoint -OwningProcess 8808 |
 Select-Object LocalAddress, LocalPort, OwningProcess
 ```
 
-Returned `No MSFT_NetUDPEndpoint objects found ... OwningProcess equal to 8808`. This means no matching CURRENT UDP endpoint, not no past activity.
+Hasilnya `No MSFT_NetUDPEndpoint objects found ... OwningProcess equal to 8808`. Artinya tidak ada endpoint UDP SAAT INI yang cocok, bukan berarti tidak pernah ada aktivitas sebelumnya.
 
-### 7. Check executable path
+### 7. Memeriksa jalur file executable
 
 ```powershell
 $file = Join-Path $env:LOCALAPPDATA 'Discord\app-1.0.9261\Discord.exe'
 Test-Path -LiteralPath $file
 ```
 
-Result: `True` for current file.
+Hasil: `True` untuk file saat ini.
 
-### 8. Read file metadata
+### 8. Membaca metadata file
 
 ```powershell
 Get-Item -LiteralPath $file |
 Select-Object Name, Length, CreationTime, LastWriteTime
 ```
 
-Observed: Discord.exe, Length 220542392 bytes, CreationTime 2026-10-08 16:02:01, LastWriteTime 2026-10-08 16:02:04 (local). These are filesystem timestamps, not verified first execution times.
+Hasil pengamatan: Discord.exe, `Length 220542392 bytes`, `CreationTime 2026-10-08 16:02:01`, dan `LastWriteTime 2026-10-08 16:02:04` (waktu lokal). Ini adalah timestamp sistem file, bukan waktu pertama file dipastikan dijalankan.
 
-### 9. Check Authenticode digital signature
+### 9. Memeriksa tanda tangan digital Authenticode
 
 ```powershell
 Get-AuthenticodeSignature -LiteralPath $file |
 Format-List Status, StatusMessage, SignerCertificate
 ```
 
-Observed `Status: Valid`; `StatusMessage: Signature verified.`; signer subject Discord Inc. Verification pertains to file checked at time of test and does not guarantee benign network behavior.
+Hasil pengamatan: `Status: Valid`; `StatusMessage: Signature verified.`; subjek penanda tangan adalah Discord Inc. Verifikasi ini berlaku untuk file yang diperiksa saat pengujian dan tidak menjamin bahwa perilaku jaringannya pasti wajar.
 
-### 10. Calculate SHA256
+### 10. Menghitung SHA256
 
 ```powershell
 Get-FileHash -LiteralPath $file -Algorithm SHA256
 ```
 
-Observed: Hash successfully calculated, SHA256 begins `08F12BDED9410C45...`. A hash is a fingerprint, not an antivirus verdict. Do not assume historical file bytes are identical without verification.
+Hasil pengamatan: hash berhasil dihitung; SHA256 diawali `08F12BDED9410C45...`. Hash adalah sidik jari file, bukan hasil pemindaian antivirus. Jangan menganggap byte file historis identik dengan file saat ini tanpa verifikasi.
 
-## Commands assigned in lab but whose output was NOT supplied
+## Perintah yang ditugaskan dalam lab, tetapi hasilnya BELUM diberikan
 
-The time-window `Get-WinEvent` commands using `StartTime`, `EndTime`, and `Where-Object` were in the lesson. Learner answered P17–P19, but did not provide actual outputs for these two commands; therefore no verified extra historical Discord records can be documented.
+Perintah `Get-WinEvent` dengan `StartTime`, `EndTime`, dan `Where-Object` sudah dibahas dalam materi. Kamu menjawab P17–P19, tetapi belum memberikan hasil aktual dari kedua perintah tersebut; karena itu, tidak ada catatan historis Discord tambahan yang dapat diverifikasi.
 
-## Privacy
+## Privasi
 
-All personal local names, hostnames, host-specific ProcessGuid values, local/private IP addresses, and personally identifying profile paths are redacted in repository material.
+Semua nama lokal pribadi, hostname, ProcessGuid khusus host, alamat IP lokal/privat, dan jalur profil yang dapat mengungkap identitas telah disamarkan dalam materi repo.

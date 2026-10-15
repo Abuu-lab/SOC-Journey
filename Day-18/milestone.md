@@ -1,29 +1,29 @@
 # 📌 Day 18 — Extended Hands-on Milestone
 
 ## Status
-Extended practical work completed/submitted for sections 4–8, simulated challenge and partial report. Overall Day18 status remains PASS from prior 90/100 formative evaluation; supplemental work reveals gaps to carry into Day19. No new numerical score yet for extended work.
+Praktik tambahan pada bagian 4–8, tantangan simulasi, dan sebagian laporan telah dikerjakan/dikirim. Status keseluruhan Day 18 tetap PASS berdasarkan nilai formatif sebelumnya, 90/100; latihan tambahan menunjukkan beberapa hal yang perlu diperkuat pada Day 19. Belum ada nilai angka baru untuk praktik tambahan ini.
 
-## Actually practiced
-- Read five historical Sysmon ID3 event timestamps.
-- Read three complete network event messages: all Spotify.exe and UDP; two share one ProcessGuid, one is from a different process instance.
-- Differentiate local source ports from destination ports and Initiated true.
-- Check historical PID8808 against current process list; absent.
-- Enumerate six current Discord.exe process entries.
-- Check live UDP endpoints and confirm no match for historical PID8808.
-- Check Discord executable exists with Test-Path.
-- Retrieve file metadata: 220542392 bytes and timestamps.
-- Verify Authenticode Status Valid / Discord Inc. signer.
-- Compute a SHA256 fingerprint with Get-FileHash.
-- Answer simulated investigation questions and attempt a structured SOC investigation report.
+## Praktik yang benar-benar dilakukan
+- Membaca timestamp dari lima catatan historis Sysmon ID3.
+- Membaca pesan lengkap dari tiga event jaringan: semuanya milik Spotify.exe dan menggunakan UDP; dua event memiliki ProcessGuid yang sama, sedangkan satu berasal dari instance process lain.
+- Membedakan port sumber lokal dari port tujuan serta memahami `Initiated true`.
+- Memeriksa PID historis 8808 terhadap daftar process saat ini; PID tersebut tidak ditemukan.
+- Mencatat enam process Discord.exe yang sedang berjalan.
+- Memeriksa endpoint UDP saat ini dan memastikan tidak ada yang cocok dengan PID historis 8808.
+- Memeriksa keberadaan file executable Discord dengan `Test-Path`.
+- Mengambil metadata file: ukuran 220542392 byte dan timestamp.
+- Memeriksa Authenticode: status `Valid`, penanda tangan Discord Inc.
+- Menghitung sidik jari SHA256 dengan `Get-FileHash`.
+- Menjawab pertanyaan investigasi simulasi dan mencoba menyusun laporan investigasi SOC terstruktur.
 
-## Learning and gaps
-- Correctly: destination port alone not malware, current state != historical, multiple process names/instances, valid signature is evidence but not definitive safety.
-- Needs correction: SHA256 does not scan viruses; port443 does not prove legitimate; ID3 does not imply DNS Query; matching ProcessGuid must be observed, not assumed.
-- User's final report incorrectly says metadata/signature/SHA256 Not checked despite them being tested.
-- Timeline P17–P19 lacks actual Command11/12 output, and statements about PID8808 are inconsistent. No additional historical Discord event verified from these answers.
-- Parent of historical Discord PID8808 not observed; current different Discord process parent info is not its historical parent.
-- Reinforce: assessment = classification plus evidence-grounded reason; next action = specific test. End report must keep event timestamps and destination IP tied to actual inspected event, not mix observations.
-- Revisit false-positive definition, Format-List, and UDP vs TCP field meanings.
+## Pembelajaran dan hal yang masih perlu diperkuat
+- Sudah dipahami dengan benar: port tujuan saja tidak membuktikan malware; kondisi saat ini berbeda dari bukti historis; aplikasi dapat memiliki beberapa nama/instance process; signature `Valid` merupakan bukti, tetapi tidak menjamin keamanan.
+- Perlu diperbaiki: SHA256 tidak memindai virus; port 443 tidak membuktikan aktivitas sah; ID3 bukan DNS Query; kecocokan ProcessGuid harus diamati, bukan diasumsikan.
+- Laporan akhir pengguna keliru menyatakan metadata/signature/SHA256 belum diperiksa, padahal ketiganya sudah diuji.
+- Timeline P17–P19 tidak dilengkapi keluaran aktual Command 11/12, dan keterangan tentang PID 8808 tidak konsisten. Jawaban tersebut tidak memverifikasi event historis Discord tambahan.
+- Parent dari PID historis Discord 8808 belum diamati; informasi parent process Discord lain yang sedang berjalan bukan bukti parent historis PID tersebut.
+- Perkuat pemahaman bahwa penilaian = klasifikasi disertai alasan yang didukung bukti, sedangkan tindakan berikutnya = pengujian tertentu. Dalam laporan akhir, hubungkan timestamp event dan IP tujuan dengan event yang benar-benar diperiksa; jangan mencampuradukkan observasi.
+- Ulangi definisi false positive, fungsi `Format-List`, dan arti field UDP dibandingkan TCP.
 
-## Privacy
-Only sanitized examples can appear in public GitHub: hide hostname, username, LAN source addresses, full local profile paths and host-specific ProcessGuid.
+## Privasi
+Hanya contoh yang sudah disamarkan yang boleh dimasukkan ke GitHub publik: samarkan hostname, username, alamat sumber LAN, jalur profil lokal lengkap, dan ProcessGuid khusus host.

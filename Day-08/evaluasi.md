@@ -278,7 +278,7 @@ Contoh yang kamu berikan tentang signed driver lama yang punya vulnerability ada
 
 Prinsip umumnya:
 
-> **A valid signature does not guarantee benign intent or safe behavior.**
+> **Signature yang valid tidak menjamin tujuan yang baik atau perilaku yang aman.**
 
 ---
 
@@ -306,7 +306,7 @@ Kamu memahami process bisa berhenti, dan kalau dijalankan lagi bisa mendapatkan 
 
 Ini insight penting:
 
-> **PID bukan permanent identity of a program.**
+> **PID bukan identitas permanen suatu program.**
 
 ---
 
@@ -535,11 +535,11 @@ Betul.
 
 Sekarang pertanyaan investigation kita berkembang dari:
 
-> **What is running?**
+> **Process apa yang sedang berjalan?**
 
 menjadi:
 
-> **Who is running it?**
+> **Siapa yang menjalankannya?**
 
 ---
 #### Q6 User = Buya berarti benign? ✅

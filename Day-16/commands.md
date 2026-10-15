@@ -1,10 +1,10 @@
 # Day 16 — Commands
 
-**Topic:** Sysmon Health, Event Distribution, Process Create Analysis, Telemetry Gap.
+**Topik:** Kesehatan Sysmon, sebaran event, analisis `Process Create`, dan kesenjangan telemetry.
 
-## Commands actually executed by learner
+## Perintah yang benar-benar dijalankan
 
-### 1. Count Sysmon records by Event ID
+### 1. Menghitung catatan Sysmon berdasarkan Event ID
 ~~~powershell
 Get-WinEvent -LogName 'Microsoft-Windows-Sysmon/Operational' |
 Group-Object Id |
@@ -12,7 +12,7 @@ Select-Object Name, Count |
 Sort-Object Name
 ~~~
 
-Observed output (no user/hostname retained):
+Hasil yang diamati (username/hostname tidak dicantumkan):
 
 | Event ID | Count |
 |---|---:|
@@ -26,26 +26,26 @@ Observed output (no user/hostname retained):
 | 16 | 1 |
 | 22 | 352 |
 
-**Meaning:** 108 historical Event ID 3 records are present. Recording Event ID 3 has been demonstrated; it does not guarantee every network connection is captured.
+**Makna:** terdapat 108 catatan historis Event ID 3. Ini membuktikan bahwa Event ID 3 pernah dicatat, tetapi tidak menjamin semua koneksi jaringan tertangkap.
 
-### 2. Verify Sysmon service status
+### 2. Memeriksa status layanan Sysmon
 ~~~powershell
 Get-Service -Name Sysmon,Sysmon64 -ErrorAction SilentlyContinue |
 Select-Object Name, Status, StartType
 ~~~
 
-Observed: Sysmon, Running, Automatic.
+Hasil: Sysmon berstatus `Running`, jenis startup `Automatic`.
 
-### 3. Inspect Win32_Service details
+### 3. Memeriksa detail Win32_Service
 ~~~powershell
 Get-CimInstance Win32_Service |
 Where-Object {$_.Name -in @('Sysmon', 'Sysmon64')} |
 Select-Object Name, State, StartMode, ProcessId, PathName
 ~~~
 
-Observed: Sysmon; Running; Auto; PID 26508 (historical snapshot); PathName C:\Windows\Sysmon.exe.
+Hasil: Sysmon; `Running`; `Auto`; PID 26508 (cuplikan historis); `PathName` C:\Windows\Sysmon.exe.
 
-### 4. Retrieve latest historical Process Create
+### 4. Mengambil catatan historis Process Create terbaru
 ~~~powershell
 Get-WinEvent -FilterHashtable @{
     LogName = 'Microsoft-Windows-Sysmon/Operational'
@@ -54,9 +54,9 @@ Get-WinEvent -FilterHashtable @{
 Format-List TimeCreated, Id, Message
 ~~~
 
-Observed: EpicGamesUpdater.exe (PID 21144) with parent EpicGamesLauncher.exe (PPID 15924), IntegrityLevel Medium, CommandLine EpicGamesUpdater.exe queryinstallation. User account and unique GUIDs withheld.
+Hasil: `EpicGamesUpdater.exe` (PID 21144), parent `EpicGamesLauncher.exe` (PPID 15924), `IntegrityLevel Medium`, dan `CommandLine EpicGamesUpdater.exe queryinstallation`. Akun pengguna dan GUID unik tidak dicantumkan.
 
-## Optional next steps — taught but NOT executed yet in Day 16
+## Langkah lanjutan — sudah diajarkan, tetapi BELUM dijalankan pada Day 16
 
 ~~~powershell
 Get-WinEvent -FilterHashtable @{
@@ -66,7 +66,7 @@ Get-WinEvent -FilterHashtable @{
 Format-List TimeCreated, Message
 ~~~
 
-Read a Network Connection event, if available. Correlate its ProcessGuid to an Event ID 1 rather than rely on PID alone.
+Jika tersedia, baca event `Network Connection`. Cocokkan `ProcessGuid`-nya dengan Event ID 1; jangan hanya mengandalkan PID.
 
-## Security/privacy
-Never commit raw hostname, local username, user's profile-directory path, or raw logs containing them. Substitute [REDACTED_HOST], [REDACTED_USER] where applicable.
+## Keamanan dan privasi
+Jangan pernah menyimpan hostname, username lokal, jalur direktori profil pengguna, atau log mentah yang memuat informasi tersebut. Jika diperlukan, ganti dengan [REDACTED_HOST] dan [REDACTED_USER].

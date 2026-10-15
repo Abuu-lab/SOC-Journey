@@ -1,31 +1,31 @@
 # Day 19 — Commands
 
-**Status:** Hands-on 1–5 dijalankan; Hands-on 6 berupa reasoning tanpa output korelasi tambahan; mini-project belum dikumpulkan.
+**Status:** Hands-on 1–5 sudah dijalankan; Hands-on 6 berupa penalaran tanpa keluaran korelasi tambahan; mini-project belum dikumpulkan.
 
-## Hands-on 1: Current Discord process list
+## Hands-on 1: Daftar process Discord saat ini
 ~~~powershell
 Get-CimInstance Win32_Process -Filter "Name = 'Discord.exe'" |
 Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 ~~~
-**Actual result:** enam Discord.exe process instances dengan enam PID berbeda: 2724, 7856, 22476, 9028, 18508, dan 12432. Lima child memiliki ParentProcessId 2724, sedangkan PID 2724 memiliki parent PID 4632. Path dan account lokal disamarkan. Command lines menunjukkan role Electron: crashpad-handler, gpu-process, network utility, renderer, dan audio utility. Role tersebut tidak membuktikan sendiri file aman atau berbahaya.
+**Hasil aktual:** enam instance process Discord.exe dengan enam PID berbeda: 2724, 7856, 22476, 9028, 18508, dan 12432. Lima process anak memiliki `ParentProcessId 2724`, sedangkan PID 2724 memiliki parent PID 4632. Jalur dan akun lokal disamarkan. Command line menunjukkan peran Electron: crashpad-handler, gpu-process, network utility, renderer, dan audio utility. Peran tersebut sendiri tidak membuktikan bahwa file aman atau berbahaya.
 
-## Hands-on 2: Query chosen PID
+## Hands-on 2: Memeriksa PID yang dipilih
 ~~~powershell
 Get-CimInstance Win32_Process -Filter "ProcessId = 2724" |
 Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 ~~~
-**Actual result:** proses yang dicari ialah Discord.exe dengan PID 2724, **ParentProcessId 4632**. Identitas proses pemilik PID 4632 belum diperiksa. P4 awal salah menjawab 4632 sebagai nama parent: itu angka PPID, bukan hasil query nama parent.
+**Hasil aktual:** process yang dicari adalah Discord.exe dengan PID 2724 dan **ParentProcessId 4632**. Identitas process yang memiliki PID 4632 belum diperiksa. Jawaban awal P4 keliru menyebut 4632 sebagai nama parent; angka tersebut adalah PPID, bukan hasil query nama parent.
 
-## Hands-on 3: Latest Sysmon Event ID 1
+## Hands-on 3: Event ID 1 Sysmon terbaru
 ~~~powershell
 Get-WinEvent -FilterHashtable @{
     LogName = 'Microsoft-Windows-Sysmon/Operational'
     Id = 1
 } -MaxEvents 1 | Format-List TimeCreated, Message
 ~~~
-**Actual result:** 2026-10-15 17:12:32 local, Microsoft Office opushutil.exe (PID 3424), command line /pushregistration, IntegrityLevel Medium, parent svchost.exe (PID 2144), ParentCommandLine includes `-k netsvcs -p -s Schedule`. User/device GUID and private account redacted. Do not assert legitimate or malicious from basename alone.
+**Hasil aktual:** 2026-10-15 pukul 17:12:32 waktu lokal, `opushutil.exe` dari Microsoft Office (PID 3424), command line `/pushregistration`, `IntegrityLevel Medium`, parent `svchost.exe` (PID 2144), dan `ParentCommandLine` memuat `-k netsvcs -p -s Schedule`. GUID user/perangkat dan akun privat disamarkan. Jangan menyimpulkan sah atau malicious hanya berdasarkan basename.
 
-## Hands-on 4: Verify current Discord executable
+## Hands-on 4: Memeriksa file executable Discord saat ini
 ~~~powershell
 $file = Join-Path $env:LOCALAPPDATA 'Discord\app-1.0.9261\Discord.exe'
 Test-Path -LiteralPath $file
@@ -35,32 +35,32 @@ Get-AuthenticodeSignature -LiteralPath $file |
 Select-Object Status, StatusMessage
 Get-FileHash -LiteralPath $file -Algorithm SHA256
 ~~~
-**Actual result:** Test-Path True; Discord.exe 220542392 bytes; CreationTime 2026-10-08 16:02:01, LastWriteTime 16:02:04 (local). Authenticode status Valid, Signature verified. SHA256 was computed; public record does not publish full fingerprint. SHA256 is a content fingerprint, **not** virus scanning. File data are a current file check, not proof of the exact bytes associated with every historical process event.
+**Hasil aktual:** `Test-Path True`; Discord.exe berukuran 220542392 byte; `CreationTime 2026-10-08 16:02:01`, `LastWriteTime 16:02:04` (waktu lokal). Status Authenticode `Valid`, signature terverifikasi. SHA256 berhasil dihitung; repo publik tidak mencantumkan sidik jari lengkap. SHA256 adalah sidik jari isi file, **bukan** pemindaian virus. Pemeriksaan file ini menggambarkan kondisi saat ini dan tidak membuktikan byte file yang sama digunakan pada setiap event process historis.
 
-## Hands-on 5: Three Sysmon Network Events
+## Hands-on 5: Tiga Event Jaringan Sysmon
 ~~~powershell
 Get-WinEvent -FilterHashtable @{
     LogName = 'Microsoft-Windows-Sysmon/Operational'
     Id = 3
 } -MaxEvents 3 | Format-List TimeCreated, Message
 ~~~
-**Actual results:** three Spotify.exe ID 3 records, on 2026-10-15 local:
-- 17:24:40: TCP, PID 22300, ProcessGuid [REDACTED_GUID_A], outbound to [REDACTED_EXTERNAL_IP]:443.
+**Hasil aktual:** tiga catatan Spotify.exe ID 3 pada 2026-10-15 waktu lokal:
+- 17:24:40: TCP, PID 22300, ProcessGuid [REDACTED_GUID_A], koneksi keluar menuju [REDACTED_EXTERNAL_IP]:443.
 - 17:24:25: UDP, PID 6680, ProcessGuid [REDACTED_GUID_B], Initiated false, source multicast 239.255.255.250:1900 toward local UDP endpoint [REDACTED_PRIVATE_IP]:56104.
-- 17:24:24: UDP, same PID 6680 and same ProcessGuid [REDACTED_GUID_B], Initiated true, local endpoint to multicast 239.255.255.250:1900.
+- 17:24:24: UDP, PID 6680 dan ProcessGuid [REDACTED_GUID_B] yang sama, `Initiated true`, dari endpoint lokal menuju multicast 239.255.255.250:1900.
 
-Port 1900 is labeled ssdp in log. Multicast SSDP-related traffic is distinct from internet traffic on port 443. The samples contain **2 process instances** (two distinct GUIDs), even though there are 3 events.
+Port 1900 diberi label `ssdp` pada log. Lalu lintas multicast terkait SSDP berbeda dari lalu lintas internet pada port 443. Sampel ini memuat **dua instance process** (dua GUID berbeda), meskipun terdapat tiga event.
 
-## Hands-on 6: Timeline
-No additional command output submitted. Learner tried to order Event ID 1 → 3 → 22, but the supplied actual records were ID 1 from opushutil.exe and three ID 3 from Spotify.exe. **No Event ID 22 was supplied for this lab.** Correct chronological order of observed records:
+## Hands-on 6: Linimasa
+Tidak ada keluaran perintah tambahan yang dikirim. Kamu mencoba mengurutkan Event ID 1 → 3 → 22, tetapi catatan aktual yang diberikan adalah ID 1 dari opushutil.exe dan tiga ID 3 dari Spotify.exe. **Tidak ada Event ID 22 yang disertakan dalam lab ini.** Urutan kronologis catatan yang diamati:
 1. 17:12:32 ID 1 opushutil.exe.
 2. 17:24:24 ID 3 Spotify.exe (UDP).
 3. 17:24:25 ID 3 Spotify.exe (UDP).
 4. 17:24:40 ID 3 Spotify.exe (TCP).
-Do not imply the Office event caused or relates to the Spotify events; GUIDs differ.
+Jangan menyatakan bahwa event Office menyebabkan atau berkaitan dengan event Spotify; GUID-nya berbeda.
 
-## Next reporting commands — TAUGHT, NOT YET EXECUTED FOR MINI PROJECT
-Read-only options already learned for single-case follow-up:
+## Perintah pelaporan lanjutan — SUDAH DIAJARKAN, BELUM DIJALANKAN UNTUK MINI-PROJECT
+Pilihan perintah hanya-baca yang sudah dipelajari untuk menindaklanjuti satu kasus:
 ~~~powershell
 Get-CimInstance Win32_Process -Filter "ProcessId = 6680" |
 Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
@@ -72,21 +72,21 @@ Get-WinEvent -FilterHashtable @{
     EndTime = (Get-Date '2026-10-15 17:25:00')
 } | Format-List TimeCreated, Message
 ~~~
-No assumption that historical PID 6680 is still in use. Neither command above has been executed for mini-project as of this submission.
+Jangan menganggap PID historis 6680 masih digunakan. Hingga laporan ini dibuat, kedua perintah di atas belum dijalankan untuk mini-project.
 
-## Privacy
-All local user names, raw hostname, unique Sysmon GUIDs, user-profile identifying paths and private IP addresses are redacted from this portfolio.
+## Privasi
+Semua username lokal, hostname mentah, GUID Sysmon unik, jalur profil pengguna yang dapat mengungkap identitas, serta alamat IP privat disamarkan dari portofolio ini.
 
 
-## Final follow-up: historical Spotify parent correlation
+## Tindak lanjut akhir: korelasi parent Spotify historis
 
-Additional commands actually executed after the initial notes:
+Perintah tambahan yang benar-benar dijalankan setelah catatan awal:
 
 ```powershell
 Get-CimInstance Win32_Process -Filter "ProcessId = 6680" | Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 ```
-Result: no current matching process.
+Hasil: tidak ada process yang cocok saat ini.
 
-A search of the latest 200 Sysmon ID 1 messages returned no matching candidate within that bounded sample. A later Sysmon ID 1 time-window search on October 15, 2026 returned five Spotify child creation records (child PIDs 7160, 6308, 7208, 18628, 13636), each with ParentProcessId 6680. Their ParentProcessGuid matches the Spotify UDP event ProcessGuid for historical PID 6680. The parent process's own creation record was not among these five results.
+Pencarian pada 200 pesan Sysmon ID 1 terbaru tidak menemukan kandidat yang cocok dalam sampel terbatas tersebut. Pencarian berdasarkan rentang waktu pada 15 Oktober 2026 kemudian menemukan lima catatan pembuatan process anak Spotify (PID anak 7160, 6308, 7208, 18628, 13636), masing-masing memiliki `ParentProcessId 6680`. `ParentProcessGuid`-nya cocok dengan ProcessGuid event UDP Spotify untuk PID historis 6680. Catatan pembuatan parent itu sendiri tidak termasuk dalam lima hasil tersebut.
 
-**Final Day 19 status: PASS 80/100**, formative. The complete case summary is mentor-assisted in evaluasi.md; sensitive local identifying fields omitted.
+**Status akhir Day 19: PASS 80/100**, bersifat formatif. Ringkasan kasus lengkap pada evaluasi.md disusun dengan bantuan mentor; field lokal yang sensitif telah dihilangkan.

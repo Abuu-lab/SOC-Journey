@@ -201,7 +201,7 @@ Untuk sekarang jangan masuk terlalu jauh ke permission.
 
 Cukup pahami:
 
-> **Who is running this service?**
+> **Akun siapa yang menjalankan service ini?**
 
 ---
 
@@ -315,7 +315,7 @@ DisplayName:
 
 ---
 
-## TASK 3 — Investigate One Service
+## TUGAS 3 — Investigasi Satu Service
 
 Pilih salah satu service yang **Running**.
 

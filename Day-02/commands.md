@@ -28,7 +28,7 @@ Process ↔ PID ↔ Network Connection
 3. netstat -ano
 
 netstat -ano
--a → menampilkan connections/listening ports
+-a → menampilkan koneksi aktif dan port yang sedang menunggu koneksi.
 -n → menampilkan address/port dalam bentuk angka
 -o → menampilkan PID
 

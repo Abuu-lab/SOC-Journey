@@ -882,7 +882,7 @@ PID: 10284
 PPID: 11068
 
 
-Task 2 — Find the Executable Path
+Tugas 2 — Temukan Jalur File Executable
 
 Sekarang gunakan:
 

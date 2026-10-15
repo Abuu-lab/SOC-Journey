@@ -294,7 +294,7 @@ Artinya process berjalan dalam user context Buya.
 
 Menjawab:
 
-> **WHAT SECURITY LEVEL?**
+> **TINGKAT KEAMANAN APA?**
 
 Contoh:
 
@@ -389,7 +389,7 @@ Karena jangan sekadar menghafal command line.
 
 `svchost.exe` adalah:
 
-> **Host Process for Windows Services**
+> **Process host untuk layanan Windows (Host Process for Windows Services)**
 
 Artinya satu process dapat menjadi tempat beberapa Windows services berjalan.
 

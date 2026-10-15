@@ -1,28 +1,28 @@
 # Day 18 — Materi Extended Lab
 
-## Learning flow
-One concept, one explained command, inspect result, investigate, assess. This extended session addresses learner feedback that earlier Day18 was too short.
+## Alur pembelajaran
+Satu konsep, satu perintah yang dijelaskan, periksa hasilnya, lakukan investigasi, lalu buat penilaian. Sesi tambahan ini menindaklanjuti masukan bahwa materi Day 18 sebelumnya terlalu singkat.
 
-## Sysmon and network
-ID 3 records a network event. ID22 records DNS query; DNS resolution is not proof of a network connection. ID1 is Process Create; ID2 is File Creation Time Changed. ProcessGuid helps identify process instances, while PID can be reused. SourceIp/SourcePort and DestinationIp/DestinationPort describe endpoints. Initiated true means locally initiated; false requires careful interpretation. UDP does not use TCP state Established. Port 443, even a port-service label https, is not proof of HTTPS over TCP, safety or exfiltration.
+## Sysmon dan jaringan
+ID 3 mencatat event jaringan. ID 22 mencatat DNS Query; resolusi DNS bukan bukti bahwa koneksi jaringan benar-benar terjadi. ID 1 adalah `Process Create`; ID 2 adalah `File Creation Time Changed`. ProcessGuid membantu mengenali instance process, sedangkan PID dapat digunakan kembali. `SourceIp/SourcePort` dan `DestinationIp/DestinationPort` menunjukkan endpoint. `Initiated true` berarti koneksi dimulai dari perangkat lokal; nilai `false` perlu ditafsirkan dengan hati-hati. UDP tidak menggunakan status TCP `Established`. Port 443, termasuk label layanan `https`, tidak membuktikan bahwa koneksi memakai HTTPS melalui TCP, aman, atau digunakan untuk eksfiltrasi.
 
-## Historical vs current
-Get-WinEvent returns logged historical evidence. Get-CimInstance Win32_Process and Get-NetUDPEndpoint present current state. A missing historical PID from the current state cannot invalidate Sysmon logs. A process can terminate or the PID can be reused. Multiple process records under one application are possible; same name does not prove same instance.
+## Bukti historis dan kondisi saat ini
+`Get-WinEvent` mengambil bukti historis yang tercatat. `Get-CimInstance Win32_Process` dan `Get-NetUDPEndpoint` menampilkan kondisi saat ini. PID historis yang tidak ditemukan dalam daftar kondisi saat ini tidak membatalkan log Sysmon. Process mungkin sudah berhenti atau PID-nya digunakan kembali. Satu aplikasi dapat memiliki beberapa catatan process; nama yang sama tidak membuktikan bahwa instance-nya sama.
 
-## PowerShell fundamentals
-Get-WinEvent with FilterHashtable and MaxEvents retrieves matching events. Select-Object chooses object properties. Format-List formats output in list form; Format-List TimeCreated,Message does not mean display every property. Format-List * can display all available properties. Where-Object can filter; later steps require understanding simple commands before introducing complex XML loops.
+## Dasar PowerShell
+`Get-WinEvent` dengan `FilterHashtable` dan `MaxEvents` mengambil event yang sesuai. `Select-Object` memilih properti objek. `Format-List` menata keluaran dalam bentuk daftar; `Format-List TimeCreated,Message` tidak berarti semua properti ditampilkan. `Format-List *` dapat menampilkan semua properti objek yang tersedia. `Where-Object` digunakan untuk menyaring hasil. Pahami perintah sederhana terlebih dahulu sebelum mempelajari perulangan XML yang lebih rumit.
 
-## File verification
-Test-Path checks the selected path. Get-Item shows file metadata. Get-AuthenticodeSignature checks Authenticode signature and certificate signer. Get-FileHash -Algorithm SHA256 computes content fingerprint, NOT virus detection. Valid signature is not guarantee of safe behavior. File metadata timestamps do not prove first execution time.
+## Pemeriksaan file
+`Test-Path` memeriksa jalur yang dipilih. `Get-Item` menampilkan metadata file. `Get-AuthenticodeSignature` memeriksa signature Authenticode dan penanda tangan sertifikat. `Get-FileHash -Algorithm SHA256` menghitung sidik jari isi file, **bukan** mendeteksi virus. Signature berstatus `Valid` tidak menjamin perilaku file aman. Timestamp metadata file tidak membuktikan kapan file pertama kali dijalankan.
 
-## Real lab observations
-A historical Discord.exe network event on October 14, 2026 showed UDP activity initiated locally to destination 162.159.130.233:443, historical PID8808. Later Get-CimInstance found six current Discord.exe processes but not PID8808. Get-NetUDPEndpoint -OwningProcess 8808 found no current UDP endpoint. Test-Path for Discord.exe returned True. Metadata showed Length 220542392, CreationTime 2026-10-08 16:02:01, LastWriteTime 16:02:04. Authenticode signature Status Valid, signer Discord Inc. SHA256 hash was successfully computed. These results concern the file checked later; identical bytes at historical event time were not separately proven.
+## Hasil pengamatan lab aktual
+Event jaringan historis `Discord.exe` pada 14 Oktober 2026 menunjukkan aktivitas UDP yang dimulai secara lokal menuju 162.159.130.233:443, dengan PID historis 8808. Pemeriksaan `Get-CimInstance` berikutnya menemukan enam process Discord.exe yang sedang berjalan, tetapi tidak menemukan PID 8808. `Get-NetUDPEndpoint -OwningProcess 8808` tidak menemukan endpoint UDP saat ini. `Test-Path` untuk Discord.exe menghasilkan `True`. Metadata menunjukkan `Length 220542392`, `CreationTime 2026-10-08 16:02:01`, dan `LastWriteTime 16:02:04`. Signature Authenticode berstatus `Valid`, dengan penanda tangan Discord Inc. Hash SHA256 berhasil dihitung. Hasil tersebut berkaitan dengan file yang diperiksa belakangan; belum dibuktikan bahwa byte file itu sama dengan yang digunakan saat event historis terjadi.
 
-Another query retrieved three Spotify.exe network events, all UDP. Two shared PID21452 and matching ProcessGuid and destination 35.186.224.24:443. One used PID21148, Initiated false, broadcast-style private LAN endpoint. The same image name does not mean same process instance. Event duplication cannot be diagnosed from three event fields alone.
+Query lain mengambil tiga event jaringan Spotify.exe yang semuanya menggunakan UDP. Dua event memiliki PID 21452, ProcessGuid yang sama, dan tujuan 35.186.224.24:443. Satu event menggunakan PID 21148, `Initiated false`, serta endpoint jaringan lokal privat yang menyerupai alamat broadcast. Nama `Image` yang sama tidak berarti instance process-nya sama. Duplikasi event tidak dapat ditentukan hanya dari tiga field tersebut.
 
-## SOC investigation workflow
-Observation → Evidence Available → Evidence Gap → Hypotheses → Test and Result → Assessment → Next Action.
-Assessment and Next Action are distinct. Absence of ID1/22 in provided output is not proof such events do not exist. Do not claim DNS Query in a case that only supplies ID3. Avoid asserting malicious solely from a download path or a numbered port.
+## Alur investigasi SOC
+Observasi → Bukti yang Tersedia → Kesenjangan Bukti → Hipotesis → Pengujian dan Hasil → Penilaian → Tindakan Berikutnya.
+Penilaian dan Tindakan Berikutnya merupakan dua hal berbeda. Tidak terlihatnya ID1/22 dalam keluaran yang diberikan bukan bukti bahwa event tersebut tidak ada. Jangan menyebut adanya DNS Query jika kasus hanya memuat ID3. Jangan menyatakan aktivitas malicious hanya berdasarkan jalur unduhan atau nomor port.
 
-## Learning weakness
-The learner understands many observation fields but needs more precision in assessment, file hash concepts, timestamp/PID distinction, and report consistency. Long unexplained scripts were counterproductive; maintain full-length sessions with short explained steps.
+## Hal yang perlu diperkuat
+Kamu sudah memahami banyak field observasi, tetapi perlu lebih teliti saat menyusun penilaian, memahami fungsi hash file, membedakan timestamp dan PID, serta menjaga konsistensi laporan. Script panjang tanpa penjelasan kurang membantu; sesi tetap dapat mendalam, dengan langkah pendek yang dijelaskan satu per satu.

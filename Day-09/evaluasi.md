@@ -391,7 +391,7 @@ No events were found
 
 Dan ini penting:
 
-> **No result ≠ No process creation ever happened.**
+> **Tidak ada hasil ≠ process tidak pernah dibuat.**
 
 Bisa karena auditing/configuration/log retention dan faktor lainnya.
 

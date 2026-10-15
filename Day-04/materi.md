@@ -274,7 +274,7 @@ atau executable Windows lain yang legitimate.
 
 ---
 
-## TASK 1 — Find the File
+## TUGAS 1 — Temukan File
 
 Buka PowerShell.
 

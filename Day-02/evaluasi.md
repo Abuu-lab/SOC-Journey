@@ -168,13 +168,13 @@ Benar.
 
 ---
 
-##### Q6 One application → multiple processes ✅
+##### Q6 Satu aplikasi → beberapa process ✅
 
 Benar.
 
 ---
 
-##### Q7 Same executable name → malware? ✅
+##### Q7 Nama executable sama → malware? ✅
 
 Benar.
 

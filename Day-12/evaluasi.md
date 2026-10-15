@@ -368,7 +368,7 @@ Jangan langsung menulis:
 
 Gunakan:
 
-> **"No obvious anomaly identified from the evidence currently collected."**
+> **“Tidak ditemukan anomali yang jelas dari bukti yang telah dikumpulkan saat ini.”**
 
 Karena evidence yang kamu punya belum mencakup semuanya.
 

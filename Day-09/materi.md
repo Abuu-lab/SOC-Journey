@@ -230,7 +230,7 @@ Process creation.
 
 #### 7045
 
-A service was installed.
+Sebuah service dipasang.
 
 Penting:
 
@@ -497,7 +497,7 @@ Event:
 4688
 ```
 
-berhubungan dengan **a new process being created**.
+berhubungan dengan **pembuatan process baru**.
 
 Jalankan:
 
@@ -534,7 +534,7 @@ Get-CimInstance Win32_Process
 
 Memberi gambaran:
 
-> **What is happening now?**
+> **Apa yang sedang terjadi sekarang?**
 
 #### Historical state
 
@@ -544,7 +544,7 @@ Get-WinEvent
 
 Memberi gambaran:
 
-> **What happened?**
+> **Apa yang sudah terjadi?**
 
 SOC Analyst membutuhkan keduanya.
 

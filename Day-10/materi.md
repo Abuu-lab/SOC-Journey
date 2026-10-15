@@ -262,7 +262,7 @@ Kita belum mengatakan malicious.
 
 Kita hanya mengatakan:
 
-> **These events may be related and require further investigation.**
+> **Event-event ini mungkin saling berkaitan dan perlu diperiksa lebih lanjut.**
 
 ---
 
@@ -516,7 +516,7 @@ Itu sudah merupakan **interpretation** yang membutuhkan evidence.
 
 Yang boleh kita katakan dari data sederhana:
 
-> "A successful logon was recorded, followed later by process creation and service installation events."
+> “Login berhasil tercatat, kemudian diikuti event pembuatan process dan pemasangan service.”
 
 Itu **observation**.
 
