@@ -62,13 +62,15 @@ Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day
 6. Bedakan hasil endpoint aktual dari **simulated challenges**, serta data **current** dari **historical evidence**.
 7. **Privasi:** hostname, username lokal, lokasi profil personal, alamat IP privat lokal dan ProcessGuid yang mengikat endpoint harus disamarkan sebelum dipublikasikan. Hindari memublikasikan secret, token, password, atau raw logs yang mengungkap identitas.
 
-## Aturan Kelulusan dan Remedial
+## Aturan Kelulusan, Koreksi dan Remedial (berlaku mulai Day 20)
 
-- **Nilai 76–100: PASS**, lanjut hari berikutnya tanpa mengulang seluruh materi. Kekurangan tetap dibawa ke Active Recall besok.
-- **Nilai di bawah 76: belum PASS.** Mentor memberi materi tambahan singkat dan **2–5 soal atau praktik remedial** khusus kelemahan yang tampak, lalu menilai ulang sampai memenuhi ambang kelulusan.
-- Nilai merupakan evaluasi formatif pembelajaran, bukan sertifikasi keahlian.
-- Setiap Day tetap memiliki teori cukup mendalam, banyak hands-on bertahap, challenge, mini-project, commands yang dijelaskan, evaluasi beserta koreksi, dan milestone berdasarkan pekerjaan nyata.
-- Mentor menyensor data identitas perangkat, akun pribadi, dan informasi sensitif sebelum publikasi GitHub.
+- **Nilai 76–100: PASS dan lanjut ke Day berikutnya.** Tidak menahan progres hanya karena beberapa jawaban kurang tepat.
+- **Khusus rentang 76–95:** bila kalimat kurang rapi atau ada kesalahan kecil tetapi **inti konsep sudah benar**, nilai sebagai benar; **tidak perlu koreksi redaksional** atau memperpanjang pembahasan.
+- Bila terdapat **kesalahan konsep yang mendasar/salah total** meskipun nilai akhir sudah PASS, berikan **soal berbeda yang menguji konsep sama** sebagai penguatan; lanjutkan Day sesuai jadwal, jangan mewajibkan remedial kelulusan ulang. Boleh dibawa ke Active Recall berikutnya.
+- **Nilai di bawah 76: belum PASS.** Beri materi singkat yang fokus ke kelemahan, lalu 2–5 soal atau praktik kecil dengan contoh berbeda. Nilai ulang sampai memenuhi ambang; **tidak mengulang seluruh Day**.
+- Pisahkan **koreksi konsep yang penting** dari variasi ungkapan yang sama-sama benar. Jangan mengklaim kemampuan mandiri yang belum diperagakan.
+- Penilaian ini formatif, bukan sertifikasi profesional. Setiap Day tetap memuat teori mendalam, banyak hands-on bertahap, challenge, mini-project, commands yang dijelaskan, evaluasi berdasarkan jawaban pengguna, dan milestone nyata.
+- Mentor menyensor hostname, username, identitas perangkat dan data sensitif sebelum publikasi GitHub.
 
 ## Materi yang perlu dikuatkan berikutnya
 
