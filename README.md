@@ -37,7 +37,7 @@ Milestone mencatat pembelajaran, bukan klaim bahwa semua konsep sudah dikuasai. 
 | [Day 16](Day-16/materi.md) | Sysmon Telemetry Troubleshooting & Evidence Validation | [Commands](Day-16/commands.md) · [Materi](Day-16/materi.md) · [Evaluasi](Day-16/evaluasi.md) · [Milestone](Day-16/milestone.md) | **PASS** (77/100, formatif) |
 | [Day 17](Day-17/evaluasi.md) | Sysmon DNS Query & ProcessGuid Correlation | [Commands](Day-17/commands.md) · Materi belum tersimpan · [Evaluasi](Day-17/evaluasi.md) · [Milestone](Day-17/milestone.md) | **PASS** (80/100, formatif; perlu penguatan scripting) |
 | [Day 18](Day-18/materi.md) | Sysmon Network Investigation & Extended Hands-on Lab | [Commands](Day-18/commands.md) · [Materi](Day-18/materi.md) · [Evaluasi](Day-18/evaluasi.md) · [Milestone](Day-18/milestone.md) | **PASS** (90/100 latihan inti; extended lab dengan koreksi) |
-| [Day 19](Day-19/materi.md) | Process Verification & False Positive Investigation | [Commands](Day-19/commands.md) · [Materi](Day-19/materi.md) · [Evaluasi](Day-19/evaluasi.md) · [Milestone](Day-19/milestone.md) | **IN PROGRESS** (hands-on completed; challenge C10 & mini-project pending) |
+| [Day 19](Day-19/materi.md) | Process Verification & False Positive Investigation | [Commands](Day-19/commands.md) · [Materi](Day-19/materi.md) · [Evaluasi](Day-19/evaluasi.md) · [Milestone](Day-19/milestone.md) | **PASS** (80/100, formative; mentor-assisted final report) |
 
 Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day 01.
 
@@ -50,7 +50,7 @@ Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day
 - **Day 16:** 77/100, PASS (formative).
 - **Day 17:** 80/100, PASS (formative), DNS Event ID 22 dan ProcessGuid; lab scripting panjang belum dikuasai secara mandiri. `Day-17/materi.md` belum tersedia (upaya penyimpanan terdahulu gagal); evaluasi/commands/milestone ada.
 - **Day 18:** 90/100 pada latihan inti, PASS (formative); Extended Hands-on Lab mencakup multi-event Sysmon, current vs historical PID, UDP endpoint, file metadata, signature dan SHA-256. Ada koreksi report dan konsep yang dibawa ke Day 19.
-- **Day 19:** **IN PROGRESS**. Active recall, current Discord process investigation, Office Sysmon ID 1, Discord file checks and three Spotify ID 3 records completed. C10 and the real mini-project remain pending. No final grade yet. See [Day 19 evaluation](Day-19/evaluasi.md).
+- **Day 19:** **PASS 80/100** (formative). Completed multiple hands-on tasks and matched five Spotify child creation records to a historical parent network event using process-instance correlation. The final report and simulated challenge C10 answer were mentor-assisted, not independently completed. Some evidence gaps remain for Day 20 recall. See [Day 19 evaluation](Day-19/evaluasi.md).
 
 ## Metode belajar dan kualitas evidensi
 
@@ -61,6 +61,14 @@ Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day
 5. **📌 Milestone Hari Ini** hanya berisi praktik dan konsep yang benar-benar telah muncul; jangan menganggap command yang disalin otomatis telah dikuasai.
 6. Bedakan hasil endpoint aktual dari **simulated challenges**, serta data **current** dari **historical evidence**.
 7. **Privasi:** hostname, username lokal, lokasi profil personal, alamat IP privat lokal dan ProcessGuid yang mengikat endpoint harus disamarkan sebelum dipublikasikan. Hindari memublikasikan secret, token, password, atau raw logs yang mengungkap identitas.
+
+## Aturan Kelulusan dan Remedial
+
+- **Nilai 76–100: PASS**, lanjut hari berikutnya tanpa mengulang seluruh materi. Kekurangan tetap dibawa ke Active Recall besok.
+- **Nilai di bawah 76: belum PASS.** Mentor memberi materi tambahan singkat dan **2–5 soal atau praktik remedial** khusus kelemahan yang tampak, lalu menilai ulang sampai memenuhi ambang kelulusan.
+- Nilai merupakan evaluasi formatif pembelajaran, bukan sertifikasi keahlian.
+- Setiap Day tetap memiliki teori cukup mendalam, banyak hands-on bertahap, challenge, mini-project, commands yang dijelaskan, evaluasi beserta koreksi, dan milestone berdasarkan pekerjaan nyata.
+- Mentor menyensor data identitas perangkat, akun pribadi, dan informasi sensitif sebelum publikasi GitHub.
 
 ## Materi yang perlu dikuatkan berikutnya
 
