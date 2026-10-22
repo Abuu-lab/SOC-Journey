@@ -38,12 +38,13 @@ Milestone mencatat pembelajaran, bukan klaim bahwa semua konsep sudah dikuasai. 
 | [Day 17](Day-17/evaluasi.md) | DNS Query Sysmon dan Korelasi ProcessGuid | [Commands](Day-17/commands.md) · Materi belum tersimpan · [Evaluasi](Day-17/evaluasi.md) · [Milestone](Day-17/milestone.md) | **PASS** (80/100, formatif; perlu penguatan scripting) |
 | [Day 18](Day-18/materi.md) | Investigasi Jaringan Sysmon dan Praktik Tambahan | [Commands](Day-18/commands.md) · [Materi](Day-18/materi.md) · [Evaluasi](Day-18/evaluasi.md) · [Milestone](Day-18/milestone.md) | **PASS** (90/100 latihan inti; extended lab dengan koreksi) |
 | [Day 19](Day-19/materi.md) | Verifikasi Process dan Investigasi False Positive | [Commands](Day-19/commands.md) · [Materi](Day-19/materi.md) · [Evaluasi](Day-19/evaluasi.md) · [Milestone](Day-19/milestone.md) | **PASS** (80/100, formative; mentor-assisted final report) |
+| [Day 20](Day-20/commands.md) | Investigasi Siklus Process | [Commands](Day-20/commands.md) · [Milestone](Day-20/milestone.md) | **PASS** (80/100, formatif; materi dan evaluasi belum tersimpan) |
 
 Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day 01.
 
 
 
-## Progres saat ini (Day 01–19)
+## Progres saat ini (Day 01–20)
 
 - **Tahap yang sudah dilatih:** computer/process fundamentals, Windows services, parent-child process, metadata/digital signature/SHA-256, Windows Event Logs, Security Context, Sysmon, DNS Query, UDP/TCP network evidence, timeline dan preliminary SOC assessment.
 - **Day 15:** 69/100, belum PASS sesuai evaluasi historis; materi tetap dipakai untuk remediasi.
