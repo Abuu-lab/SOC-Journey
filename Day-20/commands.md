@@ -83,3 +83,20 @@ Select-Object TimeCreated, Id, RecordId
 Jika record paling tua setelah 15 Oktober 2026, log tanggal itu tidak lagi tersedia melalui channel tersebut. Gunakan evidence yang masih tersimpan, misalnya 22 Oktober 2026. Jangan mengarang data hilang.
 
 **Privacy:** username/hostname/IP privat, path profil akun, dan GUID khusus host tidak dimasukkan ke dokumentasi.
+
+
+## Praktik tambahan — Periksa record Sysmon tertua (sudah dilakukan)
+
+```powershell
+Get-WinEvent -LogName 'Microsoft-Windows-Sysmon/Operational' -Oldest -MaxEvents 1 |
+Select-Object TimeCreated, Id, RecordId
+```
+
+**Output nyata:**
+- TimeCreated: 2026-10-20 12:28:45 (waktu lokal)
+- Id: 2
+- RecordId: 203160
+
+**Analisis:** record terlama yang kini masih tersedia di channel ini berasal dari 20 Oktober 2026. Karena itu record Sysmon dari 15 Oktober 2026 tidak lagi tersedia di channel tersebut. Penyebab spesifiknya (misalnya rotasi/penghapusan) belum dibuktikan.
+
+**Catatan:** command ini benar-benar sudah dijalankan, bukan lagi sekadar tugas yang diberikan.
