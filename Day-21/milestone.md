@@ -24,3 +24,10 @@ Pengamanan data: username/hostname, alamat privat dan identitas host tidak dipub
 - Berhasil menghubungkan PID10512 melalui Win32_Process ke **msedgewebview2.exe**, parent PID4100 dan command-line network service WebView2 terkait Widgets.
 - Berlatih membedakan fakta observasi vs dugaan bahwa proses berkaitan dengan fitur Windows Widgets.
 - Belum memverifikasi parent PID4100, digital signature/hash executable maupun status remote endpoint. Mini-project dan penilaian final Day21 masih berjalan.
+
+## Progress terbaru — Parent process berikutnya
+
+- Menggunakan query current Win32_Process untuk PID4100 dan menemukan WebView2 parent process lain.
+- Bukti aktual: msedgewebview2.exe PID4100 memiliki ParentProcessId6200 dan commandline embedded browser terkait Widgets.exe.
+- Berlatih menelusuri chain koneksi TCP hingga dua level proses dan membedakan evidence dari dugaan proses yang lebih tua.
+- Parent PID6200 dan file signature/hash belum dikonfirmasi. Nilai akhir belum ditetapkan.
