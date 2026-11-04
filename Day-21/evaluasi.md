@@ -1,6 +1,6 @@
 # Day 21 — Evaluasi Sementara
 
-**Status: IN PROGRESS, belum PASS/belum dinilai final.** Active Recall, Hands-on 1–6 dan Challenge telah dijawab sebagian besar; mini-report mandiri belum diserahkan. Koreksi mengutamakan salah konsep penting, bukan kekurangan redaksi.
+**Status final: PASS 78/100 (formatif); lihat penilaian akhir di bagian bawah.** Active Recall, Hands-on 1–6 dan Challenge telah dijawab sebagian besar; mini-report mandiri belum diserahkan. Koreksi mengutamakan salah konsep penting, bukan kekurangan redaksi.
 
 ## Active Recall
 - Q1: 'udp tidak bisa menjadi tcp' — benar.
@@ -53,3 +53,41 @@ Subnet PrefixLength, AddressState/loopback, DNS success vs TCP success, default 
 - Penilaian sementara: fungsi normal Windows Widgets/WebView2 merupakan hipotesis masuk akal; belum terbukti aman atau berbahaya. Perlu cek parent PID6200, file signature/hash.
 - Jangan memublikasikan user profile path, token/handles, hostname atau identifier khusus perangkat.
 - Mini SOC Report dan nilai final Day21 masih pending.
+
+## Final Day 21 Assessment — supersedes initial IN PROGRESS
+
+**PASS — 78/100 (formatif mentor; batas PASS 76).** Score based on demonstrated learner work, not standardized certification. User has not independently authored the full case report; final report below is **MENTOR-ASSISTED**.
+
+### Final evidence submitted
+- Current Established TCP endpoint has OwningProcess PID10512.
+- Current PID10512 `msedgewebview2.exe`, PPID4100; network service utility, WebView2 command-line flags associated with Widgets.
+- Current PID4100 `msedgewebview2.exe`, PPID6200; embedded browser WebView2 for Widgets.
+- Current PID6200 `Widgets.exe`, PPID1416, installed under Windows Client WebExperience WindowsApps package. Command line includes `-ServerName:Microsoft.Windows.DashboardServer`.
+- `Get-AuthenticodeSignature` against specified WebView2 binary returned **Valid / Signature verified**. Full certificate signer subject truncated in submitted output.
+- `Get-FileHash` was invoked, but no SHA256 output was pasted. Status: **NOT VERIFIED FROM OUTPUT**.
+- Exact role/ownership of remote destination is unverified; port443 is not proof of HTTPS content or safety. PID1416 not identified. Event ID1/3/22 historical ProcessGuid correlation for this case not performed.
+
+### Rubrik penilaian
+| Komponen | Maks | Nilai |
+|---|---:|---:|
+| Pemahaman konsep | 20 | 15 |
+| Ketepatan mengumpulkan dan membaca evidence | 25 | 24 |
+| Analisis dan penalaran | 25 | 18 |
+| Keputusan dan tindak lanjut | 15 | 11 |
+| Dokumentasi dan komunikasi | 15 | 10 |
+| **Total** | **100** | **78** |
+
+### Mini SOC Report — DRAFT BY MENTOR, not learner-independent
+**Case:** Current Network & Process Investigation, WebView2/Widgets.
+**Observation:** Windows machine Ethernet has private IPv4 /24, default IPv4 route via local gateway. DNS query for example.com returned two A records; TCP connection test to example.com:443 succeeded. Separately, an actual Established TCP connection was observed from a local ephemeral port to public remote IP 104.89.118.72 on TCP443, owned by PID10512.
+**Process evidence:** current chain observed PID10512 WebView2 (network utility) → PPID4100 WebView2 (embedded browser) → PPID6200 Widgets.exe. Widgets.exe points to Windows Client WebExperience package. Process names and executable paths consistent with Windows Widgets.
+**File evidence:** Authenticode Status Valid and message Signature verified on WebView2 binary. Full signer subject and SHA-256 not provided in pasted output.
+**Hypotheses:** benign: Widgets/WebView2 communicating for normal feature content. potentially malicious: component spoofing/abuse or unexpected activity, not demonstrated by present evidence.
+**Assessment:** Activity appears **consistent with legitimate Widgets/WebView2**; no affirmative malicious indicator in the supplied observations. Still insufficient to make an absolute safe verdict or validate actual remote service identity.
+**Evidence gaps:** Parent PID1416, signer subject, hash output, destination ownership, current-to-historical event GUID correlation, and independent case reporting.
+**Next actions (optional):** inspect actual certificate signer and hash output; if risk/context warrants, check PID1416 and related network telemetry from same instance/time.
+
+### Progression and weakness reinforcement
+- PASS grants progression to Day22 without retaking entire Day21.
+- Minor wording not corrected. Important topics to revisit through *different examples*: IPv4 subnet prefix, default gateway vs NAT, DNS success vs TCP success, Assessment vs Next Action, and competing hypotheses.
+- Independence rating: **Terpandu** for final report; **bantuan terbatas** for selected commands/output interpretation. Not rated fully independent.
