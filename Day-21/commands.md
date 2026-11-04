@@ -1,6 +1,6 @@
 # Day 21 — Commands (Praktik)
 
-Status: **IN PROGRESS**. Tema: IP, subnet, DNS, routing, TCP dan investigasi jaringan. Nilai akhir belum ditetapkan.
+Status: **PASS 78/100** (formatif). Tema: IP, subnet, DNS, routing, TCP dan investigasi jaringan. Nilai akhir belum ditetapkan.
 
 ## Perintah yang sudah dijalankan pengguna
 
@@ -94,3 +94,25 @@ Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 Hasil nyata: Name `msedgewebview2.exe`, ProcessId `4100`, ParentProcessId `6200`. ExecutablePath merujuk ke instalasi EdgeWebView versi `156.0.4314.58`. CommandLine memiliki argumen `--embedded-browser-webview=1`, `--webview-exe-name=Widgets.exe`, `--edge-webview-is-background`, serta konfigurasi WebView2. Username dan data path pengguna disamarkan. Parent PID6200 BELUM diperiksa. Signature dan hash BELUM dijalankan pada sesi ini.
 
 Rangkaian snapshot: TCP Established OwningProcess10512 → WebView2 PID10512 ParentPID4100 → WebView2 PID4100 ParentPID6200 (belum terverifikasi prosesnya).
+
+## Final follow-up: Widgets.exe and WebView2 signature
+
+**Executed** read-only process query:
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = 6200" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+Actual result: `Widgets.exe`, PID 6200, ParentProcessId 1416. Executable under `C:\Program Files\WindowsApps\MicrosoftWindows.Client.WebExperience_[VERSION]\Dashboard\Widgets.exe`; command line contains `-ServerName:Microsoft.Windows.DashboardServer`. Version and WindowsApps package folder normalized; no user-specific paths.
+
+**Executed** file checks:
+```powershell
+$file = "C:\Program Files (x86)\Microsoft\EdgeWebView\Application\156.0.4314.58\msedgewebview2.exe"
+Get-AuthenticodeSignature -LiteralPath $file |
+Select-Object Status, StatusMessage, SignerCertificate
+Get-FileHash -LiteralPath $file -Algorithm SHA256
+```
+Observed signature output: Status **Valid**, StatusMessage **Signature verified.** The displayed SignerCertificate was truncated to `[Subject]...`; exact signer not verified. **Hash output was not included in the learner submission**, so record hash result as NOT PROVIDED, not as a verified fingerprint.
+
+Observed snapshot chain: `Widgets.exe` PID6200 → `msedgewebview2.exe` PID4100 → `msedgewebview2.exe` PID10512 → TCP Established remote endpoint port443. Distinct snapshots do not establish historical ProcessGuid correlation. Parent of Widgets (PID1416) not investigated.
+
+Mini-project status: **mentor-assisted final case summary**, final formative Day21 score recorded in evaluation.
