@@ -16,3 +16,11 @@ Kelemahan konsep yang ditemukan: PrefixLength bukan penjumlahan antarinterface, 
 Mini-project Local Network Investigation Report belum selesai dan nilai final belum ditetapkan. Materi tambahan serta contoh model laporan disediakan oleh mentor, bukan hasil kerja mandiri.
 
 Pengamanan data: username/hostname, alamat privat dan identitas host tidak dipublikasikan.
+
+
+## Tambahan milestone — koneksi TCP ke pemilik process
+
+- Berhasil mengambil contoh current Established TCP: local port65514 menuju remote port443 dengan OwningProcess10512.
+- Berhasil menghubungkan PID10512 melalui Win32_Process ke **msedgewebview2.exe**, parent PID4100 dan command-line network service WebView2 terkait Widgets.
+- Berlatih membedakan fakta observasi vs dugaan bahwa proses berkaitan dengan fitur Windows Widgets.
+- Belum memverifikasi parent PID4100, digital signature/hash executable maupun status remote endpoint. Mini-project dan penilaian final Day21 masih berjalan.
