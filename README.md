@@ -39,12 +39,13 @@ Milestone mencatat pembelajaran, bukan klaim bahwa semua konsep sudah dikuasai. 
 | [Day 18](Day-18/materi.md) | Investigasi Jaringan Sysmon dan Praktik Tambahan | [Commands](Day-18/commands.md) · [Materi](Day-18/materi.md) · [Evaluasi](Day-18/evaluasi.md) · [Milestone](Day-18/milestone.md) | **PASS** (90/100 latihan inti; extended lab dengan koreksi) |
 | [Day 19](Day-19/materi.md) | Verifikasi Process dan Investigasi False Positive | [Commands](Day-19/commands.md) · [Materi](Day-19/materi.md) · [Evaluasi](Day-19/evaluasi.md) · [Milestone](Day-19/milestone.md) | **PASS** (80/100, formative; mentor-assisted final report) |
 | [Day 20](Day-20/commands.md) | Investigasi Siklus Process | [Commands](Day-20/commands.md) · [Milestone](Day-20/milestone.md) | **PASS** (80/100, formatif; materi dan evaluasi belum tersimpan) |
+| [Day 21](Day-21/materi.md) | Dasar Jaringan I: IP, Subnet, DNS, TCP dan Routing | [Commands](Day-21/commands.md) · [Materi](Day-21/materi.md) · [Evaluasi](Day-21/evaluasi.md) · [Milestone](Day-21/milestone.md) | **IN PROGRESS** (hands-on dijalankan, mini-project belum dinilai) |
 
 Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day 01.
 
 
 
-## Progres saat ini (Day 01–20)
+## Progres saat ini (Day 01–21)
 
 - **Tahap yang sudah dilatih:** computer/process fundamentals, Windows services, parent-child process, metadata/digital signature/SHA-256, Windows Event Logs, Security Context, Sysmon, DNS Query, UDP/TCP network evidence, timeline dan preliminary SOC assessment.
 - **Day 15:** 69/100, belum PASS sesuai evaluasi historis; materi tetap dipakai untuk remediasi.
@@ -52,6 +53,8 @@ Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day
 - **Day 17:** 80/100, PASS (formative), DNS Event ID 22 dan ProcessGuid; lab scripting panjang belum dikuasai secara mandiri. `Day-17/materi.md` belum tersedia (upaya penyimpanan terdahulu gagal); evaluasi/commands/milestone ada.
 - **Day 18:** 90/100 pada latihan inti, PASS (formative); Extended Hands-on Lab mencakup multi-event Sysmon, current vs historical PID, UDP endpoint, file metadata, signature dan SHA-256. Ada koreksi report dan konsep yang dibawa ke Day 19.
 - **Day 19:** **PASS 80/100** (formatif). Menyelesaikan beberapa praktik langsung dan mencocokkan lima catatan pembuatan process anak Spotify dengan event jaringan historis milik parent melalui korelasi instance process. Laporan akhir dan jawaban tantangan simulasi C10 disusun dengan bantuan mentor, bukan secara mandiri. Masih ada kesenjangan bukti untuk diulang pada Day 20. Lihat [evaluasi Day 19](Day-19/evaluasi.md).
+
+- **Day 21:** **IN PROGRESS.** Telah melakukan konfigurasi IP, subnet, route, DNS resolution dan TCP test. Koreksi konsep penting: PrefixLength /24, gateway vs NAT, DNS tidak menjamin TCP dan Assessment vs Next Action. Mini-project koneksi TCP serta owner process belum selesai; belum ada nilai akhir.
 
 ## Metode belajar dan kualitas evidensi
 
