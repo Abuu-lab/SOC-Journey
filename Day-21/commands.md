@@ -83,3 +83,14 @@ Next command diberikan (belum ada output):
 Get-CimInstance Win32_Process -Filter "ProcessId = 4100" |
 Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
 ```
+
+## Mini-project — Parent PID 4100 (SUDAH DIJALANKAN)
+
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = 4100" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Hasil nyata: Name `msedgewebview2.exe`, ProcessId `4100`, ParentProcessId `6200`. ExecutablePath merujuk ke instalasi EdgeWebView versi `156.0.4314.58`. CommandLine memiliki argumen `--embedded-browser-webview=1`, `--webview-exe-name=Widgets.exe`, `--edge-webview-is-background`, serta konfigurasi WebView2. Username dan data path pengguna disamarkan. Parent PID6200 BELUM diperiksa. Signature dan hash BELUM dijalankan pada sesi ini.
+
+Rangkaian snapshot: TCP Established OwningProcess10512 → WebView2 PID10512 ParentPID4100 → WebView2 PID4100 ParentPID6200 (belum terverifikasi prosesnya).
