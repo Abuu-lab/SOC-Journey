@@ -59,3 +59,27 @@ Ganti 1234 dengan OwningProcess yang ditemukan. Jangan mengklaim koneksi histori
 
 ## Privasi
 Username, hostname, alamat IP lokal, serta informasi identitas perangkat tidak dicantumkan pada repository publik.
+
+
+## Mini-project follow-up — koneksi TCP dan OwningProcess (SUDAH DIJALANKAN)
+
+User mengirim output satu current TCP Established connection:
+- LocalAddress: [REDACTED_PRIVATE_IP]; LocalPort 65514.
+- RemoteAddress: 104.89.118.72; RemotePort 443.
+- OwningProcess: 10512.
+
+User lalu menjalankan:
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = 10512" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
+
+Hasil: Name **msedgewebview2.exe**, PID 10512, ParentProcessId 4100, executable di lokasi instalasi Microsoft Edge WebView2 versi 156.0.4314.58. Argumen menyebut `--type=utility`, `--utility-sub-type=network.mojom.NetworkService`, dan `--webview-exe-name=Widgets.exe`, serta data directory Windows Client WebExperience. Ini **konsisten dengan kemungkinan Windows Widgets/WebView2**; belum merupakan verdict legitimate.
+
+**Evidence gap:** identitas parent PID 4100 dan verifikasi signature/hash file msedgewebview2.exe belum dijalankan. Pemilik connection adalah hasil snapshot, tidak otomatis berkaitan dengan event historis.
+
+Next command diberikan (belum ada output):
+```powershell
+Get-CimInstance Win32_Process -Filter "ProcessId = 4100" |
+Select-Object Name, ProcessId, ParentProcessId, ExecutablePath, CommandLine
+```
