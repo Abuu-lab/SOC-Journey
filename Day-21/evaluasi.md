@@ -34,3 +34,13 @@
 
 ## Fokus remediasi non-blocking jika nilai PASS
 Subnet PrefixLength, AddressState/loopback, DNS success vs TCP success, default gateway vs NAT, Assessment vs Next Action, drafting competing hypotheses. Final grade ditentukan setelah mini-project.
+
+
+## Mini-project progress baru — current TCP Established → executable (evidence aktual)
+
+- Pelajar mengirim contoh koneksi Established dari private local endpoint port 65514 ke remote 104.89.118.72:443, `OwningProcess = 10512`.
+- Query current `Win32_Process` dengan PID10512 berhasil mengidentifikasi `msedgewebview2.exe`, ParentProcessId4100, lokasi Microsoft Edge WebView2, dan command-line role `network.mojom.NetworkService` dengan `--webview-exe-name=Widgets.exe`.
+- **Valid correlation dalam snapshot:** OwningProcess cocok dengan PID dari process query. Tidak memverifikasi historical instance atau remote domain/reputasi.
+- **Preliminary assessment:** Needs Investigation. Path dan commandline konsisten dengan fungsi WebView2/Windows Widgets tetapi belum ada pemeriksaan publisher/signature/hash dan parent name. Port443 tidak membuktikan keamanan.
+- Parent PID4100 belum diperiksa; command untuk investigasi berikutnya telah diberikan dan output belum diterima.
+- Mini SOC Report dan nilai final Day21 tetap pending.
