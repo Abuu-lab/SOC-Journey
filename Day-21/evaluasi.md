@@ -44,3 +44,12 @@ Subnet PrefixLength, AddressState/loopback, DNS success vs TCP success, default 
 - **Preliminary assessment:** Needs Investigation. Path dan commandline konsisten dengan fungsi WebView2/Windows Widgets tetapi belum ada pemeriksaan publisher/signature/hash dan parent name. Port443 tidak membuktikan keamanan.
 - Parent PID4100 belum diperiksa; command untuk investigasi berikutnya telah diberikan dan output belum diterima.
 - Mini SOC Report dan nilai final Day21 tetap pending.
+
+## Follow-up Parent Process (bukti pengguna)
+
+- `Get-CimInstance Win32_Process -Filter "ProcessId = 4100"` berhasil mengidentifikasi parent dari proses pemilik koneksi.
+- PID4100 adalah `msedgewebview2.exe`; ParentProcessId=6200. Binary WebView2 version 156.0.4314.58. Commandline mengacu pada embedded browser dan `Widgets.exe`.
+- Korelasi snapshot: Established TCP owner PID10512 → current WebView2 PID10512 → current WebView2 PID4100. PID6200 belum diperiksa.
+- Penilaian sementara: fungsi normal Windows Widgets/WebView2 merupakan hipotesis masuk akal; belum terbukti aman atau berbahaya. Perlu cek parent PID6200, file signature/hash.
+- Jangan memublikasikan user profile path, token/handles, hostname atau identifier khusus perangkat.
+- Mini SOC Report dan nilai final Day21 masih pending.
