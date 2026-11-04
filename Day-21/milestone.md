@@ -1,6 +1,6 @@
 # 📌 Day 21 — Milestone Sementara
 
-**IN PROGRESS — belum ada nilai akhir.** Tahap 2 roadmap SOC: Network Fundamentals I.
+**Status final: PASS 78/100 (formatif); catatan di bawah merekam perkembangan hingga penutupan.** Tahap 2 roadmap SOC: Network Fundamentals I.
 
 Kemampuan yang sudah dipraktikkan:
 - Menggunakan Get-NetIPConfiguration untuk melihat interface Ethernet, IP/gateway/DNS.
@@ -31,3 +31,14 @@ Pengamanan data: username/hostname, alamat privat dan identitas host tidak dipub
 - Bukti aktual: msedgewebview2.exe PID4100 memiliki ParentProcessId6200 dan commandline embedded browser terkait Widgets.exe.
 - Berlatih menelusuri chain koneksi TCP hingga dua level proses dan membedakan evidence dari dugaan proses yang lebih tua.
 - Parent PID6200 dan file signature/hash belum dikonfirmasi. Nilai akhir belum ditetapkan.
+
+## 📌 Final Day 21 milestone
+
+**PASS 78/100 — formative mentor evaluation.** Advance to Day22.
+
+- Successfully followed actual Established TCP owner PID10512 through the Win32_Process parent chain: WebView2 PID10512 → WebView2 PID4100 → Widgets.exe PID6200.
+- Recognized Widgets.exe command-line context in Windows Client WebExperience package.
+- Executed `Get-AuthenticodeSignature` for WebView2; output Status Valid, message Signature verified. Certificate subject was truncated; `Get-FileHash` was invoked but output not supplied, therefore SHA256 **not recorded as verified**.
+- Combined subnet /24, DNS resolution, TCP connectivity, current network connections and parent-process findings into a mentor-assisted case assessment.
+- No categorical malware or clean verdict; remote service and certain process identity/file checks remain unverified.
+- Independence: **Terpandu** for final report, with growing hands-on ability. Carry prefix/gateway/DNS and assessment writing into Day22 active recall.
