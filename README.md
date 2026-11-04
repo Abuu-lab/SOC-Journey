@@ -39,7 +39,7 @@ Milestone mencatat pembelajaran, bukan klaim bahwa semua konsep sudah dikuasai. 
 | [Day 18](Day-18/materi.md) | Investigasi Jaringan Sysmon dan Praktik Tambahan | [Commands](Day-18/commands.md) · [Materi](Day-18/materi.md) · [Evaluasi](Day-18/evaluasi.md) · [Milestone](Day-18/milestone.md) | **PASS** (90/100 latihan inti; extended lab dengan koreksi) |
 | [Day 19](Day-19/materi.md) | Verifikasi Process dan Investigasi False Positive | [Commands](Day-19/commands.md) · [Materi](Day-19/materi.md) · [Evaluasi](Day-19/evaluasi.md) · [Milestone](Day-19/milestone.md) | **PASS** (80/100, formative; mentor-assisted final report) |
 | [Day 20](Day-20/commands.md) | Investigasi Siklus Process | [Commands](Day-20/commands.md) · [Milestone](Day-20/milestone.md) | **PASS** (80/100, formatif; materi dan evaluasi belum tersimpan) |
-| [Day 21](Day-21/materi.md) | Dasar Jaringan I: IP, Subnet, DNS, TCP dan Routing | [Commands](Day-21/commands.md) · [Materi](Day-21/materi.md) · [Evaluasi](Day-21/evaluasi.md) · [Milestone](Day-21/milestone.md) | **IN PROGRESS** (hands-on dijalankan, mini-project belum dinilai) |
+| [Day 21](Day-21/materi.md) | Dasar Jaringan I: IP, Subnet, DNS, TCP dan Routing | [Commands](Day-21/commands.md) · [Materi](Day-21/materi.md) · [Evaluasi](Day-21/evaluasi.md) · [Milestone](Day-21/milestone.md) | **PASS** (78/100, formatif; laporan mentor-assisted) |
 
 Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day 01.
 
@@ -54,7 +54,7 @@ Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day
 - **Day 18:** 90/100 pada latihan inti, PASS (formative); Extended Hands-on Lab mencakup multi-event Sysmon, current vs historical PID, UDP endpoint, file metadata, signature dan SHA-256. Ada koreksi report dan konsep yang dibawa ke Day 19.
 - **Day 19:** **PASS 80/100** (formatif). Menyelesaikan beberapa praktik langsung dan mencocokkan lima catatan pembuatan process anak Spotify dengan event jaringan historis milik parent melalui korelasi instance process. Laporan akhir dan jawaban tantangan simulasi C10 disusun dengan bantuan mentor, bukan secara mandiri. Masih ada kesenjangan bukti untuk diulang pada Day 20. Lihat [evaluasi Day 19](Day-19/evaluasi.md).
 
-- **Day 21:** **IN PROGRESS.** Telah melakukan konfigurasi IP, subnet, route, DNS resolution dan TCP test. Koreksi konsep penting: PrefixLength /24, gateway vs NAT, DNS tidak menjamin TCP dan Assessment vs Next Action. Mini-project koneksi TCP serta owner process belum selesai; belum ada nilai akhir.
+- **Day 21:** **PASS 78/100** (formatif). Mempraktikkan IP/subnet, DNS, TCP, route dan korelasi current TCP owner PID10512 ke rangkaian WebView2/Widgets.exe. Authenticode file WebView2 Valid; hash output dan sertifikat lengkap belum tersedia. Laporan akhir disusun mentor dari evidence yang diserahkan; penguatan konsep dilanjutkan ke Day22.
 
 ## Metode belajar dan kualitas evidensi
 
