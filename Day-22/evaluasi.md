@@ -57,3 +57,16 @@ Pengguna meminta mentor menjelaskan dasar konsep sebelum remedial saat menjawab 
 - Ini membuktikan peningkatan pemahaman untuk satu contoh /26, bukan berarti seluruh skill routing dan laporan SOC sudah dinilai mandiri.
 
 **Langkah berikutnya:** satu latihan pemilihan route dengan data baru lalu mini-project assessment ringkas; skor akhir Day22 belum diputuskan. Skor 72/100 adalah hasil evaluasi awal dan belum dihitung ulang setelah penguatan.
+
+
+## Latihan routing setelah remedial subnetting
+
+**Jawaban asli peserta:**
+- Route pilihan: `0.0.0.0/0 (Gateway)`.
+- Alasan: `karena jawaban 10.10.5.0/24 berada di subnet 0-63`.
+
+**Evaluasi: belum tepat.** Peserta menerapkan blok 0–63 yang berlaku untuk subnet `/26` pada jaringan `10.10.5.0/24`. Prefix `/24` memakai mask `255.255.255.0` dan mencakup alamat `10.10.5.0` sampai `10.10.5.255`. Destination `10.10.5.80` cocok dengan route `10.10.5.0/24`, yang lebih spesifik daripada `0.0.0.0/0`; NextHop `0.0.0.0` berarti on-link sehingga route `10.10.5.0/24` yang dipilih.
+
+**Metode koreksi:** mentor memberi penjelasan /24 versus /26, membedakan jumlah alamat per blok, dan memperagakan pemilihan route paling spesifik. Bukan langsung memberi remedial baru tanpa pengajaran. Satu pertanyaan analogi diberikan untuk mengecek apakah kesalahan konsep telah diperbaiki, belum ada jawaban dari pengguna saat catatan ini ditulis.
+
+**Status Day22:** masih 72/100 sementara, belum PASS; jangan klaim remedial routing sudah benar.
