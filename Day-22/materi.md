@@ -1,6 +1,6 @@
 # Day 22 — Materi: Subnetting, Routing, DNS, Firewall dan TCP/UDP
 
-**Status IN PROGRESS; skor sementara 72/100.** Penjelasan utama Bahasa Indonesia.
+**Status PASS; nilai final 78/100.** Penjelasan utama Bahasa Indonesia.
 
 ## Subnetting
 PrefixLength adalah konfigurasi **per interface**, tidak dijumlahkan. /24 memiliki mask 255.255.255.0. /26 memiliki mask 255.255.255.192 dan membentuk blok 64 alamat: 0–63, 64–127, 128–191, 192–255 pada oktet terakhir untuk contoh 192.168.10.x.
@@ -22,4 +22,4 @@ Get-NetFirewallProfile dapat menampilkan Domain/Private/Public, Enabled dan kebi
 Observation = fakta dari output. Evidence Gap = hal yang belum diuji. Assessment = kesimpulan sementara dan alasannya. Next Actions = langkah konkret untuk memeriksa hipotesis. Pada error TCP, pertimbangkan firewall/middlebox, route, host destination, dan port layanan; tidak semua failure adalah insiden keamanan.
 
 ## Latihan penguatan
-Remedial pendek berisi empat pertanyaan dengan data baru tentang /26, on-link vs default, DNS vs TCP, serta firewall policy. Penulisan mini-report dari output lama masih diperlukan, tanpa mengulang seluruh command.
+Remedial dan penjelasan bertahap dilakukan sesuai kesulitan pelajar: /26, on-link vs default, DNS/TCP, firewall policy. Penilaian akhir Assessment telah dikerjakan dan dinyatakan PASS. Kelemahan memilih route dengan alasan tepat serta Evidence Gap/Next Action tetap dibawa sebagai Active Recall Day23, tanpa menahan kelulusan.
