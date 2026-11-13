@@ -80,3 +80,15 @@ Pengguna meminta mentor menjelaskan dasar konsep sebelum remedial saat menjawab 
 **Hasil:** Pemilihan route belum tepat. Blok /26 yang memuat angka 90 adalah 64-127, dengan network address 192.168.40.64/26. Route itu tidak ada dalam tabel; route 192.168.40.0/26 hanya mencakup 0-63. Default route 0.0.0.0/0 via 192.168.40.1 merupakan satu-satunya route tabel yang cocok. Jaringan 192.168.40.0/25 secara matematis juga mencakup 90 tetapi tidak ada di tabel, jadi jangan mengarang route.
 
 **Proses belajar:** Mentor menjelaskan perbedaan perhitungan network address dan pemilihan route dari routing table yang tersedia sebelum memberi latihan lanjutan. Skor sementara tetap 72/100 dan belum PASS.
+
+## Cek pemahaman routing — hasil terbaru
+
+**Soal penguatan:** destination 192.168.40.90; tersedia 192.168.40.0/26 (on-link) dan 0.0.0.0/0 (gateway).
+
+**Jawaban asli peserta:**
+- Network /26 yang memuat .90: 192.168.40.64/26.
+- Route yang tersedia dan dipilih: 0.0.0.0/0 (Gateway).
+
+**Evaluasi: benar 2/2.** Network yang memuat IP tidak otomatis merupakan route yang tersedia. Karena route 192.168.40.0/26 hanya mencakup alamat .0–.63, untuk .90 hanya default 0.0.0.0/0 yang cocok.
+
+Riwayat pembelajaran dijaga: awalnya salah memilih route /26 on-link; setelah contoh dan penjelasan berhasil menjawab kasus yang sama secara tepat. Latihan subnet /26 sebelumnya juga benar 3/3. Langkah selanjutnya penulisan Assessment mini-project dari DNS example.com berhasil, TCP port443 berhasil, dan batas uji. **Belum ada laporan akhir tertulis peserta** dan nilai final belum ditetapkan.
