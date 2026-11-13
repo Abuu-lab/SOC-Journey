@@ -1,16 +1,16 @@
-# Day 22 — Evaluasi Sementara
+# Day 22 — Evaluasi Final
 
-**IN PROGRESS, skor sementara 72/100, belum PASS (ambang 76).** Kiriman pengguna dua kali berisi jawaban sama; hanya dinilai sekali. Semua hands-on sudah dikerjakan. Mini-project terstruktur belum diserahkan.
+**PASS — skor akhir 78/100 (ambang 76).** Penilaian formatif berdasarkan seluruh praktik, jawaban awal, penguatan konsep, dan jawaban akhir Assessment. Kiriman identik pengguna dihitung satu kali. Penjelasan mentor tidak diklaim sebagai pekerjaan mandiri peserta. Riwayat di bawah mempertahankan skor sementara 72/100 pada tahap awal.
 
-## Rubrik sementara
-| Aspek | Maks | Skor |
+## Rubrik akhir
+| Aspek | Maks | Skor akhir |
 |---|---:|---:|
-| Pemahaman konsep | 20 | 13 |
+| Pemahaman konsep | 20 | 14 |
 | Pengumpulan dan pembacaan bukti | 25 | 24 |
-| Analisis dan penalaran | 25 | 16 |
-| Tindak lanjut dan eskalasi | 15 | 9 |
-| Dokumentasi dan komunikasi | 15 | 10 |
-| **Total** | **100** | **72** |
+| Analisis dan penalaran | 25 | 19 |
+| Tindak lanjut dan eskalasi | 15 | 10 |
+| Dokumentasi dan komunikasi | 15 | 11 |
+| **Total** | **100** | **78** |
 
 ## Active Recall — Jawaban dan koreksi
 - Q1: 'belum paham' -> prefix Ethernet tidak dijumlahkan dengan prefix loopback.
@@ -111,3 +111,19 @@ Soal: destination 8.8.8.8; routing table 10.20.0.0/16 via 10.1.1.254 dan 0.0.0.0
 **Hasil:** gateway terpilih benar, tetapi alasan masih keliru. Blok 0-63 adalah contoh subnet /26 dan tidak relevan dengan routing ini. Network 10.20.0.0/16 mencakup 10.20.0.0 sampai 10.20.255.255 dan tidak mencakup 8.8.8.8. Karena itu hanya default route 0.0.0.0/0 yang cocok dan next hop 10.1.1.1 terpilih.
 
 Mentor menjelaskan lagi perbedaan menghitung subnet dengan memilih route; belum mengklaim alasan routing dikuasai mandiri. Nilai Day22 masih sementara, dan mini-project assessment belum diserahkan.
+
+## Penutupan Day 22 — Assessment pengguna dan nilai final
+
+**Pertanyaan akhir mentor:** Dari DNS example.com berhasil, TCP example.com:443 True, default gateway tersedia dan firewall aktif, bolehkah menyimpulkan seluruh koneksi internet normal dan tidak ada masalah keamanan?
+
+**Jawaban asli pengguna:** "kalau terlihat secara umum, terlihat normal\ncuman kita gk bisa lngsung mengatakan semua baik2 saja".
+
+**Evaluasi:** tepat secara inti. Peserta bisa menyatakan hasil uji tampak baik sambil mengakui cakupan evidence terbatas, tidak mengklaim semua sistem aman. Jawaban tidak menjabarkan DNS/TCP spesifik dan pemeriksaan berikutnya, tetapi pertanyaan yang diajukan hanya meminta assessment singkat 2–3 kalimat. Tidak dipaksa mengulang untuk kekurangan redaksi. **PASS 78/100** berdasarkan hasil kumulatif, bukan karena seluruh soal awal benar.
+
+**Contoh jawaban ideal oleh mentor, bukan ditulis peserta:** "Dari pengujian yang dilakukan, DNS example.com berhasil menghasilkan alamat IP dan koneksi TCP ke port 443 berhasil. Namun, hasil tersebut hanya membuktikan keberhasilan pengujian terhadap tujuan terkait pada saat itu, bukan bahwa seluruh koneksi internet atau sistem bebas dari ancaman. Bila ada indikasi masalah, lanjutkan pemeriksaan HTTP/TLS, log, dan koneksi terkait."
+
+**Rekonsiliasi skor:** awal 72 (konsep13, bukti24, analisis16, tindak lanjut9, dokumentasi10); akhir 78 (konsep14, bukti24, analisis19, tindak lanjut10, dokumentasi11), terutama karena jawaban subnet /26 3/3 setelah demonstrasi, pemilihan network+route 2/2 dengan arahan mentor (alasan routing kemudian diakui masih belum paham), serta assessment terakhir yang hati-hati dan benar. Skor tidak mengklaim kemampuan routing mandiri. Penilaian tidak bersifat sertifikasi.
+
+**Tingkat kemandirian:** perintah dan output asli dikumpulkan peserta dengan **bantuan terbatas**; pemahaman subnet/routing mengalami penguatan **terpandu**; final Assessment singkat ditulis peserta sendiri; laporan lengkap berformat SOC disusun/dicontohkan mentor, **tidak diklaim sebagai report mandiri peserta**.
+
+**Catatan untuk Day 23 (tidak menahan PASS):** pemilihan longest prefix match /16 /24 /26, perbedaan DestinationPrefix 0.0.0.0/0 vs NextHop 0.0.0.0, DNS tidak menjamin TCP, HTTP/TLS tidak dijamin TCP, dan menyusun Evidence Gap serta Next Action lebih spesifik. Hasil GitHub adalah ringkasan pengajaran sekaligus bukti praktik, bukan investigasi keamanan nyata.
