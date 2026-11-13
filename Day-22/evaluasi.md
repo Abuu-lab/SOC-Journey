@@ -92,3 +92,12 @@ Pengguna meminta mentor menjelaskan dasar konsep sebelum remedial saat menjawab 
 **Evaluasi: benar 2/2.** Network yang memuat IP tidak otomatis merupakan route yang tersedia. Karena route 192.168.40.0/26 hanya mencakup alamat .0–.63, untuk .90 hanya default 0.0.0.0/0 yang cocok.
 
 Riwayat pembelajaran dijaga: awalnya salah memilih route /26 on-link; setelah contoh dan penjelasan berhasil menjawab kasus yang sama secara tepat. Latihan subnet /26 sebelumnya juga benar 3/3. Langkah selanjutnya penulisan Assessment mini-project dari DNS example.com berhasil, TCP port443 berhasil, dan batas uji. **Belum ada laporan akhir tertulis peserta** dan nilai final belum ditetapkan.
+
+## Klarifikasi tingkat pemahaman setelah jawaban routing 2/2
+
+Pengguna menyatakan terus terang: 'sebenernya aku gk tau kenapa kok pilih 0.0.0.0'. Artinya dua jawaban benar sebelumnya **belum boleh dianggap pembuktian pemahaman mandiri atas alasan pemilihan route**. Jangan menyimpulkan konsep routing sudah dikuasai hanya karena pilihan benar.
+
+Mentor lalu menjelaskan bahwa DestinationPrefix 0.0.0.0/0 adalah default route yang cocok dengan semua alamat IPv4, sedangkan NextHop 0.0.0.0 berarti on-link; dua field itu tidak sama. Pada tabel dengan route 192.168.40.0/26 (mencakup .0-.63) dan default 0.0.0.0/0 via 192.168.40.1, destination .90 tidak cocok dengan route /26 tetapi cocok default. Jika route lebih spesifik 192.168.40.64/26 tersedia, ia dipilih dibanding default.
+
+Rencana pedagogis: satu soal sederhana dengan konteks baru, peserta harus menyatakan alasan sebelum mentor menandai pemahaman; tidak langsung mengulang mini-project jika konsep masih belum jelas.
+Nilai Day22 tetap sementara 72/100, belum PASS.
