@@ -32,3 +32,9 @@ Pelajar berhasil sebelumnya pada satu latihan subnetting `/26` (3/3), tetapi ket
 
 ## 📌 Tambahan perkembangan routing
 Peserta mengidentifikasi bahwa destination `192.168.40.90` masuk blok di atas 63, tetapi masih memilih on-link route `192.168.40.0/26`, yang hanya mencakup 0–63. Mentor membimbing: block yang benar adalah 64–127 dengan network `192.168.40.64/26`; route itu dan route /25 tidak tercantum di table sehingga default route yang dipakai. Konsep penting: menghitung network address tidak sama dengan memilih route yang tersedia; gunakan longest-prefix match dari routing table yang nyata. Status Day22 masih latihan, skor sementara 72/100.
+
+## 📌 Verifikasi pemahaman routing setelah pengajaran
+
+Pelajar berhasil menjawab **2/2 benar**: network yang mencakup destination 192.168.40.90 pada /26 adalah 192.168.40.64/26, tetapi route ini tidak tersedia dalam routing table soal, sehingga default route 0.0.0.0/0 melalui gateway dipilih. Keterampilan yang diperagakan: memisahkan perhitungan subnet dari pemilihan route berdasarkan tabel. Ini merupakan hasil retest setelah penjelasan, bukan klaim mahir di semua jenis routing.
+
+Status Day22 masih menunggu Assessment mini-project yang ditulis peserta. Penilaian sementara belum direvisi menjadi nilai final.
