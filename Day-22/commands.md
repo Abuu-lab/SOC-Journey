@@ -1,6 +1,6 @@
 # Day 22 — Commands dan hasil praktik
 
-**Status: IN PROGRESS. Skor sementara 72/100, belum PASS.** Perintah berikut benar-benar dijalankan; output identitas perangkat disamarkan.
+**Status: PASS Day 22, nilai final 78/100.** Perintah berikut benar-benar dijalankan; output identitas perangkat disamarkan.
 
 ## 1. Ethernet IPv4
 ```powershell
@@ -49,7 +49,7 @@ Select-Object -First 5 LocalAddress, LocalPort, OwningProcess
 ```
 Hasil: empat koneksi TCP Established menggunakan IPv6 loopback ::1 dengan PID 23160/17768. Satu koneksi TCP IPv4 menuju remote 104.18.32.47:443 dimiliki PID 3220; nama executable PID3220 belum diperiksa. Lima UDP endpoint mempunyai LocalAddress/LocalPort/OwningProcess tetapi tidak mempunyai TCP State Established.
 
-## Belum dilakukan
-Mini-project report lengkap yang ditulis mandiri, serta remedial subnet, DNS/TCP, route dan firewall. Tidak ada perintah konfigurasi firewall maupun perubahan sistem yang dijalankan.
+## Batas praktik yang telah dilakukan
+Report SOC berformat lengkap belum ditulis mandiri; peserta memberikan Assessment singkat yang benar dan mendapat contoh jawaban ideal dari mentor. Penguatan subnet /26 dan routing telah dicoba, walau pemahaman mandiri alasan routing masih perlu dibiasakan pada Day berikutnya. Tidak ada perintah konfigurasi firewall atau perubahan sistem yang dilakukan.
 
 **Privasi:** raw IP privat, hostname, username dan alamat profil tidak dipublikasikan.
