@@ -1,6 +1,6 @@
-# 📌 Day 22 — Catatan Penting / Milestone Sementara
+# 📌 Day 22 — Catatan Penting / Milestone Final
 
-**Status IN PROGRESS — 72/100 sementara, belum PASS.** Nilai mentor formatif.
+**Status PASS — 78/100 final, ambang 76.** Nilai mentor formatif berdasarkan output PowerShell nyata, latihan, dan penilaian akhir. Pembahasan bertahap di bawah mencatat perkembangan dari awal ketika skor masih 72.
 
 ## Yang telah benar-benar dilakukan
 - Membaca Ethernet IPv4 Preferred /24 menggunakan Get-NetIPAddress.
@@ -42,3 +42,12 @@ Status Day22 masih menunggu Assessment mini-project yang ditulis peserta. Penila
 ## Koreksi milestone: pilihan benar belum berarti pemahaman mandiri
 
 Setelah cek routing 2/2, pengguna menjelaskan bahwa sebenarnya belum tahu mengapa memilih 0.0.0.0/0. Catatan yang lebih akurat: **jawaban benar, tetapi alasan dan tingkat penguasaan belum teruji**. Mentor memberikan pengajaran tentang default route DestinationPrefix 0.0.0.0/0 versus NextHop 0.0.0.0 (on-link) dan pemilihan route paling spesifik yang tersedia. Belum ada retest dengan alasan yang bisa dinilai. Status Day22 tetap IN PROGRESS.
+
+## 📌 Milestone Hari Ini — Day 22 PASS (final)
+
+- **Praktik nyata:** enam hands-on PowerShell tentang IPv4/prefix, routing table, DNS, TCP connectivity, firewall profiles dan TCP/UDP endpoints dijalankan peserta.
+- **Perkembangan:** subnetting /26 awalnya belum dipahami, lalu latihan baru benar 3/3 setelah materi; pilihan subnet dan route pada contoh penguatan benar 2/2, tetapi pengguna menjelaskan alasan routing masih perlu penguatan. Ini bukan bukti telah mahir routing mandiri.
+- **Analisis:** Assessment akhir peserta: "kalau terlihat secara umum, terlihat normal cuman kita gk bisa lngsung mengatakan semua baik2 saja"; benar karena batas pengujian DNS dan TCP tidak membuktikan semua koneksi normal atau bebas serangan.
+- **Nilai akhir 78/100 = PASS** sesuai ambang 76; tidak wajib mengulang Day22. Rincian dan koreksi berada pada evaluasi.md.
+- **Kemandirian:** commands/output bantuan terbatas; beberapa konsep dan contoh terpandu; assessment akhir jawaban asli peserta; contoh laporan lengkap adalah buatan mentor, bukan laporan mandiri peserta.
+- **Bawa ke Day23:** penguatan longest-prefix route /16 vs /24 vs /26 dan default route, DNS/TCP/HTTP, serta Evidence Gap dan Next Action pada kasus jaringan. Lanjut jalur SOC sesuai roadmap.
