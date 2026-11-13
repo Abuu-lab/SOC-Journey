@@ -70,3 +70,13 @@ Pengguna meminta mentor menjelaskan dasar konsep sebelum remedial saat menjawab 
 **Metode koreksi:** mentor memberi penjelasan /24 versus /26, membedakan jumlah alamat per blok, dan memperagakan pemilihan route paling spesifik. Bukan langsung memberi remedial baru tanpa pengajaran. Satu pertanyaan analogi diberikan untuk mengecek apakah kesalahan konsep telah diperbaiki, belum ada jawaban dari pengguna saat catatan ini ditulis.
 
 **Status Day22:** masih 72/100 sementara, belum PASS; jangan klaim remedial routing sudah benar.
+
+## Latihan routing lanjutan
+
+**Soal:** route 192.168.40.0/26 on-link dan default 0.0.0.0/0 via 192.168.40.1; destination 192.168.40.90.
+
+**Jawaban asli pengguna:** Route 192.168.40.0/26 (On-link). Alasan: angka 90 termasuk 64-128, tapi harusnya /25.
+
+**Hasil:** Pemilihan route belum tepat. Blok /26 yang memuat angka 90 adalah 64-127, dengan network address 192.168.40.64/26. Route itu tidak ada dalam tabel; route 192.168.40.0/26 hanya mencakup 0-63. Default route 0.0.0.0/0 via 192.168.40.1 merupakan satu-satunya route tabel yang cocok. Jaringan 192.168.40.0/25 secara matematis juga mencakup 90 tetapi tidak ada di tabel, jadi jangan mengarang route.
+
+**Proses belajar:** Mentor menjelaskan perbedaan perhitungan network address dan pemilihan route dari routing table yang tersedia sebelum memberi latihan lanjutan. Skor sementara tetap 72/100 dan belum PASS.
