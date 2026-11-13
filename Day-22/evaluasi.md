@@ -101,3 +101,13 @@ Mentor lalu menjelaskan bahwa DestinationPrefix 0.0.0.0/0 adalah default route y
 
 Rencana pedagogis: satu soal sederhana dengan konteks baru, peserta harus menyatakan alasan sebelum mentor menandai pemahaman; tidak langsung mengulang mini-project jika konsep masih belum jelas.
 Nilai Day22 tetap sementara 72/100, belum PASS.
+
+## Penguatan routing — contoh 10.20.0.0/16 vs default
+
+Soal: destination 8.8.8.8; routing table 10.20.0.0/16 via 10.1.1.254 dan 0.0.0.0/0 via 10.1.1.1.
+
+**Jawaban asli:** '10.1.1.1 karena 0-63'.
+
+**Hasil:** gateway terpilih benar, tetapi alasan masih keliru. Blok 0-63 adalah contoh subnet /26 dan tidak relevan dengan routing ini. Network 10.20.0.0/16 mencakup 10.20.0.0 sampai 10.20.255.255 dan tidak mencakup 8.8.8.8. Karena itu hanya default route 0.0.0.0/0 yang cocok dan next hop 10.1.1.1 terpilih.
+
+Mentor menjelaskan lagi perbedaan menghitung subnet dengan memilih route; belum mengklaim alasan routing dikuasai mandiri. Nilai Day22 masih sementara, dan mini-project assessment belum diserahkan.
