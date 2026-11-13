@@ -38,3 +38,7 @@ Peserta mengidentifikasi bahwa destination `192.168.40.90` masuk blok di atas 63
 Pelajar berhasil menjawab **2/2 benar**: network yang mencakup destination 192.168.40.90 pada /26 adalah 192.168.40.64/26, tetapi route ini tidak tersedia dalam routing table soal, sehingga default route 0.0.0.0/0 melalui gateway dipilih. Keterampilan yang diperagakan: memisahkan perhitungan subnet dari pemilihan route berdasarkan tabel. Ini merupakan hasil retest setelah penjelasan, bukan klaim mahir di semua jenis routing.
 
 Status Day22 masih menunggu Assessment mini-project yang ditulis peserta. Penilaian sementara belum direvisi menjadi nilai final.
+
+## Koreksi milestone: pilihan benar belum berarti pemahaman mandiri
+
+Setelah cek routing 2/2, pengguna menjelaskan bahwa sebenarnya belum tahu mengapa memilih 0.0.0.0/0. Catatan yang lebih akurat: **jawaban benar, tetapi alasan dan tingkat penguasaan belum teruji**. Mentor memberikan pengajaran tentang default route DestinationPrefix 0.0.0.0/0 versus NextHop 0.0.0.0 (on-link) dan pemilihan route paling spesifik yang tersedia. Belum ada retest dengan alasan yang bisa dinilai. Status Day22 tetap IN PROGRESS.
