@@ -47,3 +47,13 @@ Pertanyaan pengguna: 'bagian 5 sepertinya sudah kutulis ya?' Observasi dan outpu
 
 ## Target penyelesaian
 Jawab empat remedial dengan data berbeda dan susun paragraf singkat penilaian kasus nyata. Setelah itu skor final dapat ditentukan. Jika >=76, lanjut Day23 dan kesalahan kecil masuk Active Recall.
+## Pembelajaran terarah setelah penilaian sementara
+
+Pengguna meminta mentor menjelaskan dasar konsep sebelum remedial saat menjawab 'belum paham' atau keliru total. Mentor sudah mendemonstrasikan subnetting /26 (blok 64), route paling spesifik /24 dibanding default /0, pemisahan DNS versus TCP, serta pengecualian rule Allow ketika firewall default Block. Pada penguatan R3, pengguna menjawab DNS tidak selalu bermasalah dan firewall bisa jadi penyebab: **benar secara inti**. Pada R4, pengguna menjawab rule Allow TCP8080 dapat menjadi pengecualian Block: **benar secara inti** dengan syarat rule efektif.
+
+**Latihan satu soal berbeda — sudah dijawab pengguna:** PC A `192.168.20.75/26`, PC B `192.168.20.110/26`.
+- Jawaban asli pengguna: "Network PC A: 192.168.20.64/26; Network PC B: 192.168.20.64/26; Subnet sama? Ya".
+- Hasil: **benar 3/3**; keduanya berada pada blok 64–127 dari subnet 192.168.20.64/26.
+- Ini membuktikan peningkatan pemahaman untuk satu contoh /26, bukan berarti seluruh skill routing dan laporan SOC sudah dinilai mandiri.
+
+**Langkah berikutnya:** satu latihan pemilihan route dengan data baru lalu mini-project assessment ringkas; skor akhir Day22 belum diputuskan. Skor 72/100 adalah hasil evaluasi awal dan belum dihitung ulang setelah penguatan.
