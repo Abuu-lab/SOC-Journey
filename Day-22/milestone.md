@@ -24,3 +24,8 @@ Privasi: IP privat, hostname, username dan host-specific identifiers dihilangkan
 ## 📌 Milestone tambahan — subnet /26 terbukti melalui latihan baru
 
 Pelajar menjawab mandiri contoh baru PC A 192.168.20.75/26 dan PC B 192.168.20.110/26: kedua network address **192.168.20.64/26**, sama subnet, dinilai **3/3 benar**. Ini progress yang benar-benar diuji setelah materi demonstrasi. Pemahaman routing dan laporan SOC masih perlu diuji secara bertahap. Prinsip mentoring diperbarui: **jelaskan konsep dan contoh dahulu jika belum paham, lalu satu soal penguatan, bukan langsung banyak remedial**.
+
+
+## Tambahan sesi penguatan routing
+
+Pelajar berhasil sebelumnya pada satu latihan subnetting `/26` (3/3), tetapi ketika memilih route untuk tujuan `10.10.5.80`, salah menganggap network `10.10.5.0/24` hanya mencakup 0–63. Mentor menjelaskan bahwa rentang 0–63 adalah contoh blok `/26`, sedangkan `/24` mencakup 0–255. Route lebih spesifik `10.10.5.0/24` mengungguli default route `0.0.0.0/0` untuk tujuan tersebut. **Pemahaman routing belum dikonfirmasi lewat jawaban baru; status dan skor tidak berubah.**
