@@ -41,12 +41,13 @@ Milestone mencatat pembelajaran, bukan klaim bahwa semua konsep sudah dikuasai. 
 | [Day 20](Day-20/commands.md) | Investigasi Siklus Process | [Commands](Day-20/commands.md) · [Milestone](Day-20/milestone.md) | **PASS** (80/100, formatif; materi dan evaluasi belum tersimpan) |
 | [Day 21](Day-21/materi.md) | Dasar Jaringan I: IP, Subnet, DNS, TCP dan Routing | [Commands](Day-21/commands.md) · [Materi](Day-21/materi.md) · [Evaluasi](Day-21/evaluasi.md) · [Milestone](Day-21/milestone.md) | **PASS** (78/100, formatif; laporan mentor-assisted) |
 | [Day 22](Day-22/materi.md) | Subnetting, Routing & Network Troubleshooting | [Commands](Day-22/commands.md) · [Materi](Day-22/materi.md) · [Evaluasi](Day-22/evaluasi.md) · [Milestone](Day-22/milestone.md) | **PASS 78/100** (penguatan terbimbing; routing tetap dibawa ke Day23) |
+| [Day 23](Day-23/materi.md) | DNS → TCP → TLS → HTTP/HTTPS: Connectivity Layer Triage | [Commands](Day-23/commands.md) · [Materi](Day-23/materi.md) · [Evaluasi](Day-23/evaluasi.md) · [Milestone](Day-23/milestone.md) | **IN PROGRESS** (belum dievaluasi) |
 
 Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day 01.
 
 
 
-## Progres saat ini (Day 01–22)
+## Progres saat ini (Day 01–23)
 
 - **Tahap yang sudah dilatih:** computer/process fundamentals, Windows services, parent-child process, metadata/digital signature/SHA-256, Windows Event Logs, Security Context, Sysmon, DNS Query, UDP/TCP network evidence, timeline dan preliminary SOC assessment.
 - **Day 15:** 69/100, belum PASS sesuai evaluasi historis; materi tetap dipakai untuk remediasi.
@@ -58,6 +59,7 @@ Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day
 - **Day 21:** **PASS 78/100** (formatif). Mempraktikkan IP/subnet, DNS, TCP, route dan korelasi current TCP owner PID10512 ke rangkaian WebView2/Widgets.exe. Authenticode file WebView2 Valid; hash output dan sertifikat lengkap belum tersedia. Laporan akhir disusun mentor dari evidence yang diserahkan; penguatan konsep dilanjutkan ke Day22.
 
 - **Day 22:** **PASS 78/100 (final)**. Enam hands-on nyata selesai; penguatan /26 (3/3) dan soal routing (2/2 pilihan benar) dilakukan dengan mentoring, tetapi alasan route belum sepenuhnya mandiri. Assessment akhir peserta menyatakan hasil tampak normal tetapi tidak cukup untuk memastikan seluruh jaringan aman. Dokumentasi lengkap disusun mentor, bukan laporan mandiri. Lanjut Day23 dengan penguatan longest-prefix, DNS/TCP/HTTP dan Evidence Gap.
+- **Day 23:** **IN PROGRESS, BELUM DIUJI.** Materi baru DNS→TCP→TLS→HTTP/HTTPS, hands-on curl.exe, SOC Challenge dan mini-project; belum ada output/jawaban/score. Tidak klaim PASS.
 
 ## Metode belajar dan kualitas evidensi
 
