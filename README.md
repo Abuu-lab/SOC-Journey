@@ -40,7 +40,7 @@ Milestone mencatat pembelajaran, bukan klaim bahwa semua konsep sudah dikuasai. 
 | [Day 19](Day-19/materi.md) | Verifikasi Process dan Investigasi False Positive | [Commands](Day-19/commands.md) · [Materi](Day-19/materi.md) · [Evaluasi](Day-19/evaluasi.md) · [Milestone](Day-19/milestone.md) | **PASS** (80/100, formative; mentor-assisted final report) |
 | [Day 20](Day-20/commands.md) | Investigasi Siklus Process | [Commands](Day-20/commands.md) · [Milestone](Day-20/milestone.md) | **PASS** (80/100, formatif; materi dan evaluasi belum tersimpan) |
 | [Day 21](Day-21/materi.md) | Dasar Jaringan I: IP, Subnet, DNS, TCP dan Routing | [Commands](Day-21/commands.md) · [Materi](Day-21/materi.md) · [Evaluasi](Day-21/evaluasi.md) · [Milestone](Day-21/milestone.md) | **PASS** (78/100, formatif; laporan mentor-assisted) |
-| [Day 22](Day-22/materi.md) | Subnetting, Routing & Network Troubleshooting | [Commands](Day-22/commands.md) · [Materi](Day-22/materi.md) · [Evaluasi](Day-22/evaluasi.md) · [Milestone](Day-22/milestone.md) | **IN PROGRESS** (72/100 sementara; remedial dan laporan belum selesai) |
+| [Day 22](Day-22/materi.md) | Subnetting, Routing & Network Troubleshooting | [Commands](Day-22/commands.md) · [Materi](Day-22/materi.md) · [Evaluasi](Day-22/evaluasi.md) · [Milestone](Day-22/milestone.md) | **PASS 78/100** (penguatan terbimbing; routing tetap dibawa ke Day23) |
 
 Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day 01.
 
@@ -57,7 +57,7 @@ Screenshot praktik tersedia di `assets/Day-01` dan ditampilkan pada Evaluasi Day
 
 - **Day 21:** **PASS 78/100** (formatif). Mempraktikkan IP/subnet, DNS, TCP, route dan korelasi current TCP owner PID10512 ke rangkaian WebView2/Widgets.exe. Authenticode file WebView2 Valid; hash output dan sertifikat lengkap belum tersedia. Laporan akhir disusun mentor dari evidence yang diserahkan; penguatan konsep dilanjutkan ke Day22.
 
-- **Day 22:** **IN PROGRESS, 72/100 sementara**. Enam hands-on subnet, route, DNS, TCP, firewall dan endpoints sudah dijalankan. Remedial pendek untuk /26, on-link, DNS/TCP dan firewall serta mini-report mandiri masih diperlukan. Jangan tandai PASS sebelum penilaian berikutnya.
+- **Day 22:** **PASS 78/100 (final)**. Enam hands-on nyata selesai; penguatan /26 (3/3) dan soal routing (2/2 pilihan benar) dilakukan dengan mentoring, tetapi alasan route belum sepenuhnya mandiri. Assessment akhir peserta menyatakan hasil tampak normal tetapi tidak cukup untuk memastikan seluruh jaringan aman. Dokumentasi lengkap disusun mentor, bukan laporan mandiri. Lanjut Day23 dengan penguatan longest-prefix, DNS/TCP/HTTP dan Evidence Gap.
 
 ## Metode belajar dan kualitas evidensi
 
