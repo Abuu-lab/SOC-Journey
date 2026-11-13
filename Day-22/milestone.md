@@ -21,3 +21,6 @@
 Empat pertanyaan singkat dengan skenario berbeda dan laporan pendek menggunakan hasil yang sudah diperoleh. Jangan mengulang seluruh Day; jika nilai mencapai 76, lanjut Day23. Penilaian kemandirian masih Terpandu/Bantuan Terbatas.
 
 Privasi: IP privat, hostname, username dan host-specific identifiers dihilangkan dari repository.
+## 📌 Milestone tambahan — subnet /26 terbukti melalui latihan baru
+
+Pelajar menjawab mandiri contoh baru PC A 192.168.20.75/26 dan PC B 192.168.20.110/26: kedua network address **192.168.20.64/26**, sama subnet, dinilai **3/3 benar**. Ini progress yang benar-benar diuji setelah materi demonstrasi. Pemahaman routing dan laporan SOC masih perlu diuji secara bertahap. Prinsip mentoring diperbarui: **jelaskan konsep dan contoh dahulu jika belum paham, lalu satu soal penguatan, bukan langsung banyak remedial**.
