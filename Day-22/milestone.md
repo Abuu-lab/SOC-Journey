@@ -29,3 +29,6 @@ Pelajar menjawab mandiri contoh baru PC A 192.168.20.75/26 dan PC B 192.168.20.1
 ## Tambahan sesi penguatan routing
 
 Pelajar berhasil sebelumnya pada satu latihan subnetting `/26` (3/3), tetapi ketika memilih route untuk tujuan `10.10.5.80`, salah menganggap network `10.10.5.0/24` hanya mencakup 0–63. Mentor menjelaskan bahwa rentang 0–63 adalah contoh blok `/26`, sedangkan `/24` mencakup 0–255. Route lebih spesifik `10.10.5.0/24` mengungguli default route `0.0.0.0/0` untuk tujuan tersebut. **Pemahaman routing belum dikonfirmasi lewat jawaban baru; status dan skor tidak berubah.**
+
+## 📌 Tambahan perkembangan routing
+Peserta mengidentifikasi bahwa destination `192.168.40.90` masuk blok di atas 63, tetapi masih memilih on-link route `192.168.40.0/26`, yang hanya mencakup 0–63. Mentor membimbing: block yang benar adalah 64–127 dengan network `192.168.40.64/26`; route itu dan route /25 tidak tercantum di table sehingga default route yang dipakai. Konsep penting: menghitung network address tidak sama dengan memilih route yang tersedia; gunakan longest-prefix match dari routing table yang nyata. Status Day22 masih latihan, skor sementara 72/100.
